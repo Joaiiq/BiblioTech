@@ -1,7 +1,7 @@
 # BiblioTech - Sistema de Gestão de Biblioteca
 
 ## Descrição do Projeto
-O BiblioTech é um sistema web desenvolvido para automatizar a gestão de bibliotecas. Ele controla o acervo de livros, o cadastro de membros, e o fluxo de empréstimos e reservas, aplicando regras de negócio como cálculo automático de multas por atraso
+O BiblioTech é um sistema web desenvolvido para automatizar a gestão de bibliotecas. Ele controla o acervo de livros, o cadastro de membros, e o fluxo de empréstimos e reservas, aplicando regras de negócio como cálculo automático de multas por atraso.
 ## Tecnologias
 * **Back-end:** PHP 8+ e framework Laravel
 * **Base de Dados:** MariaDB / MySQL
