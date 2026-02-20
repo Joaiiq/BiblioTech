@@ -17,7 +17,7 @@ O BiblioTech é um sistema web desenvolvido para automatizar a gestão de biblio
 ## Passo a Passo para Rodar o Projeto
 **Clonar o Repositório**
 'bash
-   git clone [https://github.com/SEU-USUARIO/BiblioTech.git](https://github.com/Joaiiq/BiblioTech.git)'
+   git clone [https://github.com/Joaiiq/BiblioTech.git](https://github.com/Joaiiq/BiblioTech.git)'
 
 **Entrar na pasta do projeto**
 'cd BiblioTech'
