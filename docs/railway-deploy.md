@@ -6,6 +6,8 @@
 - Banco: MySQL, usando o serviço MySQL do Railway.
 - Assets: `npm run build`.
 - Pre-deploy: migrations, `storage:link`, cache de config e views.
+- Start: `php artisan serve --host=0.0.0.0 --port=${PORT}`.
+- Healthcheck: `/up`.
 
 ## Variáveis do serviço App
 
