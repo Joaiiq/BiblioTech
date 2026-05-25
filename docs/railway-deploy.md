@@ -19,6 +19,7 @@ APP_ENV=production
 APP_KEY=base64:COLE_A_CHAVE_AQUI
 APP_DEBUG=false
 APP_URL=https://SEU-DOMINIO.up.railway.app
+ASSET_URL=https://SEU-DOMINIO.up.railway.app
 
 APP_LOCALE=pt_BR
 APP_FALLBACK_LOCALE=pt_BR
@@ -62,10 +63,11 @@ php artisan key:generate --show
 
 6. Cole a chave em `APP_KEY`.
 7. Gere um domínio em `Settings > Networking > Generate Domain`.
-8. Ajuste `APP_URL` para esse domínio.
+8. Ajuste `APP_URL` e `ASSET_URL` para esse domínio, sempre com `https://`.
 9. Faça deploy.
 
 ## Observações importantes
 
 - Uploads locais em `storage/app/public` podem sumir em redeploy se o app não usar volume ou storage externo. Para demonstração rápida, isso é aceitável. Para uso real, use volume Railway ou S3.
 - O Railway executa o pre-deploy do `railway.json`, então migrations e seeders rodam antes da nova versão entrar no ar.
+- Se CSS/JS aparecerem como `http://` no navegador, revise `APP_URL` e `ASSET_URL` no Railway e redeploye para refazer o cache de configuração.

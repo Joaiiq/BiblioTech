@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,5 +23,9 @@ class AppServiceProvider extends ServiceProvider
     {
         App::setLocale('pt_BR');
         App::setFallbackLocale('pt_BR');
+
+        if (App::environment('production')) {
+            URL::forceScheme('https');
+        }
     }
 }
