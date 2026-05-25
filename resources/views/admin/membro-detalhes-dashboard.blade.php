@@ -219,8 +219,8 @@
                     </div>
 
                     @if($emprestimos->count() > 0)
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left">
+                        <div class="overflow-x-auto overscroll-x-contain pb-2">
+                            <table class="min-w-[860px] w-full text-left">
                                 <thead>
                                     <tr class="text-[10px] uppercase tracking-widest text-slate-500 border-b border-slate-200 dark:border-[#1e293b]">
                                         <th class="px-5 py-3 text-left">Livro</th>

@@ -221,7 +221,7 @@
                         </a>
                     </div>
 
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto overscroll-x-contain pb-2">
                         <table class="min-w-[940px] w-full text-left">
                             <thead class="bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:bg-[#080d14] dark:text-slate-400">
                                 <tr>

@@ -29,10 +29,7 @@
 
         <header class="relative z-20">
             <nav class="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 lg:px-8">
-                <a href="{{ url('/') }}" class="hero-logo flex items-center gap-3">
-                    <span class="grid h-12 w-12 place-items-center rounded-md border border-white/10 bg-white/5 text-blue-300 shadow-lg shadow-black/20">
-                        <i class="ph ph-library text-3xl"></i>
-                    </span>
+                <a href="{{ url('/') }}" class="hero-logo flex items-center">
                     <div class="text-[13px] font-black tracking-tight leading-tight">
                         <span class="text-blue-300">BIBLIO</span><br>
                         <span class="text-[#F59E0B]">TECH</span>

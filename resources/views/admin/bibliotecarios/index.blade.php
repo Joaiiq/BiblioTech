@@ -57,7 +57,7 @@
                     </div>
                 </div>
 
-                <div class="overflow-x-auto">
+                <div class="overflow-x-auto overscroll-x-contain pb-2">
                     <table class="min-w-[760px] w-full text-sm">
                         <thead class="bg-slate-100 dark:bg-slate-950/60 text-slate-500 dark:text-slate-400 text-[11px] uppercase tracking-wider">
                             <tr>

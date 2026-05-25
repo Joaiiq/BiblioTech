@@ -134,7 +134,7 @@
                         <span class="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-[10px] font-black text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-slate-300">{{ $multas->total() }}</span>
                     </div>
 
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto overscroll-x-contain pb-2">
                         <table class="min-w-[980px] w-full text-left">
                             <thead class="bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:bg-[#080d14] dark:text-slate-400">
                                 <tr>

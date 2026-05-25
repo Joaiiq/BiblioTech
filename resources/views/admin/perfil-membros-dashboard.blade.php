@@ -128,6 +128,8 @@
         }
         .table-scroll-wrap {
             overflow-x: auto;
+            padding-bottom: .5rem;
+            overscroll-behavior-x: contain;
             scrollbar-width: thin;
             scrollbar-color: #F59E0B #dbe3ef;
         }

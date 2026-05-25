@@ -152,6 +152,34 @@
         .dark #tabelaEmprestimos_wrapper table.dataTable tbody tr:hover td { background: rgba(255,255,255,.025); }
         .dark #tabelaEmprestimos_wrapper table.dataTable tbody tr:nth-child(even) td { background: rgba(255,255,255,.012); }
         #tabelaEmprestimos_wrapper table.dataTable.no-footer { border-bottom: none; }
+        #tabelaEmprestimos_wrapper .dataTables_scroll {
+            overflow: hidden;
+        }
+        #tabelaEmprestimos_wrapper .dataTables_scrollBody {
+            scrollbar-color: #F59E0B #dbe3ef;
+            scrollbar-width: thin;
+        }
+        .dark #tabelaEmprestimos_wrapper .dataTables_scrollBody {
+            scrollbar-color: #F59E0B #0f172a;
+        }
+        #tabelaEmprestimos_wrapper .dataTables_scrollBody::-webkit-scrollbar {
+            height: 10px;
+        }
+        #tabelaEmprestimos_wrapper .dataTables_scrollBody::-webkit-scrollbar-track {
+            background: #dbe3ef;
+            border-radius: 999px;
+        }
+        #tabelaEmprestimos_wrapper .dataTables_scrollBody::-webkit-scrollbar-thumb {
+            background: #F59E0B;
+            border: 2px solid #dbe3ef;
+            border-radius: 999px;
+        }
+        .dark #tabelaEmprestimos_wrapper .dataTables_scrollBody::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        .dark #tabelaEmprestimos_wrapper .dataTables_scrollBody::-webkit-scrollbar-thumb {
+            border-color: #0f172a;
+        }
 
         /* Rodapé: info + paginação */
         #tabelaEmprestimos_wrapper .dataTables_info {
@@ -409,8 +437,23 @@
                 @endif
             </div>
 
-            <div class="p-5">
-                <table id="tabelaEmprestimos" data-has-rows="{{ $emprestimos->isNotEmpty() ? '1' : '0' }}" style="width:100%">
+            <div class="px-5 pt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <p class="flex items-center gap-2 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                    <i class="ph ph-arrows-left-right text-[#F59E0B]"></i>
+                    Em telas pequenas, use as setas ou arraste a tabela.
+                </p>
+                <div class="flex items-center gap-2">
+                    <button type="button" data-loans-scroll="-1" class="grid h-8 w-8 place-items-center rounded-md border border-slate-200 bg-slate-100 text-slate-600 transition hover:border-[#F59E0B]/60 hover:text-[#F59E0B] dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10" aria-label="Rolar tabela para esquerda">
+                        <i class="ph ph-caret-left"></i>
+                    </button>
+                    <button type="button" data-loans-scroll="1" class="grid h-8 w-8 place-items-center rounded-md border border-slate-200 bg-slate-100 text-slate-600 transition hover:border-[#F59E0B]/60 hover:text-[#F59E0B] dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10" aria-label="Rolar tabela para direita">
+                        <i class="ph ph-caret-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-5 pt-3">
+                <table id="tabelaEmprestimos" data-has-rows="{{ $emprestimos->isNotEmpty() ? '1' : '0' }}" class="min-w-[980px]" style="width:100%">
                     <thead>
                         <tr>
                             <th>Membro</th>
@@ -662,8 +705,21 @@
                 ],
                 order:      [[2, 'asc']],
                 pageLength: 15,
+                scrollX: true,
                 // DOM: controles em cima (flex), tabela, rodapé (flex)
                 dom: '<"flex items-center justify-between mb-3 gap-3 flex-wrap"lf>t<"flex items-center justify-between mt-4 pt-3 border-t border-slate-200 dark:border-[#1e293b] gap-3 flex-wrap"ip>',
+            });
+
+            document.querySelectorAll('[data-loans-scroll]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const body = document.querySelector('#tabelaEmprestimos_wrapper .dataTables_scrollBody');
+                    if (!body) return;
+
+                    body.scrollBy({
+                        left: Number(button.dataset.loansScroll) * Math.max(260, body.clientWidth * 0.7),
+                        behavior: 'smooth',
+                    });
+                });
             });
         });
 
