@@ -20,10 +20,6 @@
 </head>
 
 <body class="overflow-x-hidden bg-slate-950 font-['Inter'] text-white antialiased">
-    @php
-        $landingUser = auth()->guard('web')->user() ?: auth()->guard('membro')->user();
-    @endphp
-
     <div class="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_15%_20%,rgba(245,158,11,0.22),transparent_28%),radial-gradient(circle_at_80%_10%,rgba(59,130,246,0.24),transparent_30%),radial-gradient(circle_at_50%_80%,rgba(14,165,233,0.15),transparent_34%),linear-gradient(135deg,#020617_0%,#0f172a_45%,#111827_100%)]">
 
         <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.045)_1px,transparent_1px)] bg-[size:44px_44px] opacity-60 [mask-image:linear-gradient(to_bottom,black,transparent)]"></div>
@@ -33,13 +29,15 @@
 
         <header class="relative z-20">
             <nav class="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 lg:px-8">
-                
-
+                <a href="{{ url('/') }}" class="hero-logo flex items-center gap-3">
+                    <span class="grid h-12 w-12 place-items-center rounded-md border border-white/10 bg-white/5 text-blue-300 shadow-lg shadow-black/20">
+                        <i class="ph ph-library text-3xl"></i>
+                    </span>
                     <div class="text-[13px] font-black tracking-tight leading-tight">
                         <span class="text-blue-300">BIBLIO</span><br>
                         <span class="text-[#F59E0B]">TECH</span>
                     </div>
-                
+                </a>
 
                 <div class="hidden items-center gap-8 text-sm font-semibold text-slate-300 md:flex">
                     <a href="#recursos" class="transition hover:text-amber-300">Recursos</a>
@@ -48,15 +46,9 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    @if($landingUser)
-                        <a href="{{ url('/dashboard') }}" class="rounded-full bg-white px-5 py-2.5 text-sm font-black text-slate-950 transition hover:bg-amber-300">
-                            Dashboard
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" class="rounded-full bg-amber-400 px-5 py-2.5 text-sm font-black text-slate-950 shadow-lg shadow-amber-500/20 transition hover:bg-amber-300">
-                            Entrar
-                        </a>
-                    @endif
+                    <a href="{{ route('login') }}" class="rounded-full bg-amber-400 px-5 py-2.5 text-sm font-black text-slate-950 shadow-lg shadow-amber-500/20 transition hover:bg-amber-300">
+                        Entrar
+                    </a>
                 </div>
             </nav>
         </header>
@@ -82,22 +74,15 @@
                     </div>
 
                     <div class="hero-actions mt-9 flex flex-col gap-4 sm:flex-row">
-                        @if($landingUser)
-                            <a href="{{ url('/dashboard') }}" class="group inline-flex items-center justify-center gap-2 rounded-2xl bg-amber-400 px-7 py-4 text-base font-black text-slate-950 shadow-xl shadow-amber-500/20 transition hover:-translate-y-1 hover:bg-amber-300">
-                                Acessar sistema
-                                <i class="ph ph-arrow-right text-xl transition group-hover:translate-x-1"></i>
-                            </a>
-                        @else
-                            <a href="{{ route('login') }}" class="group inline-flex items-center justify-center gap-2 rounded-2xl bg-amber-400 px-7 py-4 text-base font-black text-slate-950 shadow-xl shadow-amber-500/20 transition hover:-translate-y-1 hover:bg-amber-300">
-                                Entrar no sistema
-                                <i class="ph ph-arrow-right text-xl transition group-hover:translate-x-1"></i>
-                            </a>
+                        <a href="{{ route('login') }}" class="group inline-flex items-center justify-center gap-2 rounded-2xl bg-amber-400 px-7 py-4 text-base font-black text-slate-950 shadow-xl shadow-amber-500/20 transition hover:-translate-y-1 hover:bg-amber-300">
+                            Entrar no sistema
+                            <i class="ph ph-arrow-right text-xl transition group-hover:translate-x-1"></i>
+                        </a>
 
-                            <a href="#recursos" class="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-7 py-4 text-base font-bold text-white backdrop-blur-xl transition hover:-translate-y-1 hover:bg-white/10">
-                                Ver recursos
-                                <i class="ph ph-squares-four text-xl"></i>
-                            </a>
-                        @endif
+                        <a href="#recursos" class="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-7 py-4 text-base font-bold text-white backdrop-blur-xl transition hover:-translate-y-1 hover:bg-white/10">
+                            Ver recursos
+                            <i class="ph ph-squares-four text-xl"></i>
+                        </a>
                     </div>
 
                     <div class="hero-stats mt-10 grid max-w-2xl grid-cols-3 gap-3">
@@ -355,17 +340,10 @@
                         </p>
 
                         <div class="mt-6">
-                            @if($landingUser)
-                                <a href="{{ url('/dashboard') }}" class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-amber-400 px-6 py-4 font-black text-slate-950 transition hover:bg-amber-300">
-                                    Ir para o dashboard
-                                    <i class="ph ph-arrow-right text-xl"></i>
-                                </a>
-                            @else
-                                <a href="{{ route('login') }}" class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-amber-400 px-6 py-4 font-black text-slate-950 transition hover:bg-amber-300">
-                                    Entrar no BiblioTech
-                                    <i class="ph ph-arrow-right text-xl"></i>
-                                </a>
-                            @endif
+                            <a href="{{ route('login') }}" class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-amber-400 px-6 py-4 font-black text-slate-950 transition hover:bg-amber-300">
+                                Entrar no BiblioTech
+                                <i class="ph ph-arrow-right text-xl"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
