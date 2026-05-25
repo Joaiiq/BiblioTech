@@ -26,11 +26,19 @@ class LivrosClassicosSeeder extends Seeder
 
         foreach ($livros as $info) {
             $autor = Autor::firstOrCreate(['nome' => $info['autor']]);
-            Livros::factory()->create([
+            $dados = Livros::factory()->make([
                 'titulo' => $info['titulo'],
                 'autor_id' => $autor->id,
                 'categoria' => 'Romance',
-            ]);
+            ])->toArray();
+
+            Livros::firstOrCreate(
+                [
+                    'titulo' => $info['titulo'],
+                    'autor_id' => $autor->id,
+                ],
+                $dados
+            );
         }
     }
 }

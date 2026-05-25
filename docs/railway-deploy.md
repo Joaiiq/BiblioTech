@@ -5,7 +5,7 @@
 - App: Laravel 12 detectado pelo Railway/Railpack.
 - Banco: MySQL, usando o serviço MySQL do Railway.
 - Assets: `npm run build`.
-- Pre-deploy: migrations, `storage:link`, cache de config e views.
+- Pre-deploy: migrations, seeders, `storage:link`, cache de config e views.
 - Start: `php artisan serve --host=0.0.0.0 --port=${PORT}`.
 - Healthcheck: `/up`.
 
@@ -68,9 +68,4 @@ php artisan key:generate --show
 ## Observações importantes
 
 - Uploads locais em `storage/app/public` podem sumir em redeploy se o app não usar volume ou storage externo. Para demonstração rápida, isso é aceitável. Para uso real, use volume Railway ou S3.
-- O Railway executa o pre-deploy do `railway.json`, então as migrations rodam antes da nova versão entrar no ar.
-- Se precisar popular dados de teste, rode manualmente no Railway:
-
-```bash
-php artisan db:seed --force
-```
+- O Railway executa o pre-deploy do `railway.json`, então migrations e seeders rodam antes da nova versão entrar no ar.
