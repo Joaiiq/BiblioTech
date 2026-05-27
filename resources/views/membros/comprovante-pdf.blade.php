@@ -45,10 +45,13 @@
             $atrasado = !$emprestimo->data_devolucao_real &&
                 \Carbon\Carbon::today()->greaterThan($emprestimo->data_devolucao_prevista);
             $ativo = !$emprestimo->data_devolucao_real;
+            $devolucaoSolicitada = $emprestimo->status === \App\Models\Emprestimos::STATUS_DEVOLUCAO_SOLICITADA;
         @endphp
 
         @if($atrasado)
             <span class="badge badge-atrasado">Atrasado</span>
+        @elseif($devolucaoSolicitada)
+            <span class="badge badge-ativo">Devolução solicitada</span>
         @elseif($ativo)
             <span class="badge badge-ativo">Em andamento</span>
         @else
@@ -97,6 +100,11 @@
             <div class="cell"><span class="label">Data de Devolução</span><br><span class="value">{{ $emprestimo->data_devolucao_real->format('d/m/Y') }}</span></div>
             <div class="cell"></div>
         </div>
+        @elseif($emprestimo->return_requested_at)
+        <div class="row">
+            <div class="cell"><span class="label">Solicitação de Devolução</span><br><span class="value">{{ $emprestimo->return_requested_at->format('d/m/Y \à\s H:i') }}</span></div>
+            <div class="cell"><span class="label">Conferência da Biblioteca</span><br><span class="value">Pendente</span></div>
+        </div>
         @endif
     </div>
 
@@ -108,9 +116,13 @@
         <div class="alert alert-red">
             <strong>Atenção:</strong> Este empréstimo está em atraso. Uma multa será calculada na devolução.
         </div>
+    @elseif($devolucaoSolicitada)
+        <div class="alert alert-blue">
+            <strong>Devolução solicitada.</strong> O pedido foi registrado em {{ $emprestimo->return_requested_at?->format('d/m/Y \à\s H:i') ?? 'data não registrada' }} e aguarda conferência da biblioteca.
+        </div>
     @elseif($ativo)
         <div class="alert alert-blue">
-            <strong>Empréstimo ativo.</strong> Devolva até {{ $emprestimo->data_devolucao_prevista?->format('d/m/Y') ?? 'a data definida pela biblioteca' }} para evitar multas.
+            <strong>Empréstimo ativo.</strong> O prazo previsto é {{ $emprestimo->data_devolucao_prevista?->format('d/m/Y') ?? 'a data definida pela biblioteca' }}. A data real só aparece depois da conferência da biblioteca.
         </div>
     @else
         <div class="alert alert-green">

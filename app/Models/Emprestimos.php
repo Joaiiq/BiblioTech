@@ -56,6 +56,7 @@ class Emprestimos extends Model
         'rejected_by',
         'rejected_reason',
         'rejected_at',
+        'return_requested_at',
         'renovacoes_count',
         'ultima_renovacao_em',
     ];
