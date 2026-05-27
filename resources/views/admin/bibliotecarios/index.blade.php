@@ -89,21 +89,23 @@
                                         </span>
                                     </td>
                                     <td class="px-5 py-4 text-slate-500 dark:text-slate-400">{{ $bibliotecario->created_at?->format('d/m/Y') }}</td>
-                                    <td class="px-5 py-4 text-right">
-                                        <a href="{{ route('bibliotecarios.edit', $bibliotecario) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 hover:bg-amber-500/20 text-[11px] font-bold uppercase tracking-widest transition">
-                                            <i class="ph ph-pencil-simple"></i>
-                                            Editar
-                                        </a>
-                                        @if($bibliotecario->tipo_usuario === 'bibliotecario')
-                                            <form action="{{ route('bibliotecarios.destroy', $bibliotecario) }}" method="POST" class="inline-flex" data-confirm="delete" data-title="Excluir bibliotecário?" data-text="Essa ação remove o acesso administrativo deste usuário.">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="ml-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-red-500/10 border border-red-500/30 text-red-700 dark:text-red-300 hover:bg-red-500/20 text-[11px] font-bold uppercase tracking-widest transition">
-                                                    <i class="ph ph-trash"></i>
-                                                    Excluir
-                                                </button>
-                                            </form>
-                                        @endif
+                                    <td class="px-5 py-4">
+                                        <div class="flex flex-col gap-2 sm:flex-row sm:justify-end">
+                                            <a href="{{ route('bibliotecarios.edit', $bibliotecario) }}" class="inline-flex h-9 items-center justify-center gap-1.5 rounded-md border border-amber-500/30 bg-amber-500/10 px-3 text-[11px] font-bold uppercase tracking-widest text-amber-700 transition hover:bg-amber-500/20 dark:text-amber-300">
+                                                <i class="ph ph-pencil-simple"></i>
+                                                Editar
+                                            </a>
+                                            @if($bibliotecario->tipo_usuario === 'bibliotecario')
+                                                <form action="{{ route('bibliotecarios.destroy', $bibliotecario) }}" method="POST" class="contents sm:block" data-confirm="delete" data-title="Excluir bibliotecário?" data-text="Essa ação remove o acesso administrativo deste usuário.">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="inline-flex h-9 items-center justify-center gap-1.5 rounded-md border border-red-500/30 bg-red-500/10 px-3 text-[11px] font-bold uppercase tracking-widest text-red-700 transition hover:bg-red-500/20 dark:text-red-300">
+                                                        <i class="ph ph-trash"></i>
+                                                        Excluir
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

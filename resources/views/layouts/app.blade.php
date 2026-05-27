@@ -559,6 +559,39 @@
                 });
             });
 
+            document.querySelectorAll('[data-avatar-zoom]').forEach((avatar) => {
+                const openAvatar = () => {
+                    if (typeof Swal === 'undefined') return;
+
+                    const imageUrl = avatar.dataset.avatarZoom;
+                    const imageName = avatar.dataset.avatarName || 'Foto do usuário';
+
+                    Swal.fire({
+                        title: imageName,
+                        imageUrl,
+                        imageAlt: imageName,
+                        width: 'min(92vw, 760px)',
+                        background: document.documentElement.classList.contains('dark') ? '#0d1420' : '#ffffff',
+                        color: document.documentElement.classList.contains('dark') ? '#ffffff' : '#0f172a',
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                        customClass: {
+                            popup: 'rounded-md border border-slate-200 dark:border-white/10 shadow-2xl',
+                            image: 'max-h-[72vh] object-contain rounded-md',
+                            title: 'text-base font-black',
+                        },
+                    });
+                };
+
+                avatar.addEventListener('click', openAvatar);
+                avatar.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        openAvatar();
+                    }
+                });
+            });
+
         </script>
     </body>
 </html>
