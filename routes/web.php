@@ -18,11 +18,17 @@ use App\Http\Controllers\CarteirinhaController;
 use App\Http\Controllers\MultaController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\OperacaoController;
+use App\Http\Controllers\UploadController;
 use Illuminate\Support\Facades\Schedule;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/storage/{path}', [UploadController::class, 'show'])
+    ->where('path', '.*')
+    ->name('uploads.show');
+
 //Middleware para proteger as rotas de cadastro de bibliotecário e livro, só o gerente pode acessar
 
 Schedule::command('emprestimos:lembrar')->dailyAt('08:00');
