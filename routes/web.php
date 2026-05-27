@@ -19,6 +19,7 @@ use App\Http\Controllers\MultaController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\OperacaoController;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\PagamentoController;
 use Illuminate\Support\Facades\Schedule;
 
 Route::get('/', function () {
@@ -128,6 +129,18 @@ Route::get('/dashboard', [LivroController::class, 'dashboard'])
     Route::get('/minha-situacao', [MinhaBibliotecaController::class, 'situacao'])
         ->middleware('membro')
         ->name('membros.situacao');
+    Route::get('/pagamentos/multa/{emprestimo}', [PagamentoController::class, 'checkout'])
+        ->middleware('membro')
+        ->name('pagamentos.checkout');
+    Route::post('/pagamentos/multa/{emprestimo}', [PagamentoController::class, 'pagar'])
+        ->middleware('membro')
+        ->name('pagamentos.pagar');
+    Route::get('/pagamentos/{pagamento}/comprovante', [PagamentoController::class, 'comprovante'])
+        ->middleware('membro')
+        ->name('pagamentos.comprovante');
+    Route::get('/pagamentos/{pagamento}/comprovante/pdf', [PagamentoController::class, 'comprovantePdf'])
+        ->middleware('membro')
+        ->name('pagamentos.comprovante.pdf');
     Route::get('/minha-carteirinha', [CarteirinhaController::class, 'show'])
         ->middleware('membro')
         ->name('membros.carteirinha');

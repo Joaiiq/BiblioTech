@@ -69,7 +69,7 @@ class MultaController extends Controller
         $valorMinimo = $request->filled('valor_minimo') ? (float) str_replace(',', '.', $request->input('valor_minimo')) : null;
         $inicio = $request->date('inicio');
         $fim = $request->date('fim');
-        $baseQuery = Emprestimos::with(['membro', 'livro.autor', 'regularizadaPor'])
+        $baseQuery = Emprestimos::with(['membro', 'livro.autor', 'regularizadaPor', 'pagamentoAprovado'])
             ->where('valor_multa', '>', 0);
 
         $multasQuery = (clone $baseQuery)

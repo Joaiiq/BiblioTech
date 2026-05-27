@@ -365,6 +365,18 @@
                                         </button>
                                     </form>
                                 @endif
+
+                                @if($emp->multaPendente())
+                                    <a href="{{ route('pagamentos.checkout', $emp) }}" class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-amber-500 px-3 text-[10px] font-black uppercase tracking-widest text-slate-950 transition hover:bg-amber-400">
+                                        <i class="ph ph-credit-card"></i>
+                                        Pagar multa
+                                    </a>
+                                @elseif((float) $emp->valor_multa > 0 && $emp->multa_paga_em)
+                                    <span class="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 text-[10px] font-black uppercase tracking-widest text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">
+                                        <i class="ph ph-check-circle"></i>
+                                        Multa paga
+                                    </span>
+                                @endif
                             </div>
                         </div>
                     </article>

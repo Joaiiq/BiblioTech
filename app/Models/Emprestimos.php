@@ -149,4 +149,16 @@ class Emprestimos extends Model
     {
         return $this->belongsTo(User::class, 'approved_by');
     }
+
+    public function pagamentos()
+    {
+        return $this->hasMany(Pagamento::class, 'emprestimo_id');
+    }
+
+    public function pagamentoAprovado()
+    {
+        return $this->hasOne(Pagamento::class, 'emprestimo_id')
+            ->where('status', Pagamento::STATUS_APROVADO)
+            ->latestOfMany();
+    }
 }

@@ -182,6 +182,11 @@
                                             @else
                                                 <span class="inline-flex rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">Regularizada</span>
                                                 <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">{{ $multa->multa_paga_em?->format('d/m/Y H:i') }}</p>
+                                                @if($multa->pagamentoAprovado)
+                                                    <p class="mt-1 text-[10px] font-black uppercase tracking-widest text-blue-700 dark:text-blue-300">
+                                                        {{ str_replace('_', ' ', ucfirst($multa->pagamentoAprovado->metodo)) }} · {{ $multa->pagamentoAprovado->codigo }}
+                                                    </p>
+                                                @endif
                                             @endif
                                         </td>
                                         <td class="px-5 py-4 text-right">
