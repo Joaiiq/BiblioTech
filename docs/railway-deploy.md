@@ -54,20 +54,21 @@ VITE_APP_NAME="${APP_NAME}"
 1. Faça push do repositório para o GitHub.
 2. No Railway, crie um projeto novo e selecione `Deploy from GitHub repo`.
 3. Adicione um serviço `MySQL` no mesmo projeto.
-4. No serviço do app, cole as variáveis acima.
-5. Gere a chave localmente com:
+4. Crie um Volume no serviço do app com mount path `/app/storage/app/public`.
+5. No serviço do app, cole as variáveis acima.
+6. Gere a chave localmente com:
 
 ```bash
 php artisan key:generate --show
 ```
 
-6. Cole a chave em `APP_KEY`.
-7. Gere um domínio em `Settings > Networking > Generate Domain`.
-8. Ajuste `APP_URL` e `ASSET_URL` para esse domínio, sempre com `https://`.
-9. Faça deploy.
+7. Cole a chave em `APP_KEY`.
+8. Gere um domínio em `Settings > Networking > Generate Domain`.
+9. Ajuste `APP_URL` e `ASSET_URL` para esse domínio, sempre com `https://`.
+10. Faça deploy.
 
 ## Observações importantes
 
-- Uploads locais em `storage/app/public` podem sumir em redeploy se o app não usar volume ou storage externo. Para demonstração rápida, isso é aceitável. Para uso real, use volume Railway ou S3.
+- Uploads de capas e fotos ficam em `storage/app/public`. No Railway, use um Volume montado em `/app/storage/app/public`; sem isso, imagens podem sumir em restart/redeploy ou não aparecer entre instâncias.
 - O Railway executa o pre-deploy do `railway.json`, então migrations e seeders rodam antes da nova versão entrar no ar.
 - Se CSS/JS aparecerem como `http://` no navegador, revise `APP_URL` e `ASSET_URL` no Railway e redeploye para refazer o cache de configuração.
