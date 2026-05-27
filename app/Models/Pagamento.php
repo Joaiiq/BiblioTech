@@ -26,12 +26,16 @@ class Pagamento extends Model
         'valor',
         'referencia',
         'metadata',
+        'reviewed_by',
+        'reviewed_at',
+        'motivo_recusa',
         'pago_em',
     ];
 
     protected $casts = [
         'valor' => 'decimal:2',
         'metadata' => 'array',
+        'reviewed_at' => 'datetime',
         'pago_em' => 'datetime',
     ];
 
@@ -43,5 +47,10 @@ class Pagamento extends Model
     public function emprestimo()
     {
         return $this->belongsTo(Emprestimos::class, 'emprestimo_id');
+    }
+
+    public function revisor()
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
     }
 }

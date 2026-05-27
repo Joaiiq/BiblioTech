@@ -133,13 +133,16 @@
                         @endforeach
 
                         @foreach($multasPendentes->take(3) as $emprestimo)
+                            @php
+                                $pagamentoPendente = $emprestimo->pagamentos?->firstWhere('status', \App\Models\Pagamento::STATUS_PENDENTE);
+                            @endphp
                             <article class="rounded-md border border-amber-200 bg-amber-50 p-4 dark:border-amber-500/30 dark:bg-amber-500/10">
                                 <p class="text-[10px] font-black uppercase tracking-widest text-amber-700 dark:text-amber-300">Multa aberta</p>
                                 <h4 class="mt-2 line-clamp-2 font-bold text-amber-950 dark:text-amber-100">{{ $emprestimo->livro?->titulo ?? 'Livro removido' }}</h4>
                                 <p class="mt-1 text-xs text-amber-800 dark:text-amber-200">R$ {{ number_format($emprestimo->valor_multa, 2, ',', '.') }}</p>
-                                <a href="{{ route('pagamentos.checkout', $emprestimo) }}" class="mt-4 inline-flex h-9 items-center gap-2 rounded-md bg-amber-500 px-3 text-[10px] font-black uppercase tracking-widest text-slate-950 transition hover:bg-amber-400">
+                                <a href="{{ route('pagamentos.checkout', $emprestimo) }}" class="mt-4 inline-flex h-9 items-center gap-2 rounded-md {{ $pagamentoPendente ? 'bg-slate-200 text-slate-700 dark:bg-white/10 dark:text-slate-300' : 'bg-amber-500 text-slate-950 hover:bg-amber-400' }} px-3 text-[10px] font-black uppercase tracking-widest transition">
                                     <i class="ph ph-credit-card"></i>
-                                    Pagar agora
+                                    {{ $pagamentoPendente ? 'Em análise' : 'Pagar agora' }}
                                 </a>
                             </article>
                         @endforeach

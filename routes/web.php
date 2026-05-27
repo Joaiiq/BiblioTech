@@ -158,6 +158,8 @@ Route::get('/dashboard', [LivroController::class, 'dashboard'])
     Route::get('/admin/multas', [MultaController::class, 'index'])->name('admin.multas.index')->middleware('tipo:gerente,bibliotecario');
     Route::get('/admin/multas/pdf', [MultaController::class, 'exportarPdf'])->name('admin.multas.pdf')->middleware('tipo:gerente,bibliotecario');
     Route::get('/admin/multas/csv', [MultaController::class, 'exportarCsv'])->name('admin.multas.csv')->middleware('tipo:gerente,bibliotecario');
+    Route::post('/admin/pagamentos/{pagamento}/aprovar', [PagamentoController::class, 'aprovar'])->name('admin.pagamentos.aprovar')->middleware('tipo:gerente,bibliotecario');
+    Route::post('/admin/pagamentos/{pagamento}/recusar', [PagamentoController::class, 'recusar'])->name('admin.pagamentos.recusar')->middleware('tipo:gerente,bibliotecario');
     Route::get('/admin/auditoria', [AuditLogController::class, 'index'])->name('admin.auditoria.index')->middleware('tipo:gerente,bibliotecario');
     Route::get('/admin/auditoria/pdf', [AuditLogController::class, 'exportarPdf'])->name('admin.auditoria.pdf')->middleware('tipo:gerente,bibliotecario');
     Route::get('/admin/auditoria/csv', [AuditLogController::class, 'exportarCsv'])->name('admin.auditoria.csv')->middleware('tipo:gerente,bibliotecario');

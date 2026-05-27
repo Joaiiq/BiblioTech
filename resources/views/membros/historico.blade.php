@@ -267,6 +267,7 @@
                                 ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300'
                                 : 'border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-300');
                         $diasRestantes = $emp->data_devolucao_prevista ? today()->diffInDays($emp->data_devolucao_prevista, false) : null;
+                        $pagamentoPendente = $emp->pagamentos?->firstWhere('status', \App\Models\Pagamento::STATUS_PENDENTE);
                     @endphp
 
                     <article class="history-card rounded-md border bg-white/95 shadow-sm transition dark:bg-[#0d1420]/95 {{ $atrasado ? 'border-red-300 dark:border-red-500/30' : 'border-slate-200 dark:border-white/10' }}" data-history-type="{{ $type }}" data-history-search="{{ Str::lower(($emp->livro?->titulo ?? '') . ' ' . ($emp->livro?->autor?->nome ?? '') . ' ' . $statusLabel) }}">
@@ -367,9 +368,9 @@
                                 @endif
 
                                 @if($emp->multaPendente())
-                                    <a href="{{ route('pagamentos.checkout', $emp) }}" class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-amber-500 px-3 text-[10px] font-black uppercase tracking-widest text-slate-950 transition hover:bg-amber-400">
+                                    <a href="{{ route('pagamentos.checkout', $emp) }}" class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-md {{ $pagamentoPendente ? 'border border-slate-200 bg-slate-100 text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-slate-300' : 'bg-amber-500 text-slate-950 hover:bg-amber-400' }} px-3 text-[10px] font-black uppercase tracking-widest transition">
                                         <i class="ph ph-credit-card"></i>
-                                        Pagar multa
+                                        {{ $pagamentoPendente ? 'Pagamento em análise' : 'Pagar multa' }}
                                     </a>
                                 @elseif((float) $emp->valor_multa > 0 && $emp->multa_paga_em)
                                     <span class="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 text-[10px] font-black uppercase tracking-widest text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">

@@ -15,7 +15,7 @@ class MinhaBibliotecaController extends Controller
     {
         $membro = auth()->guard('membro')->user();
 
-        $emprestimos = Emprestimos::with('livro.autor')
+        $emprestimos = Emprestimos::with(['livro.autor', 'pagamentos'])
             ->where('membro_id', $membro->id)
             ->latest()
             ->get();
@@ -198,7 +198,7 @@ class MinhaBibliotecaController extends Controller
     {
         $membro = auth()->guard('membro')->user();
 
-        $emprestimos = Emprestimos::with('livro.autor')
+        $emprestimos = Emprestimos::with(['livro.autor', 'pagamentos'])
             ->where('membro_id', $membro->id)
             ->latest()
             ->get();

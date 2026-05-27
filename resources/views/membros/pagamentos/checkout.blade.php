@@ -46,9 +46,14 @@
                             {{ session('erro') }}
                         </div>
                     @endif
+                    @if($pagamentoPendente)
+                        <div class="mt-4 rounded-md border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm font-semibold text-amber-800 dark:text-amber-200">
+                            Pagamento {{ $pagamentoPendente->codigo }} já está aguardando conferência da equipe.
+                        </div>
+                    @endif
                 </div>
 
-                <form method="POST" action="{{ route('pagamentos.pagar', $emprestimo) }}" class="space-y-6 p-5 sm:p-6" data-confirm="loan" data-title="Confirmar pagamento?" data-text="O sistema vai aprovar o pagamento fictício e liberar sua conta.">
+                <form method="POST" action="{{ route('pagamentos.pagar', $emprestimo) }}" class="space-y-6 p-5 sm:p-6" data-confirm="loan" data-title="Enviar pagamento?" data-text="A equipe da biblioteca vai conferir antes de liberar sua conta.">
                     @csrf
 
                     <div class="grid gap-3 md:grid-cols-3">
@@ -116,9 +121,9 @@
                     <x-input-error class="mt-2" :messages="$errors->get('card_name')" />
                     <x-input-error class="mt-2" :messages="$errors->get('card_last_digits')" />
 
-                    <button type="submit" class="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-[#1E3A8A] px-5 text-[11px] font-black uppercase tracking-widest text-white shadow-lg shadow-blue-900/20 transition hover:-translate-y-0.5 hover:bg-blue-800">
+                    <button type="submit" @disabled($pagamentoPendente) class="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-[#1E3A8A] px-5 text-[11px] font-black uppercase tracking-widest text-white shadow-lg shadow-blue-900/20 transition hover:-translate-y-0.5 hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50">
                         <i class="ph ph-lock-key text-lg"></i>
-                        Confirmar pagamento de R$ {{ number_format($emprestimo->valor_multa, 2, ',', '.') }}
+                        {{ $pagamentoPendente ? 'Aguardando conferência' : 'Enviar pagamento de R$ ' . number_format($emprestimo->valor_multa, 2, ',', '.') }}
                         <i class="ph ph-arrow-right text-lg transition group-hover:translate-x-1"></i>
                     </button>
                 </form>
@@ -147,7 +152,7 @@
                 <section class="rounded-md border border-amber-200 bg-amber-50 p-5 dark:border-amber-500/30 dark:bg-amber-500/10">
                     <div class="flex items-start gap-3">
                         <i class="ph ph-info text-2xl text-amber-700 dark:text-amber-300"></i>
-                        <p class="text-sm leading-relaxed text-amber-900 dark:text-amber-100">Este pagamento é fictício. Ele serve para demonstrar fluxo financeiro, baixa de multa, comprovante e desbloqueio do membro.</p>
+                        <p class="text-sm leading-relaxed text-amber-900 dark:text-amber-100">Este pagamento é fictício. Ele entra em análise e só regulariza a multa quando gerente ou bibliotecário aprovar no painel.</p>
                     </div>
                 </section>
             </aside>

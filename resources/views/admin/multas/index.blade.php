@@ -150,6 +150,7 @@
                                 @forelse($multas as $multa)
                                     @php
                                         $pendente = $multa->multaPendente();
+                                        $pagamentoPendente = $multa->pagamentos->firstWhere('status', \App\Models\Pagamento::STATUS_PENDENTE);
                                         $diasAtraso = $multa->data_devolucao_prevista && $multa->data_devolucao_real
                                             ? max(0, (int) $multa->data_devolucao_prevista->diffInDays($multa->data_devolucao_real, false))
                                             : null;
@@ -179,6 +180,14 @@
                                         <td class="px-5 py-4">
                                             @if($pendente)
                                                 <span class="inline-flex rounded-md border border-red-200 bg-red-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300">Pendente</span>
+                                                @if($pagamentoPendente)
+                                                    <p class="mt-2 text-[10px] font-black uppercase tracking-widest text-amber-700 dark:text-amber-300">
+                                                        Pagamento em análise · {{ $pagamentoPendente->codigo }}
+                                                    </p>
+                                                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                                                        {{ str_replace('_', ' ', ucfirst($pagamentoPendente->metodo)) }} enviado em {{ $pagamentoPendente->created_at->format('d/m/Y H:i') }}
+                                                    </p>
+                                                @endif
                                             @else
                                                 <span class="inline-flex rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">Regularizada</span>
                                                 <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">{{ $multa->multa_paga_em?->format('d/m/Y H:i') }}</p>
@@ -198,13 +207,31 @@
                                                     </a>
                                                 @endif
                                                 @if($pendente)
-                                                    <form action="{{ route('admin.emprestimos.regularizar-multa', $multa->id) }}" method="POST" data-confirm="loan" data-title="Regularizar multa?" data-text="A multa será marcada como paga e o membro poderá solicitar novos empréstimos.">
-                                                        @csrf
-                                                        <button type="submit" class="inline-flex h-9 items-center gap-2 rounded-md bg-emerald-600 px-3 text-[10px] font-black uppercase tracking-widest text-white transition hover:bg-emerald-700">
-                                                            <i class="ph ph-check-circle"></i>
-                                                            Regularizar
-                                                        </button>
-                                                    </form>
+                                                    @if($pagamentoPendente)
+                                                        <form action="{{ route('admin.pagamentos.aprovar', $pagamentoPendente) }}" method="POST" data-confirm="loan" data-title="Aprovar pagamento?" data-text="A multa será regularizada e o membro será notificado.">
+                                                            @csrf
+                                                            <button type="submit" class="inline-flex h-9 items-center gap-2 rounded-md bg-emerald-600 px-3 text-[10px] font-black uppercase tracking-widest text-white transition hover:bg-emerald-700">
+                                                                <i class="ph ph-check-circle"></i>
+                                                                Aprovar
+                                                            </button>
+                                                        </form>
+                                                        <form action="{{ route('admin.pagamentos.recusar', $pagamentoPendente) }}" method="POST" data-confirm="delete" data-title="Recusar pagamento?" data-text="O membro será avisado para reenviar o pagamento.">
+                                                            @csrf
+                                                            <input type="hidden" name="motivo_recusa" value="Pagamento recusado na conferência da equipe.">
+                                                            <button type="submit" class="inline-flex h-9 items-center gap-2 rounded-md border border-red-200 bg-red-50 px-3 text-[10px] font-black uppercase tracking-widest text-red-700 transition hover:bg-red-100 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20">
+                                                                <i class="ph ph-x-circle"></i>
+                                                                Recusar
+                                                            </button>
+                                                        </form>
+                                                    @else
+                                                        <form action="{{ route('admin.emprestimos.regularizar-multa', $multa->id) }}" method="POST" data-confirm="loan" data-title="Regularizar multa?" data-text="A multa será marcada como paga manualmente.">
+                                                            @csrf
+                                                            <button type="submit" class="inline-flex h-9 items-center gap-2 rounded-md bg-slate-700 px-3 text-[10px] font-black uppercase tracking-widest text-white transition hover:bg-slate-800">
+                                                                <i class="ph ph-check-circle"></i>
+                                                                Baixa manual
+                                                            </button>
+                                                        </form>
+                                                    @endif
                                                 @endif
                                             </div>
                                         </td>
