@@ -23,7 +23,6 @@
         $currentPessoa = $dashboardUser ?: $dashboardMember;
         $nomeCompleto = $currentPessoa ? ($currentPessoa->name ?? $currentPessoa->nome ?? 'Visitante') : 'Visitante';
         $primeiroNome = explode(' ', $nomeCompleto)[0];
-        $iniciais = collect(explode(' ', $nomeCompleto))->map(fn($p) => strtoupper(mb_substr($p,0,1)))->take(2)->join('');
         $hora     = now()->hour;
         $saudacao = $hora < 12 ? 'Bom dia' : ($hora < 18 ? 'Boa tarde' : 'Boa noite');
         $isAdmin  = $dashboardUser && in_array($dashboardUser->tipo_usuario, ['gerente','bibliotecario'], true);
@@ -99,9 +98,7 @@
 
                 @if($currentPessoa)
                 <div class="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-white/10">
-                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#1E3A8A] to-blue-700 flex items-center justify-center ring-1 ring-blue-500/30 shrink-0">
-                        <span class="text-white text-[10px] font-black tracking-tight select-none">{{ $iniciais }}</span>
-                    </div>
+                    <x-user-avatar :user="$currentPessoa" :name="$nomeCompleto" />
                 </div>
                 @endif
             </div>

@@ -269,15 +269,12 @@
                                         'devendo' => 'situacao-badge-devendo',
                                         default => 'situacao-badge-bom',
                                     };
-                                    $iniciais = collect(explode(' ', $membro->nome))->map(fn($p) => strtoupper(mb_substr($p, 0, 1)))->take(2)->join('');
                                     $ultimoEmprestimo = $item['ultimoEmprestimo'];
                                 @endphp
                                 <tr data-perfil="{{ $perfil }}">
                                     <td data-search="{{ $membro->nome }} {{ $membro->email }} {{ $perfilLabel }}">
                                         <div class="flex items-center gap-3 min-w-[230px]">
-                                            <div class="w-10 h-10 rounded-full bg-[#1E3A8A] flex items-center justify-center text-white text-xs font-black shrink-0">
-                                                {{ $iniciais }}
-                                            </div>
+                                            <x-user-avatar :user="$membro" size="h-10 w-10" text="text-xs" />
                                             <div class="min-w-0">
                                                 <p class="text-sm font-bold text-slate-900 dark:text-white truncate">{{ $membro->nome }}</p>
                                                 <p class="text-[11px] text-slate-500 dark:text-gray-500 truncate">{{ $membro->email }}</p>

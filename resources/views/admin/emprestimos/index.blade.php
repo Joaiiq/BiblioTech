@@ -18,9 +18,7 @@
                 <button type="button" @click="dark = !dark" class="w-9 h-9 rounded-md bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/10 transition">
                     <i class="ph text-sm" :class="dark ? 'ph-sun' : 'ph-moon'"></i>
                 </button>
-                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#1E3A8A] to-blue-700 flex items-center justify-center ring-1 ring-blue-500/30 shrink-0">
-                    <span class="text-white text-[10px] font-black tracking-tight select-none">{{ auth()->guard('web')->user()?->name ? collect(explode(' ', auth()->guard('web')->user()->name))->map(fn($p) => strtoupper(mb_substr($p,0,1)))->take(2)->join('') : 'AD' }}</span>
-                </div>
+                <x-user-avatar :user="auth()->guard('web')->user()" />
             </div>
         </div>
     </x-slot>
@@ -487,9 +485,7 @@
                                 <td>
                                     @if($emprestimo->membro && $emprestimo->membro->name)
                                         <div class="flex items-center gap-2">
-                                            <span class="w-7 h-7 rounded-full bg-[#1E3A8A] flex items-center justify-center text-white text-xs font-bold shrink-0">
-                                                {{ strtoupper(substr($emprestimo->membro->name, 0, 1)) }}
-                                            </span>
+                                            <x-user-avatar :user="$emprestimo->membro" size="h-7 w-7" text="text-[10px]" />
                                             <span class="text-slate-800 dark:text-slate-200 font-medium text-sm">{{ $emprestimo->membro->name }}</span>
                                         </div>
                                     @elseif($emprestimo->membro)

@@ -78,9 +78,7 @@
                                 <tr class="hover:bg-slate-50 dark:hover:bg-white/[.03]">
                                     <td class="px-5 py-4">
                                         <div class="flex items-center gap-3">
-                                            <span class="w-9 h-9 rounded-full bg-[#1E3A8A] text-white flex items-center justify-center text-xs font-black">
-                                                {{ collect(explode(' ', $bibliotecario->name))->map(fn($p) => strtoupper(mb_substr($p, 0, 1)))->take(2)->join('') }}
-                                            </span>
+                                            <x-user-avatar :user="$bibliotecario" text="text-xs" />
                                             <span class="font-bold text-slate-900 dark:text-white">{{ $bibliotecario->name }}</span>
                                         </div>
                                     </td>

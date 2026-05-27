@@ -29,7 +29,10 @@
                             </button>
                         @endif
                         <div class="text-sm dark:text-gray-300">
-                            Logado como: <strong>{{ Auth::guard('web')->user()?->name ?? 'Equipe' }}</strong>
+                            <div class="flex items-center gap-2">
+                                <x-user-avatar :user="Auth::guard('web')->user()" size="h-8 w-8" text="text-[9px]" />
+                                <span>Logado como: <strong>{{ Auth::guard('web')->user()?->name ?? 'Equipe' }}</strong></span>
+                            </div>
                         </div>
                     </div>
                 </header>

@@ -88,7 +88,6 @@
             : ($statusGeral === 'devendo'
                 ? 'situacao-badge-devendo'
                 : 'situacao-badge-bom');
-        $iniciais = collect(explode(' ', $membro->nome))->map(fn($p) => strtoupper(mb_substr($p, 0, 1)))->take(2)->join('');
     @endphp
 
     <div class="-mx-4 px-4 py-8 member-detail-bg sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 min-h-screen relative">
@@ -113,9 +112,7 @@
             <div class="member-panel border rounded-md p-5">
                 <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
                     <div class="flex items-start gap-4 min-w-0">
-                        <div class="w-14 h-14 rounded-full bg-[#1E3A8A] flex items-center justify-center text-white text-base font-black shrink-0">
-                            {{ $iniciais }}
-                        </div>
+                        <x-user-avatar :user="$membro" size="h-14 w-14" text="text-base" />
                         <div class="min-w-0">
                             <div class="flex flex-wrap items-center gap-2">
                                 <h2 class="text-xl font-black text-slate-900 dark:text-white">{{ $membro->nome }}</h2>
