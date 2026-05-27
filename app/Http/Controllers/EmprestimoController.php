@@ -63,34 +63,8 @@ class EmprestimoController extends Controller
         // 3. Pega o membro autenticado pelo guard de membros.
         $membro = auth()->guard('membro')->user();
 
-        // 3.1. Checa se já existe empréstimo ativo deste livro para o membro
-        $jaTem = Emprestimos::where('membro_id', $membro->id)
-            ->where('livro_id', $livro->id)
-            ->whereIn('status', Emprestimos::STATUS_ATIVOS)
-            ->exists();
-        if ($jaTem) {
-            return redirect()->back()->with('erro', 'Você já tem uma solicitação ou empréstimo ativo deste livro.');
-        }
-
-        // 3.2. Limite de empréstimos ativos
-        $ativos = Emprestimos::where('membro_id', $membro->id)
-            ->whereIn('status', Emprestimos::STATUS_ATIVOS)
-            ->count();
-        if ($ativos >= 3) {
-            return redirect()->back()->with('erro', 'Você atingiu o limite de 3 empréstimos ativos. Devolva algum livro para pegar outro.');
-        }
-
-        // 3.3. Bloqueio por pendências (empréstimos vencidos ou multas)
-        $temVencido = Emprestimos::where('membro_id', $membro->id)
-            ->whereIn('status', Emprestimos::STATUS_EM_ANDAMENTO)
-            ->where('data_devolucao_prevista', '<', Carbon::today())
-            ->exists();
-        if ($temVencido) {
-            return redirect()->back()->with('erro', 'Você possui empréstimos vencidos. Regularize sua situação para pegar novos livros.');
-        }
-
-        if (Emprestimos::possuiMultaPendente($membro->id)) {
-            return redirect()->back()->with('erro', 'Você possui multas pendentes. Regularize sua situação para pegar novos livros.');
+        if ($motivo = Emprestimos::impedimentoParaNovoEmprestimo($membro->id, $livro->id)) {
+            return redirect()->back()->with('erro', $this->mensagemParaMembro($motivo));
         }
 
         // 4. Verifica o estoque
@@ -154,15 +128,6 @@ class EmprestimoController extends Controller
             return redirect()->back()->with('erro', 'Este livro está disponível. Você já pode solicitar o empréstimo.');
         }
 
-        $jaTemEmprestimo = Emprestimos::where('membro_id', $membro->id)
-            ->where('livro_id', $livro->id)
-            ->whereIn('status', Emprestimos::STATUS_ATIVOS)
-            ->exists();
-
-        if ($jaTemEmprestimo) {
-            return redirect()->back()->with('erro', 'Você já tem uma solicitação ou empréstimo ativo deste livro.');
-        }
-
         $jaReservou = Reserva::ativas()
             ->where('membro_id', $membro->id)
             ->where('livro_id', $livro->id)
@@ -172,21 +137,8 @@ class EmprestimoController extends Controller
             return redirect()->back()->with('erro', 'Você já está na fila de reserva deste livro.');
         }
 
-        $ativos = Emprestimos::where('membro_id', $membro->id)
-            ->whereIn('status', Emprestimos::STATUS_ATIVOS)
-            ->count();
-
-        if ($ativos >= 3) {
-            return redirect()->back()->with('erro', 'Você atingiu o limite de 3 empréstimos ativos. Devolva algum livro para reservar outro.');
-        }
-
-        $temVencido = Emprestimos::where('membro_id', $membro->id)
-            ->whereIn('status', Emprestimos::STATUS_EM_ANDAMENTO)
-            ->where('data_devolucao_prevista', '<', Carbon::today())
-            ->exists();
-
-        if ($temVencido || Emprestimos::possuiMultaPendente($membro->id)) {
-            return redirect()->back()->with('erro', 'Regularize empréstimos vencidos ou multas antes de entrar na fila.');
+        if ($motivo = Emprestimos::impedimentoParaNovoEmprestimo($membro->id, $livro->id)) {
+            return redirect()->back()->with('erro', $this->mensagemParaMembro($motivo));
         }
 
         $reserva = Reserva::create([
@@ -355,5 +307,10 @@ class EmprestimoController extends Controller
         }
 
         return null;
+    }
+
+    private function mensagemParaMembro(string $motivo): string
+    {
+        return str_replace('O membro', 'Você', $motivo);
     }
 }

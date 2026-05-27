@@ -26,6 +26,7 @@ class Emprestimos extends Model
     public const VALOR_MULTA_DIARIA = 1.00;
     public const DIAS_ANTECEDENCIA_LEMBRETE = 2;
     public const MAX_RENOVACOES = 1;
+    public const MAX_EMPRESTIMOS_ATIVOS = 3;
 
     public const STATUS_ATIVOS = [
         self::STATUS_SOLICITADO,
@@ -114,6 +115,53 @@ class Emprestimos extends Model
             ->where('valor_multa', '>', 0)
             ->whereNull('multa_paga_em')
             ->exists();
+    }
+
+    public static function possuiEmprestimoVencido(int $membroId, ?int $ignorarEmprestimoId = null): bool
+    {
+        return self::where('membro_id', $membroId)
+            ->when($ignorarEmprestimoId, fn ($query) => $query->where('id', '!=', $ignorarEmprestimoId))
+            ->whereIn('status', self::STATUS_EM_ANDAMENTO)
+            ->where('data_devolucao_prevista', '<', now()->startOfDay())
+            ->exists();
+    }
+
+    public static function totalAtivosDoMembro(int $membroId, ?int $ignorarEmprestimoId = null): int
+    {
+        return self::where('membro_id', $membroId)
+            ->when($ignorarEmprestimoId, fn ($query) => $query->where('id', '!=', $ignorarEmprestimoId))
+            ->whereIn('status', self::STATUS_ATIVOS)
+            ->count();
+    }
+
+    public static function possuiLivroAtivo(int $membroId, int $livroId, ?int $ignorarEmprestimoId = null): bool
+    {
+        return self::where('membro_id', $membroId)
+            ->where('livro_id', $livroId)
+            ->when($ignorarEmprestimoId, fn ($query) => $query->where('id', '!=', $ignorarEmprestimoId))
+            ->whereIn('status', self::STATUS_ATIVOS)
+            ->exists();
+    }
+
+    public static function impedimentoParaNovoEmprestimo(int $membroId, ?int $livroId = null, ?int $ignorarEmprestimoId = null): ?string
+    {
+        if ($livroId && self::possuiLivroAtivo($membroId, $livroId, $ignorarEmprestimoId)) {
+            return 'O membro já possui solicitação ou empréstimo ativo deste livro.';
+        }
+
+        if (self::totalAtivosDoMembro($membroId, $ignorarEmprestimoId) >= self::MAX_EMPRESTIMOS_ATIVOS) {
+            return 'O membro atingiu o limite de 3 empréstimos ativos.';
+        }
+
+        if (self::possuiEmprestimoVencido($membroId, $ignorarEmprestimoId)) {
+            return 'O membro possui empréstimos vencidos e precisa regularizar a situação.';
+        }
+
+        if (self::possuiMultaPendente($membroId)) {
+            return 'O membro possui multas pendentes e precisa regularizar a situação.';
+        }
+
+        return null;
     }
 
     public function multaPendente(): bool

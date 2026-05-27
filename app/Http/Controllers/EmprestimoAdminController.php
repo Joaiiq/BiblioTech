@@ -83,10 +83,18 @@ class EmprestimoAdminController extends Controller
 
     public function aprovar($id)
     {
-        $emprestimo = Emprestimos::with('livro')->findOrFail($id);
+        $emprestimo = Emprestimos::with(['livro', 'membro'])->findOrFail($id);
 
         if ($emprestimo->status !== Emprestimos::STATUS_SOLICITADO) {
             return redirect()->back()->with('erro', 'Somente solicitações podem ser aprovadas.');
+        }
+
+        if (!$emprestimo->membro) {
+            return redirect()->back()->with('erro', 'Membro do empréstimo não encontrado.');
+        }
+
+        if ($motivo = Emprestimos::impedimentoParaNovoEmprestimo($emprestimo->membro_id, $emprestimo->livro_id, $emprestimo->id)) {
+            return redirect()->back()->with('erro', $motivo);
         }
 
         if ($emprestimo->livro && $emprestimo->livro->quantidade <= 0) {
@@ -224,17 +232,8 @@ class EmprestimoAdminController extends Controller
             return redirect()->back()->with('erro', 'Membro da reserva não encontrado.');
         }
 
-        $jaTemEmprestimo = Emprestimos::where('membro_id', $reserva->membro_id)
-            ->where('livro_id', $reserva->livro_id)
-            ->whereIn('status', Emprestimos::STATUS_ATIVOS)
-            ->exists();
-
-        if ($jaTemEmprestimo) {
-            return redirect()->back()->with('erro', 'Este membro já possui solicitação ou empréstimo ativo deste livro.');
-        }
-
-        if (Emprestimos::possuiMultaPendente($reserva->membro_id)) {
-            return redirect()->back()->with('erro', 'O membro possui multa pendente e não pode receber a reserva agora.');
+        if ($motivo = Emprestimos::impedimentoParaNovoEmprestimo($reserva->membro_id, $reserva->livro_id)) {
+            return redirect()->back()->with('erro', $motivo);
         }
 
         $emprestimo = Emprestimos::create([
