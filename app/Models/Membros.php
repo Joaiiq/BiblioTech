@@ -26,6 +26,7 @@ class Membros extends Authenticatable implements MustVerifyEmail
         'nome',
         'name',
         'email',
+        'profile_photo_path',
         'cpf',
         'telefone',
         'endereco',

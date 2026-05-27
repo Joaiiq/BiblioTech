@@ -57,6 +57,7 @@ Schedule::command('emprestimos:lembrar')->dailyAt('08:00');
     Route::get('/admin/bibliotecarios', [FuncionarioController::class, 'index'])->name('bibliotecarios.index')->middleware('tipo:gerente');
     Route::get('/admin/bibliotecarios/{bibliotecario}/editar', [FuncionarioController::class, 'edit'])->name('bibliotecarios.edit')->middleware('tipo:gerente');
     Route::put('/admin/bibliotecarios/{bibliotecario}', [FuncionarioController::class, 'update'])->name('bibliotecarios.update')->middleware('tipo:gerente');
+    Route::delete('/admin/bibliotecarios/{bibliotecario}', [FuncionarioController::class, 'destroy'])->name('bibliotecarios.destroy')->middleware('tipo:gerente');
 
 Route::get('/emprestimos/{id}/comprovante', [EmprestimoController::class, 'comprovante'])
     ->middleware('membro')

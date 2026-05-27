@@ -4,6 +4,7 @@
         $isMembro = !auth()->guard('web')->check() && (auth()->guard('membro')->check() || $authUser instanceof \App\Models\Membros);
         $nomePerfil = $authUser->name ?? $authUser->nome ?? 'Usuário';
         $emailPerfil = $authUser->email ?? 'sem-email@bibliotech.local';
+        $fotoPerfil = $authUser->profile_photo_path ? asset('storage/' . $authUser->profile_photo_path) : null;
         $iniciaisPerfil = collect(explode(' ', trim($nomePerfil)))
             ->filter()
             ->map(fn ($parte) => strtoupper(mb_substr($parte, 0, 1)))
@@ -54,8 +55,14 @@
             <div class="mb-6 rounded-md border border-slate-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-[#0d1420] sm:p-6">
                 <div class="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
                     <div class="flex min-w-0 items-center gap-4">
-                        <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-md bg-[#1E3A8A] text-xl font-black text-white shadow-lg shadow-blue-900/20">
-                            {{ $iniciaisPerfil }}
+                        <div class="h-16 w-16 shrink-0 overflow-hidden rounded-md bg-[#1E3A8A] text-xl font-black text-white shadow-lg shadow-blue-900/20">
+                            @if($fotoPerfil)
+                                <img src="{{ $fotoPerfil }}" alt="{{ $nomePerfil }}" class="h-full w-full object-cover">
+                            @else
+                                <div class="flex h-full w-full items-center justify-center">
+                                    {{ $iniciaisPerfil }}
+                                </div>
+                            @endif
                         </div>
                         <div class="min-w-0">
                             <p class="mb-1 inline-flex items-center gap-2 rounded-md border border-amber-300 bg-amber-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-[.16em] text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300">

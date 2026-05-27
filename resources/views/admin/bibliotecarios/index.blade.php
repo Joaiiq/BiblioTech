@@ -33,6 +33,11 @@
                     {{ session('sucesso') }}
                 </div>
             @endif
+            @if(session('erro'))
+                <div class="rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm font-semibold text-red-700 dark:text-red-300">
+                    {{ session('erro') }}
+                </div>
+            @endif
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div class="bg-white dark:bg-[#111827] border border-slate-200 dark:border-[#1e293b] rounded-lg p-4">
@@ -91,6 +96,16 @@
                                             <i class="ph ph-pencil-simple"></i>
                                             Editar
                                         </a>
+                                        @if($bibliotecario->tipo_usuario === 'bibliotecario')
+                                            <form action="{{ route('bibliotecarios.destroy', $bibliotecario) }}" method="POST" class="inline-flex" data-confirm="delete" data-title="Excluir bibliotecário?" data-text="Essa ação remove o acesso administrativo deste usuário.">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="ml-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-red-500/10 border border-red-500/30 text-red-700 dark:text-red-300 hover:bg-red-500/20 text-[11px] font-bold uppercase tracking-widest transition">
+                                                    <i class="ph ph-trash"></i>
+                                                    Excluir
+                                                </button>
+                                            </form>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

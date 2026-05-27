@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User; // Puxando o model de Usuário
 use App\Models\AuditLog;
 use Illuminate\Support\Facades\Hash; // Para criptografar a senha
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class FuncionarioController extends Controller
@@ -84,5 +85,37 @@ class FuncionarioController extends Controller
         return redirect()
             ->route('bibliotecarios.index')
             ->with('sucesso', 'Bibliotecário atualizado com sucesso!');
+    }
+
+    public function destroy(User $bibliotecario)
+    {
+        if ($bibliotecario->tipo_usuario !== 'bibliotecario') {
+            return redirect()
+                ->route('bibliotecarios.index')
+                ->with('erro', 'Somente bibliotecários podem ser excluídos por aqui.');
+        }
+
+        if (auth()->id() === $bibliotecario->id) {
+            return redirect()
+                ->route('bibliotecarios.index')
+                ->with('erro', 'Você não pode excluir sua própria conta.');
+        }
+
+        $nome = $bibliotecario->name;
+        $email = $bibliotecario->email;
+
+        if ($bibliotecario->profile_photo_path) {
+            Storage::disk('public')->delete($bibliotecario->profile_photo_path);
+        }
+
+        $bibliotecario->delete();
+
+        AuditLog::record('bibliotecario_excluido', "Excluiu o bibliotecário {$nome}.", null, [
+            'email' => $email,
+        ]);
+
+        return redirect()
+            ->route('bibliotecarios.index')
+            ->with('sucesso', 'Bibliotecário excluído com sucesso!');
     }
 }
