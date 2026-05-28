@@ -58,10 +58,6 @@
 
         <div class="max-w-7xl mx-auto relative z-10 space-y-8">
 
-    {{-- DataTables CDN (sem CSS padrão — tema custom abaixo) --}}
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-
     <style>
         /* DataTables precisa de CSS porque a lib injeta markup próprio. */
         #tabelaEmprestimos_wrapper {
@@ -236,6 +232,25 @@
         .card-filtro.ativo.c-ok   { outline-color: #10b981; }
         .card-filtro.ativo.c-late { outline-color: #ef4444; }
         .card-filtro.ativo.c-done { outline-color: #10b981; }
+        .loan-table-scroll {
+            scrollbar-color: #F59E0B #dbe3ef;
+            scrollbar-width: thin;
+        }
+        .dark .loan-table-scroll {
+            scrollbar-color: #F59E0B #0f172a;
+        }
+        .loan-table-scroll::-webkit-scrollbar { height: 10px; }
+        .loan-table-scroll::-webkit-scrollbar-track {
+            background: #dbe3ef;
+            border-radius: 999px;
+        }
+        .loan-table-scroll::-webkit-scrollbar-thumb {
+            background: #F59E0B;
+            border: 2px solid #dbe3ef;
+            border-radius: 999px;
+        }
+        .dark .loan-table-scroll::-webkit-scrollbar-track { background: #0f172a; }
+        .dark .loan-table-scroll::-webkit-scrollbar-thumb { border-color: #0f172a; }
     </style>
 
     @php
@@ -442,12 +457,27 @@
                 @endif
             </div>
 
-            <div class="px-5 pt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <p class="flex items-center gap-2 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
-                    <i class="ph ph-arrows-left-right text-[#F59E0B]"></i>
-                    Em telas pequenas, use as setas ou arraste a tabela.
-                </p>
-                <div class="flex items-center gap-2">
+            <div class="px-5 pt-4 grid grid-cols-1 gap-3 lg:grid-cols-[1fr_auto] lg:items-center">
+                <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <label for="emprestimosBusca" class="sr-only">Buscar empréstimo</label>
+                    <div class="relative w-full sm:max-w-sm">
+                        <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input
+                            id="emprestimosBusca"
+                            type="search"
+                            placeholder="Buscar membro, livro, status ou pagamento..."
+                            class="h-10 w-full rounded-md border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-amber-400 dark:border-white/10 dark:bg-[#0f172a] dark:text-white dark:placeholder:text-slate-500"
+                        >
+                    </div>
+                    <span id="emprestimosContador" class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        {{ $emprestimos->count() }} registro{{ $emprestimos->count() === 1 ? '' : 's' }}
+                    </span>
+                </div>
+                <div class="flex items-center gap-2 lg:justify-end">
+                    <span class="hidden text-[11px] font-semibold text-slate-500 dark:text-slate-400 sm:inline-flex sm:items-center sm:gap-2">
+                        <i class="ph ph-arrows-left-right text-[#F59E0B]"></i>
+                        Arraste ou use as setas
+                    </span>
                     <button type="button" data-loans-scroll="-1" class="grid h-8 w-8 place-items-center rounded-md border border-slate-200 bg-slate-100 text-slate-600 transition hover:border-[#F59E0B]/60 hover:text-[#F59E0B] dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10" aria-label="Rolar tabela para esquerda">
                         <i class="ph ph-caret-left"></i>
                     </button>
@@ -457,18 +487,18 @@
                 </div>
             </div>
 
-            <div class="p-5 pt-3">
-                <table id="tabelaEmprestimos" data-has-rows="{{ $emprestimos->isNotEmpty() ? '1' : '0' }}" class="min-w-[980px]" style="width:100%">
-                    <thead>
+            <div id="emprestimosScroll" class="loan-table-scroll overflow-x-auto p-5 pt-3">
+                <table id="tabelaEmprestimos" data-has-rows="{{ $emprestimos->isNotEmpty() ? '1' : '0' }}" class="min-w-[1120px] w-full border-collapse">
+                    <thead class="bg-blue-50 dark:bg-[#0f172a]">
                         <tr>
-                            <th>Membro</th>
-                            <th>Livro</th>
-                            <th>Prazo</th>
-                            <th>Status</th>
-                            <th>Ação</th>
+                            <th class="border-b border-slate-200 px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest text-slate-500 dark:border-white/10 dark:text-slate-400">Membro</th>
+                            <th class="border-b border-slate-200 px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest text-slate-500 dark:border-white/10 dark:text-slate-400">Livro</th>
+                            <th class="border-b border-slate-200 px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest text-slate-500 dark:border-white/10 dark:text-slate-400">Prazos</th>
+                            <th class="border-b border-slate-200 px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest text-slate-500 dark:border-white/10 dark:text-slate-400">Situação</th>
+                            <th class="border-b border-slate-200 px-4 py-3 text-right text-[10px] font-black uppercase tracking-widest text-slate-500 dark:border-white/10 dark:text-slate-400">Ações</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="divide-y divide-slate-200 dark:divide-white/10">
                         @forelse($emprestimos as $emprestimo)
                             @php
                                 $atrasado = $emprestimo->isAtrasado();
@@ -498,11 +528,17 @@
                                     \App\Models\Emprestimos::STATUS_DEVOLUCAO_SOLICITADA => 'Devolução solicitada',
                                     \App\Models\Emprestimos::STATUS_DEVOLVIDO => 'Concluído',
                                     \App\Models\Emprestimos::STATUS_ENCERRADO => 'Encerrado',
+                                    \App\Models\Emprestimos::STATUS_REJEITADO => 'Rejeitado',
                                     default => '—',
                                 };
                             @endphp
-                            <tr data-status-filter="{{ implode(' ', array_unique($filtrosLinha)) }}">
-                                <td>
+                            <tr
+                                data-loan-row
+                                data-status-filter="{{ implode(' ', array_unique($filtrosLinha)) }}"
+                                data-search="{{ trim(($emprestimo->membro?->name ?? '') . ' ' . ($emprestimo->membro?->email ?? '') . ' ' . ($emprestimo->membro?->numero_carteirinha ?? '') . ' ' . ($emprestimo->livro?->titulo ?? '') . ' ' . ($emprestimo->livro?->autor?->nome ?? '') . ' ' . $statusLabel . ' ' . ($pagamentoPendente?->codigo ?? '') . ' ' . ($pagamentoAprovado?->codigo ?? '')) }}"
+                                class="align-top transition hover:bg-slate-50 dark:hover:bg-white/[0.03]"
+                            >
+                                <td class="px-4 py-4">
                                     @if($emprestimo->membro && $emprestimo->membro->name)
                                         <div class="flex items-center gap-2">
                                             <x-user-avatar :user="$emprestimo->membro" size="h-7 w-7" text="text-[10px]" />
@@ -515,7 +551,7 @@
                                     @endif
                                 </td>
 
-                                <td>
+                                <td class="px-4 py-4">
                                     @if($emprestimo->livro)
                                         <div class="space-y-1">
                                             <span class="block text-slate-700 dark:text-slate-400 italic text-sm">{{ $emprestimo->livro->titulo }}</span>
@@ -529,7 +565,7 @@
                                     @endif
                                 </td>
 
-                                <td class="text-center tabular-nums text-slate-600 dark:text-slate-400 text-xs">
+                                <td class="px-4 py-4 tabular-nums text-slate-600 dark:text-slate-400 text-xs">
                                     <div class="space-y-1">
                                         <p>{{ $emprestimo->data_devolucao_prevista ? $emprestimo->data_devolucao_prevista->format('d/m/Y') : '—' }}</p>
                                         @if((int) $emprestimo->renovacoes_count > 0)
@@ -541,7 +577,7 @@
                                     </div>
                                 </td>
 
-                                <td class="text-center">
+                                <td class="px-4 py-4">
                                     @if($atrasado)
                                         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-red-50 dark:bg-red-900/40 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800/50">
                                             <i class="ph ph-clock"></i> Atrasado
@@ -613,7 +649,7 @@
                                     @endif
                                 </td>
 
-                                <td class="text-right">
+                                <td class="px-4 py-4 text-right">
                                     @if($status === \App\Models\Emprestimos::STATUS_SOLICITADO)
                                         <div class="inline-flex items-center gap-2">
                                             <form action="{{ route('admin.emprestimos.aprovar', $emprestimo->id) }}" method="POST">
@@ -740,6 +776,12 @@
                                 </td>
                             </tr>
                         @endforelse
+                        <tr id="emprestimosEmptyState" class="hidden">
+                            <td colspan="5" class="px-4 py-16 text-center">
+                                <i class="ph ph-magnifying-glass text-4xl text-slate-400"></i>
+                                <p class="mt-2 text-sm font-semibold text-slate-500 dark:text-slate-400">Nenhum empréstimo encontrado com esse filtro.</p>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -747,53 +789,25 @@
     </div>
 
     <script>
-        let tabela;
         let filtroStatusAtual = 'todos';
+        let termoBuscaAtual = '';
 
-        $(document).ready(function () {
-            const hasRows = document.getElementById('tabelaEmprestimos')?.dataset.hasRows === '1';
+        document.addEventListener('DOMContentLoaded', () => {
+            const table = document.getElementById('tabelaEmprestimos');
+            const hasRows = table?.dataset.hasRows === '1';
             if (!hasRows) {
                 return;
             }
 
-            $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-                if (settings.nTable.id !== 'tabelaEmprestimos' || filtroStatusAtual === 'todos') {
-                    return true;
-                }
-
-                const row = settings.aoData[dataIndex]?.nTr;
-                const filtros = row?.dataset.statusFilter?.split(' ') || [];
-
-                return filtros.includes(filtroStatusAtual);
-            });
-
-            tabela = $('#tabelaEmprestimos').DataTable({
-                language: {
-                    search: "",
-                    searchPlaceholder: "Buscar...",
-                    lengthMenu:   "Mostrar _MENU_ linhas",
-                    info:         "_START_–_END_ de _TOTAL_",
-                    infoEmpty:    "0 registros",
-                    infoFiltered: "(de _MAX_)",
-                    paginate:     { next: "→", previous: "←" },
-                    emptyTable:   "Nenhum registro encontrado",
-                },
-                columnDefs: [
-                    { orderable: false, targets: [4] },
-                    { className: 'no-sort', targets: [4] },
-                    { className: 'dt-center', targets: [2, 3] },
-                    { className: 'dt-right',  targets: [4] },
-                ],
-                order:      [[2, 'asc']],
-                pageLength: 15,
-                scrollX: true,
-                // DOM: controles em cima (flex), tabela, rodapé (flex)
-                dom: '<"flex items-center justify-between mb-3 gap-3 flex-wrap"lf>t<"flex items-center justify-between mt-4 pt-3 border-t border-slate-200 dark:border-[#1e293b] gap-3 flex-wrap"ip>',
+            const searchInput = document.getElementById('emprestimosBusca');
+            searchInput?.addEventListener('input', () => {
+                termoBuscaAtual = searchInput.value.trim().toLowerCase();
+                aplicarFiltrosEmprestimos();
             });
 
             document.querySelectorAll('[data-loans-scroll]').forEach((button) => {
                 button.addEventListener('click', () => {
-                    const body = document.querySelector('#tabelaEmprestimos_wrapper .dataTables_scrollBody');
+                    const body = document.getElementById('emprestimosScroll');
                     if (!body) return;
 
                     body.scrollBy({
@@ -804,7 +818,7 @@
             });
 
             const updateScrollButtons = () => {
-                const body = document.querySelector('#tabelaEmprestimos_wrapper .dataTables_scrollBody');
+                const body = document.getElementById('emprestimosScroll');
                 if (!body) return;
 
                 document.querySelectorAll('[data-loans-scroll]').forEach((button) => {
@@ -815,10 +829,10 @@
                 });
             };
 
-            const body = document.querySelector('#tabelaEmprestimos_wrapper .dataTables_scrollBody');
+            const body = document.getElementById('emprestimosScroll');
             body?.addEventListener('scroll', updateScrollButtons, { passive: true });
             window.addEventListener('resize', updateScrollButtons);
-            tabela.on('draw', updateScrollButtons);
+            aplicarFiltrosEmprestimos();
             updateScrollButtons();
         });
 
@@ -826,9 +840,31 @@
             document.querySelectorAll('.card-filtro').forEach(c => c.classList.remove('ativo'));
             btn.classList.add('ativo');
             document.getElementById('tituloFiltro').textContent = titulo;
-            if (!tabela) return;
             filtroStatusAtual = status;
-            tabela.draw();
+            aplicarFiltrosEmprestimos();
+        }
+
+        function aplicarFiltrosEmprestimos() {
+            const rows = Array.from(document.querySelectorAll('[data-loan-row]'));
+            const empty = document.getElementById('emprestimosEmptyState');
+            const counter = document.getElementById('emprestimosContador');
+            let visible = 0;
+
+            rows.forEach((row) => {
+                const filtros = (row.dataset.statusFilter || '').split(' ');
+                const statusOk = filtroStatusAtual === 'todos' || filtros.includes(filtroStatusAtual);
+                const searchText = (row.dataset.search || '').toLowerCase();
+                const buscaOk = !termoBuscaAtual || searchText.includes(termoBuscaAtual);
+                const show = statusOk && buscaOk;
+
+                row.classList.toggle('hidden', !show);
+                if (show) visible++;
+            });
+
+            empty?.classList.toggle('hidden', visible !== 0);
+            if (counter) {
+                counter.textContent = `${visible} registro${visible === 1 ? '' : 's'}`;
+            }
         }
 
         function confirmarDevolucao(event, form) {
