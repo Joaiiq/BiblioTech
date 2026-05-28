@@ -196,6 +196,12 @@
                                     <i class="ph ph-book-bookmark text-blue-400 text-base shrink-0"></i>
                                     Cadastrar Livro
                                 </a>
+                                <a href="{{ route('autores.index') }}"
+                                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
+                                          {{ request()->routeIs('autores.index', 'autores.edit') ? 'text-amber-700 bg-amber-50 border border-amber-200 dark:text-amber-400 dark:bg-amber-900/10 dark:border-amber-400/40' : 'text-slate-600 hover:text-amber-700 hover:bg-amber-50 dark:text-gray-400 dark:hover:text-amber-400 dark:hover:bg-amber-900/10' }}">
+                                    <i class="ph ph-feather text-amber-500/70 text-base shrink-0"></i>
+                                    Gerenciar Autores
+                                </a>
                                 <a href="{{ route('autores.create') }}"
                                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
                                           {{ request()->routeIs('autores.create') ? 'text-blue-700 bg-blue-50 border border-blue-200 dark:text-blue-400 dark:bg-blue-900/10 dark:border-blue-400/40' : 'text-slate-600 hover:text-blue-700 hover:bg-blue-50 dark:text-gray-400 dark:hover:text-blue-400 dark:hover:bg-blue-900/10' }}">
