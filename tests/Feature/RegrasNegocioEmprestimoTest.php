@@ -3,6 +3,7 @@
 use App\Models\Emprestimos;
 use App\Models\Livros;
 use App\Models\Membros;
+use App\Models\Pagamento;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -95,4 +96,62 @@ it('bloqueia aprovacao acima do limite de emprestimos ativos', function () {
         ->assertSessionHas('erro', 'O membro atingiu o limite de 3 empréstimos ativos.');
 
     expect($solicitacao->fresh()->status)->toBe(Emprestimos::STATUS_SOLICITADO);
+});
+
+it('bloqueia regularizacao de multa sem pagamento aprovado', function () {
+    $gerente = User::factory()->create(['tipo_usuario' => 'gerente']);
+    $membro = criarMembroParaRegra();
+    $emprestimo = Emprestimos::create([
+        'membro_id' => $membro->id,
+        'livro_id' => criarLivroParaRegra()->id,
+        'status' => Emprestimos::STATUS_DEVOLVIDO,
+        'data_emprestimo' => now()->subDays(20)->toDateString(),
+        'data_devolucao_prevista' => now()->subDays(5)->toDateString(),
+        'data_devolucao_real' => now()->toDateString(),
+        'valor_multa' => 5,
+    ]);
+
+    $this->actingAs($gerente)
+        ->post(route('admin.emprestimos.regularizar-multa', $emprestimo))
+        ->assertRedirect()
+        ->assertSessionHas('erro', 'Esta multa ainda não possui pagamento aprovado. O membro precisa enviar o pagamento para conferência.');
+
+    expect($emprestimo->fresh()->multa_paga_em)->toBeNull();
+});
+
+it('sincroniza regularizacao quando existe pagamento aprovado', function () {
+    $gerente = User::factory()->create(['tipo_usuario' => 'gerente']);
+    $membro = criarMembroParaRegra();
+    $emprestimo = Emprestimos::create([
+        'membro_id' => $membro->id,
+        'livro_id' => criarLivroParaRegra()->id,
+        'status' => Emprestimos::STATUS_DEVOLVIDO,
+        'data_emprestimo' => now()->subDays(20)->toDateString(),
+        'data_devolucao_prevista' => now()->subDays(5)->toDateString(),
+        'data_devolucao_real' => now()->toDateString(),
+        'valor_multa' => 5,
+    ]);
+
+    $pagoEm = now()->subHour();
+    Pagamento::create([
+        'membro_id' => $membro->id,
+        'emprestimo_id' => $emprestimo->id,
+        'codigo' => 'BT-PAY-TESTE-1',
+        'metodo' => Pagamento::METODO_PIX,
+        'status' => Pagamento::STATUS_APROVADO,
+        'valor' => 5,
+        'referencia' => 'MUL-' . str_pad((string) $emprestimo->id, 6, '0', STR_PAD_LEFT),
+        'reviewed_by' => $gerente->id,
+        'reviewed_at' => $pagoEm,
+        'pago_em' => $pagoEm,
+    ]);
+
+    $this->actingAs($gerente)
+        ->post(route('admin.emprestimos.regularizar-multa', $emprestimo))
+        ->assertRedirect()
+        ->assertSessionHas('sucesso', 'Multa regularizada com sucesso. O membro já pode solicitar novos empréstimos.');
+
+    $emprestimo->refresh();
+    expect($emprestimo->multa_paga_em?->timestamp)->toBe($pagoEm->timestamp);
+    expect($emprestimo->multa_regularizada_por)->toBe($gerente->id);
 });

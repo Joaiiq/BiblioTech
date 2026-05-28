@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Emprestimos; // Usando o seu Model no plural!
+use App\Models\Pagamento;
 use App\Models\Reserva;
 use App\Notifications\EmprestimoRejeitado;
 use App\Notifications\EmprestimoAprovado;
@@ -21,7 +22,7 @@ class EmprestimoAdminController extends Controller
     {
         // Traz os empréstimos e já carrega os relacionamentos (livro, e o user dentro de membro)
         // Ordena para que os livros NÃO devolvidos apareçam no topo da lista
-        $emprestimos = Emprestimos::with(['livro', 'membro.user'])
+        $emprestimos = Emprestimos::with(['livro', 'membro.user', 'pagamentoAprovado', 'pagamentos'])
             ->orderByRaw("FIELD(status, 'solicitado','aprovado','retirado','em_uso','devolucao_solicitada','devolvido','encerrado','rejeitado')")
             ->orderBy('data_devolucao_prevista', 'asc')
             ->get();
@@ -189,14 +190,22 @@ class EmprestimoAdminController extends Controller
 
     public function regularizarMulta($id)
     {
-        $emprestimo = Emprestimos::findOrFail($id);
+        $emprestimo = Emprestimos::with(['pagamentoAprovado', 'pagamentos'])->findOrFail($id);
 
         if (!$emprestimo->multaPendente()) {
             return redirect()->back()->with('erro', 'Este empréstimo não possui multa pendente.');
         }
 
+        if ($emprestimo->pagamentos()->where('status', Pagamento::STATUS_PENDENTE)->exists()) {
+            return redirect()->back()->with('erro', 'Esta multa possui pagamento em análise. Aprove ou recuse o pagamento antes de regularizar.');
+        }
+
+        if (!$emprestimo->pagamentoAprovado) {
+            return redirect()->back()->with('erro', 'Esta multa ainda não possui pagamento aprovado. O membro precisa enviar o pagamento para conferência.');
+        }
+
         $emprestimo->update([
-            'multa_paga_em' => now(),
+            'multa_paga_em' => $emprestimo->pagamentoAprovado->pago_em ?? now(),
             'multa_regularizada_por' => auth()->guard('web')->id(),
         ]);
         AuditLog::record('multa_regularizada', 'Regularizou multa de empréstimo.', $emprestimo, [

@@ -133,10 +133,16 @@
             border-bottom-color: #1e293b;
         }
         /* Ícone de sort */
+        #tabelaEmprestimos_wrapper table.dataTable thead th.sorting,
+        #tabelaEmprestimos_wrapper table.dataTable thead th.sorting_asc,
+        #tabelaEmprestimos_wrapper table.dataTable thead th.sorting_desc {
+            background-image: none !important;
+        }
         #tabelaEmprestimos_wrapper table.dataTable thead th.sorting::after    { content: '↕'; position:absolute; right:5px; color:#334155; font-size:.6rem; top:50%; transform:translateY(-50%); }
         #tabelaEmprestimos_wrapper table.dataTable thead th.sorting_asc::after  { content: '↑'; position:absolute; right:5px; color:#F59E0B; font-size:.6rem; top:50%; transform:translateY(-50%); }
         #tabelaEmprestimos_wrapper table.dataTable thead th.sorting_desc::after { content: '↓'; position:absolute; right:5px; color:#F59E0B; font-size:.6rem; top:50%; transform:translateY(-50%); }
         #tabelaEmprestimos_wrapper table.dataTable thead th:before { display:none; }
+        #tabelaEmprestimos_wrapper table.dataTable thead th.no-sort::after { content: ''; }
 
         #tabelaEmprestimos_wrapper table.dataTable tbody td {
             padding: 11px 12px;
@@ -222,6 +228,7 @@
             color: #fff !important;
         }
         #tabelaEmprestimos_wrapper .dataTables_paginate .paginate_button.disabled { opacity: .3; cursor: not-allowed; }
+        [data-loans-scroll][disabled] { opacity: .35; cursor: not-allowed; }
 
         /* Card ativo */
         .card-filtro.ativo { outline: 2px solid; outline-offset: -2px; }
@@ -281,7 +288,7 @@
                 </div>
             </button>
 
-                <button onclick="filtrarCard(this, 'Solicitado', 'Solicitações')"
+                <button onclick="filtrarCard(this, 'solicitado', 'Solicitações')"
                     class="card-filtro c-ok bg-white/95 dark:bg-[#111827] border border-slate-200 dark:border-[#1e293b] rounded-xl px-4 py-3
                            flex items-center gap-3 hover:border-blue-700/60 transition-all text-left w-full shadow-sm">
                 <span class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
@@ -293,7 +300,7 @@
                 </div>
             </button>
 
-            <button onclick="filtrarCard(this, 'Aprovado', 'Aprovados')"
+            <button onclick="filtrarCard(this, 'aprovado', 'Aprovados')"
                     class="card-filtro c-ok bg-white/95 dark:bg-[#111827] border border-slate-200 dark:border-[#1e293b] rounded-xl px-4 py-3
                            flex items-center gap-3 hover:border-indigo-700/60 transition-all text-left w-full shadow-sm">
                 <span class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center shrink-0">
@@ -305,7 +312,7 @@
                 </div>
             </button>
 
-            <button onclick="filtrarCard(this, 'Em uso|Retirado|Devolução solicitada', 'Em uso')"
+            <button onclick="filtrarCard(this, 'em_andamento', 'Em uso')"
                     class="card-filtro c-late bg-white/95 dark:bg-[#111827] border {{ $atrasados > 0 ? 'border-red-300 dark:border-red-900/50' : 'border-slate-200 dark:border-[#1e293b]' }} rounded-xl px-4 py-3
                            flex items-center gap-3 hover:border-red-700/60 transition-all text-left w-full shadow-sm">
                 <span class="w-8 h-8 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center shrink-0">
@@ -317,7 +324,7 @@
                 </div>
             </button>
 
-            <button onclick="filtrarCard(this, 'Atrasado', 'Empréstimos atrasados')"
+            <button onclick="filtrarCard(this, 'atrasado', 'Empréstimos atrasados')"
                     class="card-filtro c-done bg-white/95 dark:bg-[#111827] border border-slate-200 dark:border-[#1e293b] rounded-xl px-4 py-3
                            flex items-center gap-3 hover:border-emerald-700/60 transition-all text-left w-full shadow-sm">
                 <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0">
@@ -329,7 +336,7 @@
                 </div>
             </button>
 
-            <button onclick="filtrarCard(this, 'Concluído|Encerrado', 'Empréstimos concluídos')"
+            <button onclick="filtrarCard(this, 'concluido', 'Empréstimos concluídos')"
                     class="card-filtro c-done bg-white/95 dark:bg-[#111827] border border-slate-200 dark:border-[#1e293b] rounded-xl px-4 py-3
                            flex items-center gap-3 hover:border-emerald-700/60 transition-all text-left w-full shadow-sm">
                 <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0">
@@ -341,7 +348,7 @@
                 </div>
             </button>
 
-            <button onclick="filtrarCard(this, 'Rejeitado', 'Solicitações rejeitadas')"
+            <button onclick="filtrarCard(this, 'rejeitado', 'Solicitações rejeitadas')"
                     class="card-filtro c-late bg-white/95 dark:bg-[#111827] border border-slate-200 dark:border-[#1e293b] rounded-xl px-4 py-3
                            flex items-center gap-3 hover:border-rose-700/60 transition-all text-left w-full shadow-sm">
                 <span class="w-8 h-8 rounded-lg bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center shrink-0">
@@ -466,6 +473,18 @@
                             @php
                                 $atrasado = $emprestimo->isAtrasado();
                                 $status = $emprestimo->status;
+                                $pagamentoPendente = $emprestimo->pagamentos?->firstWhere('status', \App\Models\Pagamento::STATUS_PENDENTE);
+                                $pagamentoAprovado = $emprestimo->pagamentoAprovado;
+                                $filtrosLinha = [$status];
+                                if (in_array($status, \App\Models\Emprestimos::STATUS_EM_ANDAMENTO, true)) {
+                                    $filtrosLinha[] = 'em_andamento';
+                                }
+                                if (in_array($status, [\App\Models\Emprestimos::STATUS_DEVOLVIDO, \App\Models\Emprestimos::STATUS_ENCERRADO], true)) {
+                                    $filtrosLinha[] = 'concluido';
+                                }
+                                if ($atrasado) {
+                                    $filtrosLinha[] = 'atrasado';
+                                }
                                 $prazoAutomatico = \App\Models\Emprestimos::prazoDiasParaLivro($emprestimo->livro);
                                 $multaPrevista = $atrasado
                                     ? \App\Models\Emprestimos::calcularMulta($emprestimo->data_devolucao_prevista)
@@ -481,7 +500,7 @@
                                     default => '—',
                                 };
                             @endphp
-                            <tr>
+                            <tr data-status-filter="{{ implode(' ', array_unique($filtrosLinha)) }}">
                                 <td>
                                     @if($emprestimo->membro && $emprestimo->membro->name)
                                         <div class="flex items-center gap-2">
@@ -572,6 +591,19 @@
                                             <p class="mt-1 text-[10px] font-bold text-red-700 dark:text-red-300">
                                                 Multa pendente: R$ {{ number_format($emprestimo->valor_multa, 2, ',', '.') }}
                                             </p>
+                                            @if($pagamentoPendente)
+                                                <p class="mt-1 text-[10px] font-bold text-amber-700 dark:text-amber-300">
+                                                    Pagamento {{ $pagamentoPendente->codigo }} em análise
+                                                </p>
+                                            @elseif($pagamentoAprovado)
+                                                <p class="mt-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
+                                                    Pagamento aprovado. Falta sincronizar.
+                                                </p>
+                                            @else
+                                                <p class="mt-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400">
+                                                    Aguardando pagamento do membro.
+                                                </p>
+                                            @endif
                                         @else
                                             <p class="mt-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
                                                 Multa regularizada em {{ $emprestimo->multa_paga_em?->format('d/m/Y') }}
@@ -639,12 +671,24 @@
                                     @elseif($status === \App\Models\Emprestimos::STATUS_DEVOLVIDO)
                                         <div class="inline-flex items-center gap-2">
                                             @if($emprestimo->multaPendente())
-                                                <form action="{{ route('admin.emprestimos.regularizar-multa', $emprestimo->id) }}" method="POST">
-                                                    @csrf
-                                                    <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-lg bg-amber-700 text-white border border-amber-600 hover:bg-amber-600 transition-all">
-                                                        <i class="ph ph-coins"></i> Regularizar multa
+                                                @if($pagamentoAprovado)
+                                                    <form action="{{ route('admin.emprestimos.regularizar-multa', $emprestimo->id) }}" method="POST">
+                                                        @csrf
+                                                        <button
+                                                            type="button"
+                                                            onclick="confirmarRegularizacao(event, this.closest('form'), true)"
+                                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-lg bg-emerald-700 text-white border border-emerald-600 hover:bg-emerald-600 transition-all">
+                                                            <i class="ph ph-check-circle"></i> Confirmar multa
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <button
+                                                        type="button"
+                                                        onclick="confirmarRegularizacao(event, null, false)"
+                                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-lg bg-slate-100 text-slate-500 border border-slate-200 transition hover:border-amber-300 hover:text-amber-700 dark:bg-white/5 dark:text-slate-400 dark:border-white/10">
+                                                        <i class="ph ph-lock-key"></i> Multa pendente
                                                     </button>
-                                                </form>
+                                                @endif
                                             @else
                                                 <form action="{{ route('admin.emprestimos.encerrar', $emprestimo->id) }}" method="POST">
                                                     @csrf
@@ -677,12 +721,25 @@
 
     <script>
         let tabela;
+        let filtroStatusAtual = 'todos';
 
         $(document).ready(function () {
             const hasRows = document.getElementById('tabelaEmprestimos')?.dataset.hasRows === '1';
             if (!hasRows) {
                 return;
             }
+
+            $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+                if (settings.nTable.id !== 'tabelaEmprestimos' || filtroStatusAtual === 'todos') {
+                    return true;
+                }
+
+                const row = settings.aoData[dataIndex]?.nTr;
+                const filtros = row?.dataset.statusFilter?.split(' ') || [];
+
+                return filtros.includes(filtroStatusAtual);
+            });
+
             tabela = $('#tabelaEmprestimos').DataTable({
                 language: {
                     search: "",
@@ -696,6 +753,7 @@
                 },
                 columnDefs: [
                     { orderable: false, targets: [4] },
+                    { className: 'no-sort', targets: [4] },
                     { className: 'dt-center', targets: [2, 3] },
                     { className: 'dt-right',  targets: [4] },
                 ],
@@ -717,6 +775,24 @@
                     });
                 });
             });
+
+            const updateScrollButtons = () => {
+                const body = document.querySelector('#tabelaEmprestimos_wrapper .dataTables_scrollBody');
+                if (!body) return;
+
+                document.querySelectorAll('[data-loans-scroll]').forEach((button) => {
+                    const direction = Number(button.dataset.loansScroll);
+                    const atStart = body.scrollLeft <= 2;
+                    const atEnd = body.scrollLeft + body.clientWidth >= body.scrollWidth - 2;
+                    button.disabled = direction < 0 ? atStart : atEnd;
+                });
+            };
+
+            const body = document.querySelector('#tabelaEmprestimos_wrapper .dataTables_scrollBody');
+            body?.addEventListener('scroll', updateScrollButtons, { passive: true });
+            window.addEventListener('resize', updateScrollButtons);
+            tabela.on('draw', updateScrollButtons);
+            updateScrollButtons();
         });
 
         function filtrarCard(btn, status, titulo) {
@@ -724,8 +800,8 @@
             btn.classList.add('ativo');
             document.getElementById('tituloFiltro').textContent = titulo;
             if (!tabela) return;
-            const useRegex = status.includes('|');
-            tabela.column(3).search(status === 'todos' ? '' : status, useRegex, false).draw();
+            filtroStatusAtual = status;
+            tabela.draw();
         }
 
         function confirmarDevolucao(event, form) {
@@ -738,6 +814,29 @@
                 confirmButtonText: 'CONFIRMAR',
                 cancelButtonText:  'CANCELAR',
             }).then(r => { if (r.isConfirmed) form.submit(); });
+        }
+
+        function confirmarRegularizacao(event, form, pagamentoAprovado) {
+            event.preventDefault();
+
+            if (!pagamentoAprovado) {
+                darkSwal.fire({
+                    title: 'Multa não paga',
+                    text: 'Não existe pagamento aprovado para esta multa. O membro precisa enviar o pagamento e a equipe deve aprovar antes da regularização.',
+                    icon: 'warning',
+                    confirmButtonText: 'ENTENDI',
+                });
+                return;
+            }
+
+            darkSwal.fire({
+                title: 'Pagamento aprovado',
+                text: 'Esta multa possui pagamento aprovado. Deseja confirmar a regularização no empréstimo?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'REGULARIZAR',
+                cancelButtonText: 'CANCELAR',
+            }).then(r => { if (r.isConfirmed && form) form.submit(); });
         }
     </script>
 
