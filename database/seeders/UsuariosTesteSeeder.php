@@ -30,10 +30,10 @@ class UsuariosTesteSeeder extends Seeder
         $membros = [];
         for ($i = 1; $i <= 4; $i++) {
             $membros[$i] = Membros::updateOrCreate(
-                ['email' => "usuario{$i}@bibliotech.com"],
+                ['cpf' => $this->cpfParaIndice($i)],
                 [
                     'nome' => "Usuario {$i}",
-                    'cpf' => $this->cpfParaIndice($i),
+                    'email' => "usuario{$i}@bibliotech.com",
                     'telefone' => "(85) 98888-000{$i}",
                     'endereco' => "Rua dos Testes, {$i}00",
                     'data_nascimento' => Carbon::create(2000, $i, 10)->toDateString(),
