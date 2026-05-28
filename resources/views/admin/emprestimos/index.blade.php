@@ -56,7 +56,7 @@
             <i class="ph ph-clipboard-text bg-icon absolute left-[74%] top-[54%] text-[26px]"></i>
         </div>
 
-        <div class="max-w-7xl mx-auto relative z-10 space-y-8">
+        <div class="mx-auto w-full max-w-[1500px] relative z-10 space-y-8">
 
     <style>
         /* DataTables precisa de CSS porque a lib injeta markup próprio. */
@@ -264,7 +264,7 @@
         $totalReservas = ($reservasAtivas ?? collect())->count();
     @endphp
 
-    <div class="max-w-7xl mx-auto space-y-5">
+    <div class="mx-auto w-full max-w-[1500px] space-y-5">
         <div class="bg-white/95 dark:bg-[#111827] border border-slate-200 dark:border-[#1e293b] rounded-xl px-5 py-4 grid grid-cols-1 md:grid-cols-5 gap-3 shadow-sm">
             <div>
                 <p class="text-[10px] uppercase tracking-widest text-slate-500">Livro comum</p>
@@ -488,7 +488,14 @@
             </div>
 
             <div id="emprestimosScroll" class="loan-table-scroll overflow-x-auto p-5 pt-3">
-                <table id="tabelaEmprestimos" data-has-rows="{{ $emprestimos->isNotEmpty() ? '1' : '0' }}" class="min-w-[1120px] w-full border-collapse">
+                <table id="tabelaEmprestimos" data-has-rows="{{ $emprestimos->isNotEmpty() ? '1' : '0' }}" class="min-w-[1320px] w-full table-fixed border-collapse">
+                    <colgroup>
+                        <col class="w-[250px]">
+                        <col class="w-[330px]">
+                        <col class="w-[150px]">
+                        <col class="w-[270px]">
+                        <col class="w-[320px]">
+                    </colgroup>
                     <thead class="bg-blue-50 dark:bg-[#0f172a]">
                         <tr>
                             <th class="border-b border-slate-200 px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest text-slate-500 dark:border-white/10 dark:text-slate-400">Membro</th>
@@ -542,7 +549,10 @@
                                     @if($emprestimo->membro && $emprestimo->membro->name)
                                         <div class="flex items-center gap-2">
                                             <x-user-avatar :user="$emprestimo->membro" size="h-7 w-7" text="text-[10px]" />
-                                            <span class="text-slate-800 dark:text-slate-200 font-medium text-sm">{{ $emprestimo->membro->name }}</span>
+                                            <div class="min-w-0">
+                                                <span class="block truncate text-sm font-bold text-slate-800 dark:text-slate-200">{{ $emprestimo->membro->name }}</span>
+                                                <span class="block truncate text-[10px] font-semibold text-slate-500 dark:text-slate-500">{{ $emprestimo->membro->numero_carteirinha ?? $emprestimo->membro->email }}</span>
+                                            </div>
                                         </div>
                                     @elseif($emprestimo->membro)
                                         <span class="text-red-400 text-xs">ID {{ $emprestimo->membro->user_id }} sem nome</span>
@@ -554,7 +564,8 @@
                                 <td class="px-4 py-4">
                                     @if($emprestimo->livro)
                                         <div class="space-y-1">
-                                            <span class="block text-slate-700 dark:text-slate-400 italic text-sm">{{ $emprestimo->livro->titulo }}</span>
+                                            <span class="block truncate text-sm font-semibold italic text-slate-700 dark:text-slate-300">{{ $emprestimo->livro->titulo }}</span>
+                                            <span class="block truncate text-[10px] font-semibold text-slate-500 dark:text-slate-500">{{ $emprestimo->livro->autor?->nome ?? 'Autor não informado' }}</span>
                                             <span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest {{ $emprestimo->livro->e_bestseller ? 'text-amber-700 dark:text-amber-300' : 'text-blue-700 dark:text-blue-300' }}">
                                                 <i class="ph {{ $emprestimo->livro->e_bestseller ? 'ph-star' : 'ph-book' }}"></i>
                                                 Prazo {{ $prazoAutomatico }}d
@@ -567,7 +578,10 @@
 
                                 <td class="px-4 py-4 tabular-nums text-slate-600 dark:text-slate-400 text-xs">
                                     <div class="space-y-1">
-                                        <p>{{ $emprestimo->data_devolucao_prevista ? $emprestimo->data_devolucao_prevista->format('d/m/Y') : '—' }}</p>
+                                        <p class="font-bold text-slate-800 dark:text-slate-200">{{ $emprestimo->data_devolucao_prevista ? $emprestimo->data_devolucao_prevista->format('d/m/Y') : '—' }}</p>
+                                        @if($emprestimo->data_emprestimo)
+                                            <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Retirada {{ $emprestimo->data_emprestimo->format('d/m') }}</p>
+                                        @endif
                                         @if((int) $emprestimo->renovacoes_count > 0)
                                             <span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300">
                                                 <i class="ph ph-arrows-clockwise"></i>
@@ -649,9 +663,9 @@
                                     @endif
                                 </td>
 
-                                <td class="px-4 py-4 text-right">
+                                <td class="px-4 py-4">
+                                    <div class="flex flex-wrap items-center justify-end gap-2">
                                     @if($status === \App\Models\Emprestimos::STATUS_SOLICITADO)
-                                        <div class="inline-flex items-center gap-2">
                                             <form action="{{ route('admin.emprestimos.aprovar', $emprestimo->id) }}" method="POST">
                                                 @csrf
                                                 <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-lg bg-[#1E3A8A] text-white border border-blue-800/80 hover:bg-blue-700 hover:border-blue-500 transition-all">
@@ -668,11 +682,10 @@
                                                     <button type="submit" class="ml-2 text-[11px] uppercase tracking-wider text-rose-700 hover:text-rose-800 dark:text-rose-300 dark:hover:text-rose-200">Confirmar</button>
                                                 </form>
                                             </details>
-                                        </div>
                                     @elseif($status === \App\Models\Emprestimos::STATUS_APROVADO)
                                         <form action="{{ route('admin.emprestimos.retirar', $emprestimo->id) }}" method="POST" class="inline-flex items-center gap-2">
                                             @csrf
-                                            <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                                            <span class="hidden text-[11px] font-semibold text-slate-500 dark:text-slate-400 xl:inline">
                                                 {{ $prazoAutomatico }}d automático
                                             </span>
                                             <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-lg bg-amber-700 text-white border border-amber-600 hover:bg-amber-600 transition-all">
@@ -680,7 +693,6 @@
                                             </button>
                                         </form>
                                     @elseif($status === \App\Models\Emprestimos::STATUS_RETIRADO)
-                                        <div class="inline-flex items-center gap-2">
                                             <form action="{{ route('admin.emprestimos.iniciar-uso', $emprestimo->id) }}" method="POST">
                                                 @csrf
                                                 <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-lg bg-blue-700 text-white border border-blue-600 hover:bg-blue-600 transition-all">
@@ -693,9 +705,8 @@
                                                     <i class="ph ph-arrow-u-up-left"></i> Receber
                                                 </button>
                                             </form>
-                                        </div>
                                     @elseif($status === \App\Models\Emprestimos::STATUS_EM_USO)
-                                        <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold flex items-center justify-end gap-1">
+                                        <span class="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[11px] font-bold text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
                                             <i class="ph ph-clock"></i> Aguardando devolução
                                         </span>
                                     @elseif($status === \App\Models\Emprestimos::STATUS_DEVOLUCAO_SOLICITADA)
@@ -706,7 +717,6 @@
                                             </button>
                                         </form>
                                     @elseif($status === \App\Models\Emprestimos::STATUS_DEVOLVIDO)
-                                        <div class="inline-flex items-center gap-2">
                                             @if($emprestimo->multaPendente())
                                                 @if($pagamentoAprovado)
                                                     <form action="{{ route('admin.emprestimos.regularizar-multa', $emprestimo->id) }}" method="POST">
@@ -734,19 +744,18 @@
                                                     </button>
                                                 </form>
                                             @endif
-                                        </div>
                                     @else
-                                        <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold flex items-center justify-end gap-1">
+                                        <span class="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[11px] font-bold text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
                                             <i class="ph ph-archive"></i> Encerrado
                                         </span>
                                     @endif
 
-                                    <details class="group mt-3 text-left">
-                                        <summary class="ml-auto inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-slate-600 transition hover:border-amber-300 hover:text-amber-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10">
+                                    <details class="group relative text-left">
+                                        <summary class="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-slate-600 transition hover:border-amber-300 hover:text-amber-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10">
                                             <i class="ph ph-clock-counter-clockwise"></i>
                                             Histórico
                                         </summary>
-                                        <div class="mt-3 w-[min(22rem,calc(100vw-4rem))] rounded-lg border border-slate-200 bg-slate-50 p-3 shadow-lg dark:border-white/10 dark:bg-[#0f172a]">
+                                        <div class="absolute right-0 z-20 mt-2 w-[min(24rem,calc(100vw-4rem))] rounded-lg border border-slate-200 bg-slate-50 p-3 text-left shadow-2xl dark:border-white/10 dark:bg-[#0f172a]">
                                             @forelse($eventos->take(6) as $evento)
                                                 <div class="relative border-l border-slate-200 pb-3 pl-3 last:pb-0 dark:border-white/10">
                                                     <span class="absolute -left-[5px] top-1 h-2.5 w-2.5 rounded-full bg-amber-500 ring-2 ring-slate-50 dark:ring-[#0f172a]"></span>
@@ -766,6 +775,7 @@
                                             @endforelse
                                         </div>
                                     </details>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
