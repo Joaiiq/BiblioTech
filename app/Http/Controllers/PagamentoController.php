@@ -93,6 +93,17 @@ class PagamentoController extends Controller
                 'metodo' => $pagamento->metodo,
             ]);
 
+            $emprestimo->registrarEvento(
+                'pagamento_enviado',
+                'Pagamento enviado',
+                'O membro enviou um pagamento de multa para conferência da equipe.',
+                [
+                    'codigo' => $pagamento->codigo,
+                    'metodo' => $pagamento->metodo,
+                    'valor' => number_format((float) $pagamento->valor, 2, ',', '.'),
+                ]
+            );
+
             return $pagamento;
         });
 
@@ -132,6 +143,16 @@ class PagamentoController extends Controller
                 'valor' => number_format((float) $pagamento->valor, 2, ',', '.'),
                 'codigo' => $pagamento->codigo,
             ]);
+
+            $pagamento->emprestimo->registrarEvento(
+                'pagamento_aprovado',
+                'Pagamento aprovado',
+                'A equipe aprovou o pagamento e regularizou a multa.',
+                [
+                    'codigo' => $pagamento->codigo,
+                    'valor' => number_format((float) $pagamento->valor, 2, ',', '.'),
+                ]
+            );
         });
 
         $pagamento->membro?->notify(new PagamentoRevisado($pagamento));
@@ -165,6 +186,16 @@ class PagamentoController extends Controller
             'codigo' => $pagamento->codigo,
             'motivo' => $pagamento->motivo_recusa,
         ]);
+
+        $pagamento->emprestimo?->registrarEvento(
+            'pagamento_recusado',
+            'Pagamento recusado',
+            'A equipe recusou o pagamento enviado pelo membro.',
+            [
+                'codigo' => $pagamento->codigo,
+                'motivo' => $pagamento->motivo_recusa,
+            ]
+        );
 
         $pagamento->membro?->notify(new PagamentoRevisado($pagamento));
 

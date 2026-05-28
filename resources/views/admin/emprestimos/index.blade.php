@@ -475,6 +475,7 @@
                                 $status = $emprestimo->status;
                                 $pagamentoPendente = $emprestimo->pagamentos?->firstWhere('status', \App\Models\Pagamento::STATUS_PENDENTE);
                                 $pagamentoAprovado = $emprestimo->pagamentoAprovado;
+                                $eventos = $emprestimo->eventos ?? collect();
                                 $filtrosLinha = [$status];
                                 if (in_array($status, \App\Models\Emprestimos::STATUS_EM_ANDAMENTO, true)) {
                                     $filtrosLinha[] = 'em_andamento';
@@ -703,6 +704,32 @@
                                             <i class="ph ph-archive"></i> Encerrado
                                         </span>
                                     @endif
+
+                                    <details class="group mt-3 text-left">
+                                        <summary class="ml-auto inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-slate-600 transition hover:border-amber-300 hover:text-amber-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10">
+                                            <i class="ph ph-clock-counter-clockwise"></i>
+                                            Histórico
+                                        </summary>
+                                        <div class="mt-3 w-[min(22rem,calc(100vw-4rem))] rounded-lg border border-slate-200 bg-slate-50 p-3 shadow-lg dark:border-white/10 dark:bg-[#0f172a]">
+                                            @forelse($eventos->take(6) as $evento)
+                                                <div class="relative border-l border-slate-200 pb-3 pl-3 last:pb-0 dark:border-white/10">
+                                                    <span class="absolute -left-[5px] top-1 h-2.5 w-2.5 rounded-full bg-amber-500 ring-2 ring-slate-50 dark:ring-[#0f172a]"></span>
+                                                    <div class="flex items-start justify-between gap-3">
+                                                        <p class="text-[11px] font-black text-slate-900 dark:text-white">{{ $evento->titulo }}</p>
+                                                        <span class="shrink-0 text-[10px] font-bold text-slate-400">{{ $evento->created_at?->format('d/m H:i') }}</span>
+                                                    </div>
+                                                    @if($evento->descricao)
+                                                        <p class="mt-1 text-[11px] leading-relaxed text-slate-600 dark:text-slate-400">{{ $evento->descricao }}</p>
+                                                    @endif
+                                                    <p class="mt-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                                        {{ $evento->ator_nome }}
+                                                    </p>
+                                                </div>
+                                            @empty
+                                                <p class="text-[11px] text-slate-500 dark:text-slate-400">Nenhum evento registrado para este empréstimo.</p>
+                                            @endforelse
+                                        </div>
+                                    </details>
                                 </td>
                             </tr>
                         @empty

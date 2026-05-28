@@ -22,7 +22,14 @@ class EmprestimoAdminController extends Controller
     {
         // Traz os empréstimos e já carrega os relacionamentos (livro, e o user dentro de membro)
         // Ordena para que os livros NÃO devolvidos apareçam no topo da lista
-        $emprestimos = Emprestimos::with(['livro', 'membro.user', 'pagamentoAprovado', 'pagamentos'])
+        $emprestimos = Emprestimos::with([
+            'livro',
+            'membro.user',
+            'pagamentoAprovado',
+            'pagamentos',
+            'eventos.user',
+            'eventos.membro',
+        ])
             ->orderByRaw("FIELD(status, 'solicitado','aprovado','retirado','em_uso','devolucao_solicitada','devolvido','encerrado','rejeitado')")
             ->orderBy('data_devolucao_prevista', 'asc')
             ->get();
@@ -65,6 +72,16 @@ class EmprestimoAdminController extends Controller
             'valor_multa'         => $valorMulta,
             'status'              => Emprestimos::STATUS_DEVOLVIDO,
         ]);
+        $emprestimo->registrarEvento(
+            'emprestimo_devolvido',
+            'Devolução recebida',
+            $valorMulta > 0 ? 'A devolução foi registrada com multa por atraso.' : 'A devolução foi registrada sem multa.',
+            [
+                'data_devolucao_real' => $hoje->format('d/m/Y'),
+                'dias_atraso' => $diasAtraso,
+                'multa' => $valorMulta,
+            ]
+        );
 
         // 4. Devolve o livro para a prateleira (Aumenta a quantidade do estoque em +1)
         $emprestimo->livro->increment('quantidade');
@@ -107,6 +124,12 @@ class EmprestimoAdminController extends Controller
             'approved_by' => auth()->guard('web')->id(),
             'approved_at' => Carbon::now(),
         ]);
+        $emprestimo->registrarEvento(
+            'emprestimo_aprovado',
+            'Solicitação aprovada',
+            'A equipe aprovou a solicitação de empréstimo.',
+            ['aprovado_em' => $emprestimo->approved_at?->format('d/m/Y H:i')]
+        );
 
         if ($emprestimo->livro) {
             $emprestimo->livro->decrement('quantidade');
@@ -139,6 +162,16 @@ class EmprestimoAdminController extends Controller
             'data_emprestimo' => $hoje,
             'data_devolucao_prevista' => $hoje->copy()->addDays($prazoDias),
         ]);
+        $emprestimo->registrarEvento(
+            'emprestimo_retirado',
+            'Retirada confirmada',
+            'A biblioteca confirmou a retirada do livro.',
+            [
+                'retirada' => $hoje->format('d/m/Y'),
+                'prazo' => $emprestimo->data_devolucao_prevista?->format('d/m/Y'),
+                'prazo_dias' => $prazoDias,
+            ]
+        );
 
         // Notifica o membro que o empréstimo foi retirado
         if ($emprestimo->membro) {
@@ -163,6 +196,11 @@ class EmprestimoAdminController extends Controller
         $emprestimo->update([
             'status' => Emprestimos::STATUS_EM_USO,
         ]);
+        $emprestimo->registrarEvento(
+            'emprestimo_em_uso',
+            'Empréstimo em uso',
+            'A equipe marcou o empréstimo como em uso.'
+        );
         AuditLog::record('emprestimo_em_uso', 'Marcou empréstimo como em uso.', $emprestimo, [
             'membro' => $emprestimo->membro?->nome,
         ]);
@@ -181,6 +219,11 @@ class EmprestimoAdminController extends Controller
         $emprestimo->update([
             'status' => Emprestimos::STATUS_ENCERRADO,
         ]);
+        $emprestimo->registrarEvento(
+            'emprestimo_encerrado',
+            'Empréstimo encerrado',
+            'A equipe encerrou o ciclo do empréstimo.'
+        );
         AuditLog::record('emprestimo_encerrado', 'Encerrou empréstimo devolvido.', $emprestimo, [
             'membro' => $emprestimo->membro?->nome,
         ]);
@@ -208,6 +251,15 @@ class EmprestimoAdminController extends Controller
             'multa_paga_em' => $emprestimo->pagamentoAprovado->pago_em ?? now(),
             'multa_regularizada_por' => auth()->guard('web')->id(),
         ]);
+        $emprestimo->registrarEvento(
+            'multa_regularizada',
+            'Multa regularizada',
+            'A equipe confirmou a regularização da multa após pagamento aprovado.',
+            [
+                'valor' => number_format((float) $emprestimo->valor_multa, 2, ',', '.'),
+                'pagamento' => $emprestimo->pagamentoAprovado?->codigo,
+            ]
+        );
         AuditLog::record('multa_regularizada', 'Regularizou multa de empréstimo.', $emprestimo, [
             'membro' => $emprestimo->membro?->nome,
             'valor' => number_format((float) $emprestimo->valor_multa, 2, ',', '.'),
@@ -262,6 +314,12 @@ class EmprestimoAdminController extends Controller
 
         $emprestimo->load('livro');
         $reserva->load('livro');
+        $emprestimo->registrarEvento(
+            'reserva_atendida',
+            'Reserva atendida',
+            'A equipe atendeu a primeira reserva da fila e gerou o empréstimo aprovado.',
+            ['reserva_id' => $reserva->id]
+        );
         $reserva->membro->notify(new ReservaDisponivel($reserva, $emprestimo));
         AuditLog::record('reserva_atendida', "Atendeu reserva do livro {$reserva->livro?->titulo}.", $reserva, [
             'membro' => $reserva->membro?->nome,
@@ -289,6 +347,12 @@ class EmprestimoAdminController extends Controller
             'rejected_at' => Carbon::now(),
             'rejected_by' => auth()->guard('web')->id(),
         ]);
+        $emprestimo->registrarEvento(
+            'emprestimo_rejeitado',
+            'Solicitação rejeitada',
+            'A equipe rejeitou a solicitação de empréstimo.',
+            ['motivo' => $request->input('motivo')]
+        );
 
         if ($emprestimo->membro) {
             $emprestimo->membro->notify(new EmprestimoRejeitado($emprestimo));

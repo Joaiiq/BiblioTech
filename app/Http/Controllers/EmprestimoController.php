@@ -99,6 +99,12 @@ class EmprestimoController extends Controller
         ]);
 
         $emprestimo->load('livro');
+        $emprestimo->registrarEvento(
+            'emprestimo_solicitado',
+            'Solicitação criada',
+            'O membro solicitou o empréstimo do livro.',
+            ['livro' => $livro->titulo]
+        );
 
         // Notifica os administradores (gerente e bibliotecario) sobre o novo pedido
         User::whereIn('tipo_usuario', ['gerente', 'bibliotecario'])
@@ -244,6 +250,12 @@ class EmprestimoController extends Controller
             'status' => Emprestimos::STATUS_DEVOLUCAO_SOLICITADA,
             'return_requested_at' => Carbon::now(),
         ]);
+        $emprestimo->registrarEvento(
+            'devolucao_solicitada',
+            'Devolução solicitada',
+            'O membro informou que deseja devolver o livro.',
+            ['solicitada_em' => $emprestimo->return_requested_at?->format('d/m/Y H:i')]
+        );
 
         // Notifica os administradores (gerente e bibliotecario) sobre a solicitação
         User::whereIn('tipo_usuario', ['gerente', 'bibliotecario'])
@@ -294,6 +306,15 @@ class EmprestimoController extends Controller
             'renovacoes_count' => ((int) $emprestimo->renovacoes_count) + 1,
             'ultima_renovacao_em' => now(),
         ]);
+        $emprestimo->registrarEvento(
+            'emprestimo_renovado',
+            'Prazo renovado',
+            "O membro renovou o empréstimo por mais {$prazoDias} dias.",
+            [
+                'novo_prazo' => $emprestimo->data_devolucao_prevista?->format('d/m/Y'),
+                'renovacoes' => $emprestimo->renovacoes_count,
+            ]
+        );
 
         return redirect()->back()->with('sucesso', "Empréstimo renovado por mais {$prazoDias} dias.");
     }

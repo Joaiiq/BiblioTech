@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Livros;
 use App\Models\Membros;
 use Carbon\CarbonInterface;
+use Illuminate\Support\Facades\Schema;
 
 class Emprestimos extends Model
 {
@@ -204,10 +205,35 @@ class Emprestimos extends Model
         return $this->hasMany(Pagamento::class, 'emprestimo_id');
     }
 
+    public function eventos()
+    {
+        return $this->hasMany(EmprestimoEvento::class, 'emprestimo_id')->latest();
+    }
+
     public function pagamentoAprovado()
     {
         return $this->hasOne(Pagamento::class, 'emprestimo_id')
             ->where('status', Pagamento::STATUS_APROVADO)
             ->latestOfMany();
+    }
+
+    public function registrarEvento(string $evento, string $titulo, ?string $descricao = null, array $metadata = []): ?EmprestimoEvento
+    {
+        if (!Schema::hasTable('emprestimo_eventos')) {
+            return null;
+        }
+
+        $userId = auth()->guard('web')->id();
+        $membroId = auth()->guard('membro')->id();
+
+        return $this->eventos()->create([
+            'user_id' => $userId,
+            'membro_id' => $membroId,
+            'ator_tipo' => $userId ? 'admin' : ($membroId ? 'membro' : 'sistema'),
+            'evento' => $evento,
+            'titulo' => $titulo,
+            'descricao' => $descricao,
+            'metadata' => $metadata ?: null,
+        ]);
     }
 }

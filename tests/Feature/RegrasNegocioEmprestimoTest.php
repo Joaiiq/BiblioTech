@@ -155,3 +155,27 @@ it('sincroniza regularizacao quando existe pagamento aprovado', function () {
     expect($emprestimo->multa_paga_em?->timestamp)->toBe($pagoEm->timestamp);
     expect($emprestimo->multa_regularizada_por)->toBe($gerente->id);
 });
+
+it('registra evento quando aprova emprestimo', function () {
+    $gerente = User::factory()->create(['tipo_usuario' => 'gerente']);
+    $membro = criarMembroParaRegra();
+    $livro = criarLivroParaRegra(['quantidade' => 1]);
+    $solicitacao = Emprestimos::create([
+        'membro_id' => $membro->id,
+        'livro_id' => $livro->id,
+        'status' => Emprestimos::STATUS_SOLICITADO,
+        'data_emprestimo' => now()->toDateString(),
+        'data_devolucao_prevista' => now()->addDays(14)->toDateString(),
+        'valor_multa' => 0,
+    ]);
+
+    $this->actingAs($gerente)
+        ->post(route('admin.emprestimos.aprovar', $solicitacao))
+        ->assertRedirect()
+        ->assertSessionHas('sucesso', 'Solicitação aprovada com sucesso.');
+
+    $evento = $solicitacao->fresh()->eventos()->first();
+
+    expect($evento?->evento)->toBe('emprestimo_aprovado');
+    expect($evento?->user_id)->toBe($gerente->id);
+});
