@@ -6,6 +6,7 @@ use App\Http\Controllers\FuncionarioController;
 use App\Http\Controllers\LivroController;
 use App\Models\Livros;  
 use App\Models\Membros;
+use App\Models\Emprestimos;
 use App\Http\Controllers\MembrosController;
 use App\Http\Controllers\EmprestimoController;
 use App\Http\Controllers\EmprestimoAdminController;
@@ -23,7 +24,21 @@ use App\Http\Controllers\PagamentoController;
 use Illuminate\Support\Facades\Schedule;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('welcome', [
+        'landingStats' => [
+            'livros' => Livros::count(),
+            'membros' => Membros::count(),
+            'emprestimos' => Emprestimos::whereIn('status', [
+                Emprestimos::STATUS_APROVADO,
+                Emprestimos::STATUS_RETIRADO,
+                Emprestimos::STATUS_EM_USO,
+                Emprestimos::STATUS_DEVOLUCAO_SOLICITADA,
+            ])->count(),
+            'pendencias' => Emprestimos::where('valor_multa', '>', 0)
+                ->whereNull('multa_paga_em')
+                ->count(),
+        ],
+    ]);
 });
 
 Route::get('/storage/{path}', [UploadController::class, 'show'])
@@ -37,6 +52,7 @@ Schedule::command('emprestimos:lembrar')->dailyAt('08:00');
 // O 'auth' sozinho já chama o guard 'web' por padrão
 
     // rotas admin...
+    Route::get('/admin/livros', [LivroController::class, 'dashboard'])->name('livros.index')->middleware('tipo:gerente,bibliotecario');
     Route::get('/admin/livros/novo', [LivroController::class, 'create'])->name('livros.create')->middleware('tipo:gerente,bibliotecario');
     Route::post('/admin/livros/salvar', [LivroController::class, 'store'])->name('livros.store')->middleware('tipo:gerente,bibliotecario');
     Route::delete('/admin/livros/{id}', [LivroController::class, 'destroy'])->name('livros.destroy')->middleware('tipo:gerente,bibliotecario');

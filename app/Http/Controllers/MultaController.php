@@ -116,7 +116,6 @@ class MultaController extends Controller
             ->selectRaw('membro_id, SUM(valor_multa) as total, COUNT(*) as multas')
             ->with('membro')
             ->where('valor_multa', '>', 0)
-            ->whereNull('multa_paga_em')
             ->groupBy('membro_id')
             ->orderByDesc('total')
             ->take(5)

@@ -257,7 +257,7 @@
                         <div class="flex items-center justify-between gap-3">
                             <div>
                                 <p class="text-[10px] font-black uppercase tracking-[.18em] text-amber-700 dark:text-amber-300">Ranking</p>
-                                <h2 class="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Maiores devedores</h2>
+                                <h2 class="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Histórico de inadimplência</h2>
                             </div>
                             <i class="ph ph-chart-bar text-2xl text-amber-600 dark:text-amber-300"></i>
                         </div>
@@ -268,14 +268,14 @@
                                     <div class="flex items-start justify-between gap-3">
                                         <div class="min-w-0">
                                             <p class="truncate text-sm font-black text-slate-950 dark:text-white">{{ $index + 1 }}. {{ $devedor->membro?->nome ?? 'Membro removido' }}</p>
-                                            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ $devedor->multas }} multa{{ $devedor->multas == 1 ? '' : 's' }} pendente{{ $devedor->multas == 1 ? '' : 's' }}</p>
+                                            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ $devedor->multas }} multa{{ $devedor->multas == 1 ? '' : 's' }} registrada{{ $devedor->multas == 1 ? '' : 's' }}</p>
                                         </div>
                                         <p class="shrink-0 text-sm font-black text-red-700 dark:text-red-300">R$ {{ number_format($devedor->total, 2, ',', '.') }}</p>
                                     </div>
                                 </div>
                             @empty
                                 <p class="rounded-md border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-500 dark:border-white/10 dark:bg-white/[.03] dark:text-slate-400">
-                                    Nenhum membro com multa pendente.
+                                    Nenhum histórico de multa registrado.
                                 </p>
                             @endforelse
                         </div>

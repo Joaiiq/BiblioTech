@@ -121,25 +121,25 @@
                                 <div class="dashboard-card rounded-3xl bg-gradient-to-br from-amber-300 to-amber-500 p-5 text-slate-950">
                                     <i class="ph ph-book-bookmark mb-8 block text-4xl"></i>
                                     <p class="text-sm font-bold opacity-80">Livros cadastrados</p>
-                                    <p class="mt-1 text-4xl font-black">1.248</p>
+                                    <p class="mt-1 text-4xl font-black">{{ number_format($landingStats['livros'] ?? 0, 0, ',', '.') }}</p>
                                 </div>
 
                                 <div class="dashboard-card rounded-3xl border border-white/10 bg-white/[.04] p-5">
                                     <i class="ph ph-users-three mb-8 block text-4xl text-blue-300"></i>
                                     <p class="text-sm font-bold text-slate-400">Membros ativos</p>
-                                    <p class="mt-1 text-4xl font-black">312</p>
+                                    <p class="mt-1 text-4xl font-black">{{ number_format($landingStats['membros'] ?? 0, 0, ',', '.') }}</p>
                                 </div>
 
                                 <div class="dashboard-card rounded-3xl border border-white/10 bg-white/[.04] p-5">
                                     <i class="ph ph-calendar-check mb-8 block text-4xl text-emerald-300"></i>
                                     <p class="text-sm font-bold text-slate-400">Empréstimos</p>
-                                    <p class="mt-1 text-4xl font-black">86</p>
+                                    <p class="mt-1 text-4xl font-black">{{ number_format($landingStats['emprestimos'] ?? 0, 0, ',', '.') }}</p>
                                 </div>
 
                                 <div class="dashboard-card rounded-3xl border border-white/10 bg-white/[.04] p-5">
                                     <i class="ph ph-warning-circle mb-8 block text-4xl text-red-300"></i>
                                     <p class="text-sm font-bold text-slate-400">Pendências</p>
-                                    <p class="mt-1 text-4xl font-black">09</p>
+                                    <p class="mt-1 text-4xl font-black">{{ str_pad((string) ($landingStats['pendencias'] ?? 0), 2, '0', STR_PAD_LEFT) }}</p>
                                 </div>
                             </div>
 

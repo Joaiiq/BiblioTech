@@ -81,9 +81,14 @@
                             <x-input-error :messages="$errors->get('email')" class="mt-2" />
                         </div>
 
-                        <div>
+                        <div x-data="{ showPassword: false }">
                             <label for="password" class="mb-1 block text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Senha</label>
-                            <input id="password" type="password" name="password" required autocomplete="current-password" class="h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/20 dark:border-white/10 dark:bg-[#080d14] dark:text-slate-100">
+                            <div class="relative">
+                                <input id="password" :type="showPassword ? 'text' : 'password'" name="password" required autocomplete="current-password" class="h-11 w-full rounded-md border border-slate-200 bg-white px-3 pr-12 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/20 dark:border-white/10 dark:bg-[#080d14] dark:text-slate-100">
+                                <button type="button" @click="showPassword = !showPassword" class="absolute inset-y-0 right-0 grid w-11 place-items-center text-slate-500 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-white" :aria-label="showPassword ? 'Ocultar senha' : 'Mostrar senha'">
+                                    <i class="ph text-lg" :class="showPassword ? 'ph-eye-slash' : 'ph-eye'"></i>
+                                </button>
+                            </div>
                             <x-input-error :messages="$errors->get('password')" class="mt-2" />
                         </div>
 
