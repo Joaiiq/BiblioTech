@@ -15,6 +15,12 @@ class Categoria extends Model
         'descricao',
     ];
 
+    public function livros()
+    {
+        return $this->belongsToMany(Livros::class, 'categoria_livro', 'categoria_id', 'livro_id')
+            ->withTimestamps();
+    }
+
     public static function nomesDisponiveis()
     {
         if (!Schema::hasTable('categorias')) {

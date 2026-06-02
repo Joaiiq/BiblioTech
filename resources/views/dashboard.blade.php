@@ -61,7 +61,7 @@
                         class="w-full bg-white dark:bg-[#0d1420] border border-slate-200 dark:border-white/10 rounded-lg pl-9 pr-3 py-2 text-xs text-slate-700 dark:text-gray-200 placeholder:text-slate-400 dark:placeholder:text-gray-600 focus:outline-none focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/30"
                         autocomplete="off"
                     >
-                    <div id="global-search-panel" class="absolute left-0 right-0 top-[calc(100%+8px)] z-50 hidden overflow-hidden rounded-md border border-slate-200 bg-white shadow-2xl shadow-slate-950/10 dark:border-white/10 dark:bg-[#0d1420] dark:shadow-black/40">
+                    <div id="global-search-panel" class="absolute left-0 right-0 top-[calc(100%+8px)] z-[9999] hidden overflow-hidden rounded-md border border-slate-200 bg-white shadow-2xl shadow-slate-950/10 dark:border-white/10 dark:bg-[#0d1420] dark:shadow-black/40">
                         <div class="border-b border-slate-200 px-3 py-2 dark:border-white/10">
                             <p class="text-[10px] font-black uppercase tracking-[.16em] text-slate-500 dark:text-slate-400">Resultados rápidos</p>
                         </div>
@@ -382,7 +382,7 @@
                                         <a href="{{ route('livros.show', $livro->id) }}" class="flex items-center justify-between gap-3 rounded-md border border-amber-200 bg-amber-50 p-3 transition hover:bg-amber-100 dark:border-amber-500/20 dark:bg-amber-500/10 dark:hover:bg-amber-500/20">
                                             <div class="min-w-0">
                                                 <p class="truncate text-sm font-bold text-slate-900 dark:text-white">{{ $livro->titulo }}</p>
-                                                <p class="truncate text-xs text-slate-500 dark:text-slate-400">{{ $livro->categoria ?? 'Acervo' }}</p>
+                                                <p class="truncate text-xs text-slate-500 dark:text-slate-400">{{ $livro->categoriasTexto() }}</p>
                                             </div>
                                             <span class="shrink-0 rounded-md bg-white px-2 py-1 text-[10px] font-black uppercase tracking-widest text-amber-800 dark:bg-[#0d1420] dark:text-amber-300">
                                                 {{ $reservasPorLivro[$livro->id] ?? 0 }} fila
@@ -598,7 +598,7 @@
                                         </div>
                                         <div class="min-w-0 py-1">
                                             <div class="mb-2 flex flex-wrap gap-1.5">
-                                                <span class="rounded-md bg-blue-100 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-blue-800 dark:bg-blue-500/10 dark:text-blue-300">{{ $livro->categoria ?? 'Acervo' }}</span>
+                                                <span class="rounded-md bg-blue-100 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-blue-800 dark:bg-blue-500/10 dark:text-blue-300">{{ $livro->categoriasTexto() }}</span>
                                                 @if($livro->e_bestseller)
                                                     <span class="rounded-md bg-amber-100 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-amber-800 dark:bg-amber-500/10 dark:text-amber-300">Destaque</span>
                                                 @endif
@@ -964,7 +964,7 @@
                          data-titulo="{{ strtolower($livro->titulo) }}"
                          data-autor-nome="{{ strtolower($livro->autor->nome ?? '') }}"
                          data-autor-id="{{ $livro->autor_id }}"
-                         data-categoria="{{ $livro->categoria ?? 'Geral' }}"
+                         data-categoria="{{ $livro->categoriasFiltro() ?: 'Geral' }}"
                          data-bestseller="{{ $livro->e_bestseller ? '1' : '0' }}"
                          data-disponivel="{{ (int) $livro->quantidade > 0 ? '1' : '0' }}"
                          data-quantidade="{{ (int) $livro->quantidade }}"
@@ -988,7 +988,7 @@
                                     </div>
                                 @endif
                                 <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2">
-                                    <span class="truncate rounded-md bg-white/90 px-2 py-1 text-[10px] font-black uppercase tracking-widest text-slate-800">{{ $livro->categoria ?? 'Geral' }}</span>
+                                    <span class="truncate rounded-md bg-white/90 px-2 py-1 text-[10px] font-black uppercase tracking-widest text-slate-800">{{ $livro->categoriasTexto() }}</span>
                                     <span class="shrink-0 rounded-md bg-emerald-500 px-2 py-1 text-[10px] font-black uppercase tracking-widest text-white">{{ (int) $livro->quantidade }} ex.</span>
                                 </div>
                             </div>

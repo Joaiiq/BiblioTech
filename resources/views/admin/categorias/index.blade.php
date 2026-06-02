@@ -14,9 +14,15 @@
                     <p class="text-xs text-slate-500 dark:text-slate-400">Organização do acervo</p>
                 </div>
             </div>
-            <button type="button" @click="dark = !dark" class="w-9 h-9 rounded-md bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/10 transition">
-                <i class="ph text-sm" :class="dark ? 'ph-sun' : 'ph-moon'"></i>
-            </button>
+            <div class="flex items-center gap-2">
+                <a href="{{ route('livros.index', ['acervo' => 1]) }}" class="inline-flex h-9 items-center gap-2 rounded-md border border-slate-200 bg-white px-3 text-[11px] font-black uppercase tracking-widest text-slate-700 transition hover:bg-slate-50 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10">
+                    <i class="ph ph-arrow-left"></i>
+                    Voltar
+                </a>
+                <button type="button" @click="dark = !dark" class="w-9 h-9 rounded-md bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/10 transition">
+                    <i class="ph text-sm" :class="dark ? 'ph-sun' : 'ph-moon'"></i>
+                </button>
+            </div>
         </div>
     </x-slot>
 

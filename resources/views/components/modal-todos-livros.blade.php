@@ -71,7 +71,7 @@
                          data-titulo="{{ strtolower($livro->titulo) }}"
                          data-autor-nome="{{ strtolower($livro->autor->nome ?? '') }}"
                          data-autor-id="{{ $livro->autor_id }}"
-                         data-categoria="{{ $livro->categoria }}"
+                         data-categoria="{{ $livro->categoriasFiltro() ?: 'Geral' }}"
                          data-data="{{ $livro->data_publicacao }}"
                          data-bestseller="{{ $livro->e_bestseller ? 1 : 0 }}">
                         <a href="{{ route('livros.show', $livro->id) }}" class="flex-grow flex flex-col">
@@ -90,7 +90,7 @@
                                 </div>
                             </div>
                             <div class="p-3 flex-grow flex flex-col gap-0.5">
-                                <span class="text-[9px] font-bold uppercase tracking-widest text-emerald-500/70">{{ $livro->categoria ?? 'Geral' }}</span>
+                                <span class="text-[9px] font-bold uppercase tracking-widest text-emerald-500/70">{{ $livro->categoriasTexto() }}</span>
                                 <h4 class="text-white text-xs font-semibold truncate group-hover:text-emerald-400 transition-colors">{{ $livro->titulo }}</h4>
                                 <p class="text-gray-500 text-[10px] truncate">{{ $livro->autor->nome ?? 'Não informado' }}</p>
                             </div>
@@ -132,7 +132,7 @@
             
             allCards.forEach(c => {
                 const ok = (!search || c.dataset.titulo.includes(search) || c.dataset.autorNome.includes(search)) &&
-                           (!categoria || c.dataset.categoria === categoria) &&
+                           (!categoria || (c.dataset.categoria || '').split('|').includes(categoria)) &&
                            (!autorId || c.dataset.autorId === autorId);
                 c.style.display = ok ? '' : 'none';
                 if(ok) visible++;

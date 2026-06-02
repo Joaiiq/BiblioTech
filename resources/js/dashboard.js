@@ -262,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         gridCards.forEach(c => {
             const ok = (!search || c.dataset.titulo.includes(search) || c.dataset.autorNome.includes(search))
-                && (!categoria || c.dataset.categoria === categoria)
+                && (!categoria || (c.dataset.categoria || '').split('|').includes(categoria))
                 && (!autorId || String(c.dataset.autorId) === String(autorId))
                 && (!disponibilidade || (disponibilidade === 'disponivel' ? c.dataset.disponivel === '1' : c.dataset.disponivel === '0'))
                 && (!destaque || (destaque === 'bestseller' ? c.dataset.bestseller === '1' : Number(c.dataset.reservas || 0) > 0));
@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         swiperCards.forEach(c => {
             const ok = (!search || c.dataset.titulo.includes(search) || c.dataset.autorNome.includes(search))
-                && (!categoria || c.dataset.categoria === categoria)
+                && (!categoria || (c.dataset.categoria || '').split('|').includes(categoria))
                 && (!autorId || String(c.dataset.autorId) === String(autorId))
                 && (!disponibilidade || (disponibilidade === 'disponivel' ? c.dataset.disponivel === '1' : c.dataset.disponivel === '0'))
                 && (!destaque || (destaque === 'bestseller' ? c.dataset.bestseller === '1' : Number(c.dataset.reservas || 0) > 0));
@@ -521,6 +521,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     applyFilters();
+
+    if (new URLSearchParams(window.location.search).has('acervo')) {
+        toggleAcervoView(true);
+    }
 
     // Listeners para os botões "Ver mais" que mostram a seção de acervo
     document.querySelectorAll('a[href="#acervo-section"]').forEach(link => {

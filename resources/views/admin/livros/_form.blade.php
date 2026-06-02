@@ -6,7 +6,19 @@
     $submitLabel = $isEdit ? 'Atualizar livro' : 'Salvar livro';
     $coverUrl = $isEdit && $livro->capa ? asset('storage/' . $livro->capa) : '';
     $selectedAutor = old('autor_id', $isEdit ? $livro->autor_id : null);
-    $selectedCategoria = old('categoria', $isEdit ? $livro->categoria : null);
+    $selectedCategorias = collect(old('categorias', $isEdit ? $livro->categorias->pluck('id')->all() : []))
+        ->map(fn ($id) => (string) $id)
+        ->values();
+    if ($selectedCategorias->isEmpty() && $isEdit && $livro->categoria) {
+        $categoriaCompat = $categorias->firstWhere('nome', $livro->categoria);
+        if ($categoriaCompat) {
+            $selectedCategorias = collect([(string) $categoriaCompat->id]);
+        }
+    }
+    $selectedCategoriaLabel = $categorias
+        ->whereIn('id', $selectedCategorias->map(fn ($id) => (int) $id)->all())
+        ->pluck('nome')
+        ->join(' / ');
     $isBestseller = (bool) old('e_bestseller', $isEdit ? $livro->e_bestseller : false);
     $inputClass = 'block h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/20 dark:border-white/10 dark:bg-[#080d14] dark:text-white';
     $labelClass = 'mb-1.5 block text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400';
@@ -51,20 +63,23 @@
                 </div>
 
                 <div>
-                    <label for="categoria" class="{{ $labelClass }}">Categoria</label>
-                    <select id="categoria" name="categoria" required class="{{ $inputClass }}">
-                        <option value="">Selecione uma categoria</option>
+                    <label class="{{ $labelClass }}">Categorias</label>
+                    <div id="categorias-wrapper" class="grid max-h-40 grid-cols-1 gap-2 overflow-y-auto rounded-md border border-slate-200 bg-white p-2 dark:border-white/10 dark:bg-[#080d14] sm:grid-cols-2">
                         @foreach($categorias as $cat)
-                            <option value="{{ $cat }}" @selected((string) $selectedCategoria === (string) $cat)>{{ $cat }}</option>
+                            <label class="flex cursor-pointer items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 transition hover:bg-slate-100 dark:border-white/10 dark:bg-white/[.03] dark:text-slate-200 dark:hover:bg-white/10">
+                                <input type="checkbox" name="categorias[]" value="{{ $cat->id }}" @checked($selectedCategorias->contains((string) $cat->id)) class="rounded border-slate-300 text-[#1E3A8A] focus:ring-[#1E3A8A] dark:border-white/10 dark:bg-[#080d14]">
+                                <span>{{ $cat->nome }}</span>
+                            </label>
                         @endforeach
-                    </select>
+                    </div>
                     <div class="mt-2">
                         <a href="{{ route('categorias.index') }}" class="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-amber-700 hover:text-amber-900 dark:text-amber-300">
                             <i class="ph ph-tag"></i>
                             Gerenciar categorias
                         </a>
                     </div>
-                    <x-input-error :messages="$errors->get('categoria')" class="mt-2" />
+                    <x-input-error :messages="$errors->get('categorias')" class="mt-2" />
+                    <x-input-error :messages="$errors->get('categorias.*')" class="mt-2" />
                 </div>
 
                 <div>
@@ -122,7 +137,11 @@
 
             <div class="mt-4">
                 <label for="sinopse" class="{{ $labelClass }}">Sinopse</label>
-                <textarea id="sinopse" name="sinopse" rows="4" class="block w-full rounded-md border border-slate-200 bg-white px-3 py-3 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/20 dark:border-white/10 dark:bg-[#080d14] dark:text-white">{{ old('sinopse', $isEdit ? $livro->sinopse : '') }}</textarea>
+                <textarea id="sinopse" name="sinopse" rows="6" maxlength="3000" class="block w-full rounded-md border border-slate-200 bg-white px-3 py-3 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/20 dark:border-white/10 dark:bg-[#080d14] dark:text-white">{{ old('sinopse', $isEdit ? $livro->sinopse : '') }}</textarea>
+                <p class="mt-1 text-right text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                    <span id="sinopse-left">3000</span> caracteres restantes
+                </p>
+                <x-input-error :messages="$errors->get('sinopse')" class="mt-2" />
             </div>
 
             <div class="mt-4">
@@ -173,7 +192,7 @@
                     <img id="prev-img" src="{{ $coverUrl }}" alt="Capa" class="{{ $coverUrl ? '' : 'hidden' }} h-full w-full object-cover">
                     <span id="prev-badge" class="{{ $isBestseller ? '' : 'hidden' }} absolute right-3 top-3 rounded-md bg-[#F59E0B] px-2 py-1 text-[10px] font-black uppercase tracking-widest text-slate-950">Destaque</span>
                     <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2">
-                        <span id="prev-cat" class="truncate rounded-md bg-white/90 px-2 py-1 text-[10px] font-black uppercase tracking-widest text-slate-800">{{ $selectedCategoria ?: 'Categoria' }}</span>
+                        <span id="prev-cat" class="truncate rounded-md bg-white/90 px-2 py-1 text-[10px] font-black uppercase tracking-widest text-slate-800">{{ $selectedCategoriaLabel ?: 'Categoria' }}</span>
                         <span class="rounded-md bg-emerald-600 px-2 py-1 text-[10px] font-black uppercase tracking-widest text-white"><span id="prev-stock">{{ old('quantidade', $isEdit ? $livro->quantidade : 0) ?: 0 }}</span> ex.</span>
                     </div>
                 </div>
@@ -211,7 +230,6 @@
         };
 
         text('titulo', 'prev-title', 'Título do livro');
-        text('categoria', 'prev-cat', 'Categoria');
         text('sinopse', 'prev-synopsis', 'A sinopse aparece aqui para conferir o card antes de salvar.');
         text('isbn', 'prev-isbn', '000-00-000-0000-0');
         text('quantidade', 'prev-stock', '0');
@@ -225,6 +243,28 @@
         };
         authorSelect?.addEventListener('change', syncAuthor);
         syncAuthor();
+
+        const categoriaInputs = [...document.querySelectorAll('input[name="categorias[]"]')];
+        const prevCat = document.getElementById('prev-cat');
+        const syncCategories = () => {
+            if (!prevCat) return;
+            const labels = categoriaInputs
+                .filter(input => input.checked)
+                .map(input => input.closest('label')?.querySelector('span')?.textContent?.trim())
+                .filter(Boolean);
+            prevCat.textContent = labels.join(' / ') || 'Categoria';
+        };
+        categoriaInputs.forEach(input => input.addEventListener('change', syncCategories));
+        syncCategories();
+
+        const sinopse = document.getElementById('sinopse');
+        const sinopseLeft = document.getElementById('sinopse-left');
+        const syncSinopseLimit = () => {
+            if (!sinopse || !sinopseLeft) return;
+            sinopseLeft.textContent = Math.max(0, 3000 - sinopse.value.length);
+        };
+        sinopse?.addEventListener('input', syncSinopseLimit);
+        syncSinopseLimit();
 
         const dateInput = document.getElementById('data_publicacao');
         const prevAno = document.getElementById('prev-ano');

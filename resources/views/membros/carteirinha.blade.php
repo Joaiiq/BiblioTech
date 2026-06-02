@@ -59,8 +59,8 @@
                                 <h2 class="mt-2 font-serif text-3xl font-black leading-tight">{{ $membro->nome }}</h2>
                                 <p class="mt-1 text-sm text-blue-100">{{ $membro->email }}</p>
                             </div>
-                            <div class="flex h-20 w-20 items-center justify-center rounded-md border border-white/20 bg-white/10">
-                                <i class="ph ph-user text-4xl text-white"></i>
+                            <div class="flex h-24 w-24 items-center justify-center rounded-md border border-white/20 bg-white/10 p-1">
+                                <x-user-avatar :user="$membro" :name="$membro->nome" size="h-full w-full" text="text-2xl" />
                             </div>
                         </div>
                     </div>

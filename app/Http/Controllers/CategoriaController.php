@@ -12,9 +12,10 @@ class CategoriaController extends Controller
     public function index()
     {
         $categorias = Categoria::orderBy('nome')
+            ->withCount('livros')
             ->paginate(8)
             ->through(function (Categoria $categoria) {
-                $categoria->livros_count = Livros::where('categoria', $categoria->nome)->count();
+                $categoria->livros_count = max($categoria->livros_count, Livros::where('categoria', $categoria->nome)->count());
                 return $categoria;
             });
 

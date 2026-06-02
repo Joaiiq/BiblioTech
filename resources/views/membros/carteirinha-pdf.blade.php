@@ -7,6 +7,11 @@
         body { font-family: DejaVu Sans, sans-serif; color: #111827; background: #ffffff; padding: 40px; }
         .card { border: 2px solid #1E3A8A; border-radius: 8px; overflow: hidden; }
         .top { background: #1E3A8A; color: #ffffff; padding: 26px; }
+        .top-table { width: 100%; }
+        .top-info { vertical-align: top; }
+        .photo-cell { width: 96px; text-align: right; vertical-align: top; }
+        .photo { width: 82px; height: 82px; border: 2px solid rgba(255,255,255,.45); border-radius: 6px; object-fit: cover; }
+        .photo-fallback { width: 82px; height: 82px; border: 2px solid rgba(255,255,255,.45); border-radius: 6px; text-align: center; line-height: 78px; font-size: 28px; font-weight: bold; background: rgba(255,255,255,.12); color: #ffffff; }
         .brand { color: #F59E0B; font-size: 12px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; }
         h1 { font-size: 28px; margin-top: 8px; }
         .email { font-size: 12px; color: #dbeafe; margin-top: 4px; }
@@ -27,13 +32,38 @@
 @php
     $regular = $atrasados === 0 && (float) $multasPendentes <= 0;
     $nascimento = $membro->data_nascimento ? \Carbon\Carbon::parse($membro->data_nascimento)->format('d/m/Y') : 'Não informado';
+    $photoData = null;
+    if ($membro->profile_photo_path) {
+        $photoPath = public_path('storage/' . $membro->profile_photo_path);
+        if (is_file($photoPath)) {
+            $photoData = 'data:' . mime_content_type($photoPath) . ';base64,' . base64_encode(file_get_contents($photoPath));
+        }
+    }
+    $initials = collect(explode(' ', $membro->nome ?? 'BT'))
+        ->filter()
+        ->map(fn ($part) => strtoupper(mb_substr($part, 0, 1)))
+        ->take(2)
+        ->join('') ?: 'BT';
 @endphp
 
 <div class="card">
     <div class="top">
-        <div class="brand">BiblioTech</div>
-        <h1>{{ $membro->nome }}</h1>
-        <div class="email">{{ $membro->email }}</div>
+        <table class="top-table">
+            <tr>
+                <td class="top-info">
+                    <div class="brand">BiblioTech</div>
+                    <h1>{{ $membro->nome }}</h1>
+                    <div class="email">{{ $membro->email }}</div>
+                </td>
+                <td class="photo-cell">
+                    @if($photoData)
+                        <img src="{{ $photoData }}" class="photo" alt="{{ $membro->nome }}">
+                    @else
+                        <div class="photo-fallback">{{ $initials }}</div>
+                    @endif
+                </td>
+            </tr>
+        </table>
     </div>
 
     <div class="body">

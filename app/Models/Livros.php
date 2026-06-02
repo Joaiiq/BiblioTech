@@ -57,6 +57,30 @@ class Livros extends Model
         return $this->belongsTo(Autor::class);
     }
 
+    public function categorias()
+    {
+        return $this->belongsToMany(Categoria::class, 'categoria_livro', 'livro_id', 'categoria_id')
+            ->withTimestamps();
+    }
+
+    public function categoriasTexto(): string
+    {
+        $nomes = $this->relationLoaded('categorias')
+            ? $this->categorias->pluck('nome')
+            : $this->categorias()->pluck('nome');
+
+        return $nomes->filter()->join(' / ') ?: ($this->categoria ?: 'Acervo');
+    }
+
+    public function categoriasFiltro(): string
+    {
+        $nomes = $this->relationLoaded('categorias')
+            ? $this->categorias->pluck('nome')
+            : $this->categorias()->pluck('nome');
+
+        return $nomes->filter()->push($this->categoria)->filter()->unique()->join('|');
+    }
+
     public function comentarios()
     {
         return $this->hasMany(Comentario::class, 'livro_id');

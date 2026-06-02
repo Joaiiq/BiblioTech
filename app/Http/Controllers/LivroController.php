@@ -19,10 +19,10 @@ use App\Models\AuditLog;
 class LivroController extends Controller{
     public function dashboard()
     {
-        $livros = Livros::with('autor')->latest()->get();
-        $bestsellers = Livros::where('e_bestseller', true)->with('autor')->limit(12)->get();
-        $livrosRecentes = Livros::latest()->with('autor')->limit(12)->get();
-        $categorias = Livros::distinct()->pluck('categoria');
+        $livros = Livros::with(['autor', 'categorias'])->latest()->get();
+        $bestsellers = Livros::where('e_bestseller', true)->with(['autor', 'categorias'])->limit(12)->get();
+        $livrosRecentes = Livros::latest()->with(['autor', 'categorias'])->limit(12)->get();
+        $categorias = Categoria::nomesDisponiveis();
         $autores = Autor::withCount('livros')->latest()->get();
         $reservasPorLivro = Schema::hasTable('reservas')
             ? Reserva::ativas()
@@ -36,7 +36,7 @@ class LivroController extends Controller{
             ->pluck('total', 'livro_id');
 
         $livrosMaisReservados = $reservasPorLivro->isNotEmpty()
-            ? Livros::with('autor')
+            ? Livros::with(['autor', 'categorias'])
                 ->whereIn('id', $reservasPorLivro->keys())
                 ->get()
                 ->sortByDesc(fn (Livros $livro) => $reservasPorLivro[$livro->id] ?? 0)
@@ -306,7 +306,7 @@ class LivroController extends Controller{
     public function create()
     {
         $autores = Autor::all();
-        $categorias = Categoria::nomesDisponiveis();
+        $categorias = Categoria::orderBy('nome')->get();
         return view('admin.livros.create', compact('autores', 'categorias'));
     }
 
@@ -323,12 +323,13 @@ class LivroController extends Controller{
                 'regex:/^[0-9]{3}-[0-9]{2}-[0-9]{3}-[0-9]{4}-[0-9]{1}$/'
             ],
             'capa'            => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'categoria'       => 'required|string|max:100', // NOVO
+            'categorias'      => 'required|array|min:1',
+            'categorias.*'    => 'integer|exists:categorias,id',
             'quantidade'      => 'required|integer|min:0',  // NOVO: min:0 impede quantidade negativa!
             'estante'         => 'nullable|string|max:50',
             'localizacao'     => 'nullable|string|max:100',
             'data_publicacao' => ['required', 'date_format:Y-m-d', new RealisticDate('book_publication')],           // NOVO
-            'sinopse'         => 'nullable|string',  
+            'sinopse'         => 'nullable|string|max:3000',
             'editora'         => 'nullable|string|max:255', // NOVO
             'paginas'         => 'nullable|integer|min:1', // NOVO
             'preview'         => 'nullable|string', // NOVO
@@ -343,7 +344,7 @@ class LivroController extends Controller{
             'autor_id'        => $request->autor_id,
             'isbn'            => $request->isbn,
             'e_bestseller'    => $request->has('e_bestseller'),
-            'categoria'       => $request->categoria,       // NOVO
+            'categoria'       => Categoria::whereKey($request->categorias[0])->value('nome'),
             'quantidade'      => $request->quantidade,      // NOVO
             'estante'         => $request->estante,
             'localizacao'     => $request->localizacao,
@@ -361,6 +362,7 @@ class LivroController extends Controller{
 
        
         $livro = Livros::create($dadosLivro);
+        $livro->categorias()->sync($request->categorias);
         AuditLog::record('livro_criado', "Cadastrou o livro {$livro->titulo}.", $livro, [
             'isbn' => $livro->isbn,
             'quantidade' => $livro->quantidade,
@@ -383,9 +385,9 @@ class LivroController extends Controller{
 
     public function edit($id)
     {
-        $livro = Livros::findOrFail($id);
+        $livro = Livros::with('categorias')->findOrFail($id);
         $autores = Autor::all();
-        $categorias = Categoria::nomesDisponiveis();
+        $categorias = Categoria::orderBy('nome')->get();
         return view('admin.livros.edit', compact('livro', 'autores', 'categorias'));
     }
 
@@ -404,12 +406,13 @@ class LivroController extends Controller{
                 'regex:/^[0-9]{3}-[0-9]{2}-[0-9]{3}-[0-9]{4}-[0-9]{1}$/'
             ],
             'capa'            => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'categoria'       => 'required|string|max:100', // NOVO
+            'categorias'      => 'required|array|min:1',
+            'categorias.*'    => 'integer|exists:categorias,id',
             'quantidade'      => 'required|integer|min:0',  // NOVO
             'estante'         => 'nullable|string|max:50',
             'localizacao'     => 'nullable|string|max:100',
             'data_publicacao' => ['required', 'date_format:Y-m-d', new RealisticDate('book_publication')],           // NOVO
-            'sinopse'         => 'nullable|string',         // NOVO
+            'sinopse'         => 'nullable|string|max:3000',
             'editora'         => 'nullable|string|max:255', // NOVO
             'paginas'         => 'nullable|integer|min:1',  // NOVO
             'preview'         => 'nullable|string',         // NOVO
@@ -424,7 +427,7 @@ class LivroController extends Controller{
             'autor_id'        => $request->autor_id,
             'isbn'            => $request->isbn,
             'e_bestseller'    => $request->has('e_bestseller'),
-            'categoria'       => $request->categoria,       // NOVO
+            'categoria'       => Categoria::whereKey($request->categorias[0])->value('nome'),
             'quantidade'      => $request->quantidade,      // NOVO
             'estante'         => $request->estante,
             'localizacao'     => $request->localizacao,
@@ -445,6 +448,7 @@ class LivroController extends Controller{
 
         // 4. Salva as alterações
         $livro->update($dadosLivro);
+        $livro->categorias()->sync($request->categorias);
         AuditLog::record('livro_atualizado', "Atualizou o livro {$livro->titulo}.", $livro, [
             'isbn' => $livro->isbn,
             'quantidade' => $livro->quantidade,
@@ -454,7 +458,7 @@ class LivroController extends Controller{
     }
     public function show($id)
     {
-        $livro = Livros::with(['autor', 'comentarios.user', 'comentarios.membro'])->findOrFail($id);
+        $livro = Livros::with(['autor', 'categorias', 'comentarios.user', 'comentarios.membro'])->findOrFail($id);
         $comentarios = $livro->comentarios->sortByDesc('created_at');
         $mediaNota = $livro->comentarios->avg('nota');
         $totalComentarios = $livro->comentarios->count();
