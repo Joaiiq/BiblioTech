@@ -180,6 +180,114 @@ it('registra evento quando aprova emprestimo', function () {
     expect($evento?->user_id)->toBe($gerente->id);
 });
 
+it('aplica prazo de 14 dias na retirada de livro comum', function () {
+    \Carbon\Carbon::setTestNow(\Carbon\Carbon::create(2026, 5, 27));
+
+    $gerente = User::factory()->create(['tipo_usuario' => 'gerente']);
+    $membro = criarMembroParaRegra();
+    $livro = criarLivroParaRegra(['e_bestseller' => false]);
+    $emprestimo = Emprestimos::create([
+        'membro_id' => $membro->id,
+        'livro_id' => $livro->id,
+        'status' => Emprestimos::STATUS_APROVADO,
+        'data_emprestimo' => now()->toDateString(),
+        'data_devolucao_prevista' => now()->toDateString(),
+        'valor_multa' => 0,
+    ]);
+
+    $this->actingAs($gerente)
+        ->post(route('admin.emprestimos.retirar', $emprestimo))
+        ->assertRedirect()
+        ->assertSessionHas('sucesso', 'Retirada confirmada. Prazo de 14 dias aplicado automaticamente.');
+
+    $emprestimo->refresh();
+
+    expect($emprestimo->status)->toBe(Emprestimos::STATUS_RETIRADO);
+    expect($emprestimo->data_emprestimo?->toDateString())->toBe('2026-05-27');
+    expect($emprestimo->data_devolucao_prevista?->toDateString())->toBe('2026-06-10');
+
+    \Carbon\Carbon::setTestNow();
+});
+
+it('aplica prazo de 7 dias na retirada de bestseller', function () {
+    \Carbon\Carbon::setTestNow(\Carbon\Carbon::create(2026, 5, 27));
+
+    $gerente = User::factory()->create(['tipo_usuario' => 'gerente']);
+    $membro = criarMembroParaRegra();
+    $livro = criarLivroParaRegra(['e_bestseller' => true]);
+    $emprestimo = Emprestimos::create([
+        'membro_id' => $membro->id,
+        'livro_id' => $livro->id,
+        'status' => Emprestimos::STATUS_APROVADO,
+        'data_emprestimo' => now()->toDateString(),
+        'data_devolucao_prevista' => now()->toDateString(),
+        'valor_multa' => 0,
+    ]);
+
+    $this->actingAs($gerente)
+        ->post(route('admin.emprestimos.retirar', $emprestimo))
+        ->assertRedirect()
+        ->assertSessionHas('sucesso', 'Retirada confirmada. Prazo de 7 dias aplicado automaticamente.');
+
+    expect($emprestimo->fresh()->data_devolucao_prevista?->toDateString())->toBe('2026-06-03');
+
+    \Carbon\Carbon::setTestNow();
+});
+
+it('bloqueia renovacao antes dos dois ultimos dias do prazo', function () {
+    \Carbon\Carbon::setTestNow(\Carbon\Carbon::create(2026, 5, 28));
+
+    $membro = criarMembroParaRegra();
+    $emprestimo = Emprestimos::create([
+        'membro_id' => $membro->id,
+        'livro_id' => criarLivroParaRegra(['e_bestseller' => false])->id,
+        'status' => Emprestimos::STATUS_EM_USO,
+        'data_emprestimo' => '2026-05-27',
+        'data_devolucao_prevista' => '2026-06-10',
+        'valor_multa' => 0,
+        'renovacoes_count' => 0,
+    ]);
+
+    $this->actingAs($membro, 'membro')
+        ->post(route('emprestimos.renovar', $emprestimo))
+        ->assertRedirect()
+        ->assertSessionHas('erro', 'Este empréstimo não pode ser renovado agora.');
+
+    $emprestimo->refresh();
+
+    expect($emprestimo->data_devolucao_prevista?->toDateString())->toBe('2026-06-10');
+    expect((int) $emprestimo->renovacoes_count)->toBe(0);
+
+    \Carbon\Carbon::setTestNow();
+});
+
+it('permite renovacao nos dois ultimos dias do prazo', function () {
+    \Carbon\Carbon::setTestNow(\Carbon\Carbon::create(2026, 6, 9));
+
+    $membro = criarMembroParaRegra();
+    $emprestimo = Emprestimos::create([
+        'membro_id' => $membro->id,
+        'livro_id' => criarLivroParaRegra(['e_bestseller' => false])->id,
+        'status' => Emprestimos::STATUS_EM_USO,
+        'data_emprestimo' => '2026-05-27',
+        'data_devolucao_prevista' => '2026-06-10',
+        'valor_multa' => 0,
+        'renovacoes_count' => 0,
+    ]);
+
+    $this->actingAs($membro, 'membro')
+        ->post(route('emprestimos.renovar', $emprestimo))
+        ->assertRedirect()
+        ->assertSessionHas('sucesso', 'Empréstimo renovado por mais 14 dias.');
+
+    $emprestimo->refresh();
+
+    expect($emprestimo->data_devolucao_prevista?->toDateString())->toBe('2026-06-24');
+    expect((int) $emprestimo->renovacoes_count)->toBe(1);
+
+    \Carbon\Carbon::setTestNow();
+});
+
 it('permite membro cancelar solicitacao antes da aprovacao', function () {
     $membro = criarMembroParaRegra();
     $emprestimo = Emprestimos::create([

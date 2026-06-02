@@ -27,6 +27,7 @@ class Emprestimos extends Model
     public const PRAZO_BESTSELLER_DIAS = 7;
     public const VALOR_MULTA_DIARIA = 1.00;
     public const DIAS_ANTECEDENCIA_LEMBRETE = 2;
+    public const DIAS_ANTECEDENCIA_RENOVACAO = 2;
     public const MAX_RENOVACOES = 1;
     public const MAX_EMPRESTIMOS_ATIVOS = 3;
 
@@ -181,7 +182,8 @@ class Emprestimos extends Model
         return in_array($this->status, [self::STATUS_RETIRADO, self::STATUS_EM_USO], true)
             && !$this->isAtrasado()
             && (int) $this->renovacoes_count < self::MAX_RENOVACOES
-            && $this->data_devolucao_prevista !== null;
+            && $this->data_devolucao_prevista !== null
+            && now()->startOfDay()->diffInDays($this->data_devolucao_prevista, false) <= self::DIAS_ANTECEDENCIA_RENOVACAO;
     }
 
     // Relação 1: O Empréstimo tem um Livro
