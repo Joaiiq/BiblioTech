@@ -7,10 +7,6 @@
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
     
     {{-- ══ PHP DATA ══ --}}
     @php
@@ -868,7 +864,7 @@
                 </div>
             </div>
 
-            <div class="mb-8 overflow-hidden rounded-md border border-slate-200 bg-white/95 shadow-sm dark:border-white/[.06] dark:bg-[#0d1420]/95" id="filter-bar">
+            <div class="relative z-30 mb-8 overflow-visible rounded-md border border-slate-200 bg-white/95 shadow-sm dark:border-white/[.06] dark:bg-[#0d1420]/95" id="filter-bar">
                 <div class="border-b border-slate-200 bg-slate-50/80 p-4 dark:border-white/10 dark:bg-white/[.03] sm:p-5">
                     <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                         <div>
@@ -894,15 +890,15 @@
                 </div>
 
                 <div class="p-4 sm:p-5">
-                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-12">
-                    <div class="sm:col-span-2 xl:col-span-4">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-12">
+                    <div class="sm:col-span-2 lg:col-span-3 2xl:col-span-4">
                         <label class="mb-1.5 block text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400" for="filter-search">Buscar</label>
                         <div class="relative flex items-center">
                             <i class="ph ph-magnifying-glass pointer-events-none absolute left-3 z-10 text-base text-slate-400"></i>
                             <input type="text" id="filter-search" placeholder="Título ou autor..." class="h-11 w-full rounded-md border border-slate-200 bg-white pl-10 pr-3 text-sm text-slate-800 placeholder:text-slate-400 outline-none transition focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/20 dark:border-white/10 dark:bg-[#080d14] dark:text-slate-200" autocomplete="off">
                         </div>
                     </div>
-                    <div class="xl:col-span-2">
+                    <div class="2xl:col-span-2">
                         <label class="mb-1.5 block text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400" for="filter-categoria">Categoria</label>
                         <select id="filter-categoria" placeholder="Todas...">
                             <option value="">Todas as categorias</option>
@@ -911,7 +907,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="xl:col-span-2">
+                    <div class="2xl:col-span-2">
                         <label class="mb-1.5 block text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400" for="filter-autor">Autor</label>
                         <select id="filter-autor" placeholder="Todos...">
                             <option value="">Todos os autores</option>
@@ -920,7 +916,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="xl:col-span-1">
+                    <div class="2xl:col-span-1">
                         <label class="mb-1.5 block text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400" for="filter-disponibilidade">Status</label>
                         <select id="filter-disponibilidade">
                             <option value="">Todos</option>
@@ -928,7 +924,7 @@
                             <option value="indisponivel">Indisponíveis</option>
                         </select>
                     </div>
-                    <div class="xl:col-span-1">
+                    <div class="2xl:col-span-1">
                         <label class="mb-1.5 block text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400" for="filter-destaque">Sinal</label>
                         <select id="filter-destaque">
                             <option value="">Todos</option>
@@ -936,7 +932,7 @@
                             <option value="fila">Com fila</option>
                         </select>
                     </div>
-                    <div class="xl:col-span-2">
+                    <div class="2xl:col-span-2">
                         <label class="mb-1.5 block text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400" for="filter-sort">Ordenar por</label>
                         <select id="filter-sort">
                             <option value="recente">Mais Recentes</option>

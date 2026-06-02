@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
         navigation: { nextEl: '#swiper-autores-next', prevEl: '#swiper-autores-prev' },
     });
 
-    const tsCfg = { allowEmptyOption: true, create: false, maxOptions: 100, plugins: ['clear_button'] };
+    const tsCfg = { allowEmptyOption: true, create: false, maxOptions: 100, plugins: ['clear_button'], dropdownParent: 'body' };
     const tsCategoria = new TomSelect('#filter-categoria', { ...tsCfg });
     const tsAutor = new TomSelect('#filter-autor', { ...tsCfg, searchField: ['text'] });
     const tsDisponibilidade = new TomSelect('#filter-disponibilidade', { ...tsCfg });
