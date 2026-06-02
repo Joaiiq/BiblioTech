@@ -38,12 +38,6 @@ Route::get('/', function () {
                 ->whereNull('multa_paga_em')
                 ->count(),
         ],
-        'landingBooks' => Livros::with(['autor', 'categorias'])
-            ->where('quantidade', '>', 0)
-            ->orderByDesc('e_bestseller')
-            ->latest()
-            ->take(4)
-            ->get(),
     ]);
 });
 
