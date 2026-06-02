@@ -78,7 +78,7 @@
                      x-transition:leave="transition ease-in duration-150"
                      x-transition:leave-start="opacity-100"
                      x-transition:leave-end="opacity-0"
-                     class="fixed inset-0 z-40 flex">
+                     class="fixed inset-0 z-[10000] flex">
 
                     <div @click="open = false" class="absolute inset-0 bg-slate-950/40 backdrop-blur-sm dark:bg-black/60"></div>
 
@@ -89,7 +89,7 @@
                            x-transition:leave="transition ease-in duration-150"
                            x-transition:leave-start="translate-x-0"
                            x-transition:leave-end="-translate-x-full"
-                           class="relative w-64 h-full bg-white border-r border-slate-200 shadow-2xl z-50 flex flex-col dark:bg-[#080d14] dark:border-white/5">
+                           class="relative z-[10010] flex h-full w-64 flex-col border-r border-slate-200 bg-white shadow-2xl dark:border-white/5 dark:bg-[#080d14]">
 
                         <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-white/5">
                             <div class="flex flex-col items-center justify-center gap-1">
