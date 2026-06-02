@@ -9,9 +9,12 @@ use App\Models\Reserva;
 use App\Notifications\EmprestimoRejeitado;
 use App\Notifications\EmprestimoAprovado;
 use App\Notifications\EmprestimoRetirado;
+use App\Notifications\EquipeOperacaoNotificada;
 use App\Notifications\ReservaDisponivel;
+use App\Models\User;
 use App\Models\AuditLog;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Notification;
 
 class EmprestimoAdminController extends Controller
 {
@@ -266,8 +269,37 @@ class EmprestimoAdminController extends Controller
             'membro' => $emprestimo->membro?->nome,
             'valor' => number_format((float) $emprestimo->valor_multa, 2, ',', '.'),
         ]);
+        $this->notificarEquipeSobreMultaRegularizada($emprestimo);
 
         return redirect()->back()->with('sucesso', 'Multa regularizada com sucesso. O membro já pode solicitar novos empréstimos.');
+    }
+
+    private function notificarEquipeSobreMultaRegularizada(Emprestimos $emprestimo): void
+    {
+        $operador = auth()->guard('web')->user();
+        $emprestimo->loadMissing(['membro', 'livro']);
+
+        $equipe = User::whereIn('tipo_usuario', ['gerente', 'bibliotecario'])
+            ->when($operador, fn ($query) => $query->whereKeyNot($operador->id))
+            ->get();
+
+        if ($equipe->isEmpty()) {
+            return;
+        }
+
+        $nomeOperador = $operador?->name ?? 'Equipe';
+
+        Notification::send($equipe, new EquipeOperacaoNotificada(
+            'multa_regularizada_equipe',
+            'Multa regularizada',
+            "{$nomeOperador} regularizou a multa de {$emprestimo->membro?->nome} no livro '{$emprestimo->livro?->titulo}'.",
+            [
+                'emprestimo_id' => $emprestimo->id,
+                'membro_id' => $emprestimo->membro_id,
+                'operador_id' => $operador?->id,
+                'operador_nome' => $operador?->name,
+            ]
+        ));
     }
 
     public function atenderReserva($id)

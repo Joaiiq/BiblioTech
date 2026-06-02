@@ -141,6 +141,10 @@ class NotificationController extends Controller
             return ['grupo' => 'alertas', 'label' => 'Acesso', 'icon' => 'ph-key', 'classes' => 'border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300'];
         }
 
+        if (str_contains($type, 'pagamento') || str_contains($type, 'multa')) {
+            return ['grupo' => 'financeiro', 'label' => 'Multa', 'icon' => 'ph-currency-circle-dollar', 'classes' => 'border-red-200 bg-red-50 text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300'];
+        }
+
         return ['grupo' => 'mensagens', 'label' => 'Mensagem', 'icon' => 'ph-chat-circle-text', 'classes' => 'border-slate-200 bg-slate-50 text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-300'];
     }
 
@@ -162,6 +166,14 @@ class NotificationController extends Controller
             }
 
             return ['label' => 'Minhas reservas', 'url' => route('emprestimos.historico')];
+        }
+
+        if (str_contains($type, 'pagamento') || str_contains($type, 'multa')) {
+            if (Auth::guard('web')->check()) {
+                return ['label' => 'Abrir multas', 'url' => route('admin.multas.index')];
+            }
+
+            return ['label' => 'Minha situação', 'url' => route('membros.situacao')];
         }
 
         if (!empty($data['livro_id'])) {

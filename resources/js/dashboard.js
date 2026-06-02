@@ -399,6 +399,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const globalSearchResults = document.getElementById('global-search-results');
     const globalSearchEmpty = document.getElementById('global-search-empty');
 
+    if (globalSearchPanel && globalSearchPanel.parentElement !== document.body) {
+        document.body.appendChild(globalSearchPanel);
+    }
+
     const normalizeText = value => (value || '')
         .toString()
         .normalize('NFD')

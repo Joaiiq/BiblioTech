@@ -39,7 +39,7 @@
             #app-header {
                 position: sticky;
                 top: 0;
-                z-index: 30;
+                z-index: 9000;
                 background: rgba(248, 250, 252, 0.0);
                 border-bottom: 1px solid transparent;
                 transition: background .3s ease, border-color .3s ease, backdrop-filter .3s ease;

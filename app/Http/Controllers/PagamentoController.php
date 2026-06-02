@@ -6,6 +6,7 @@ use App\Models\AuditLog;
 use App\Models\Emprestimos;
 use App\Models\Pagamento;
 use App\Models\User;
+use App\Notifications\EquipeOperacaoNotificada;
 use App\Notifications\PagamentoRegistrado;
 use App\Notifications\PagamentoRevisado;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -156,6 +157,7 @@ class PagamentoController extends Controller
         });
 
         $pagamento->membro?->notify(new PagamentoRevisado($pagamento));
+        $this->notificarEquipeSobreRevisao($pagamento, 'aprovou o pagamento e regularizou a multa');
 
         return redirect()->back()->with('sucesso', 'Pagamento aprovado e multa regularizada.');
     }
@@ -198,8 +200,38 @@ class PagamentoController extends Controller
         );
 
         $pagamento->membro?->notify(new PagamentoRevisado($pagamento));
+        $this->notificarEquipeSobreRevisao($pagamento, 'recusou o pagamento de multa');
 
         return redirect()->back()->with('sucesso', 'Pagamento recusado. O membro foi notificado.');
+    }
+
+    private function notificarEquipeSobreRevisao(Pagamento $pagamento, string $acao): void
+    {
+        $operador = auth()->guard('web')->user();
+        $pagamento->loadMissing(['membro', 'emprestimo.livro']);
+
+        $equipe = User::whereIn('tipo_usuario', ['gerente', 'bibliotecario'])
+            ->when($operador, fn ($query) => $query->whereKeyNot($operador->id))
+            ->get();
+
+        if ($equipe->isEmpty()) {
+            return;
+        }
+
+        $nomeOperador = $operador?->name ?? 'Equipe';
+
+        Notification::send($equipe, new EquipeOperacaoNotificada(
+            'pagamento_revisado_equipe',
+            'Situação atualizada',
+            "{$nomeOperador} {$acao} de {$pagamento->membro?->nome} no livro '{$pagamento->emprestimo?->livro?->titulo}'.",
+            [
+                'pagamento_id' => $pagamento->id,
+                'emprestimo_id' => $pagamento->emprestimo_id,
+                'membro_id' => $pagamento->membro_id,
+                'operador_id' => $operador?->id,
+                'operador_nome' => $operador?->name,
+            ]
+        ));
     }
 
     public function comprovante(Pagamento $pagamento): View
