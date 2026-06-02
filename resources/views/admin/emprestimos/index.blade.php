@@ -260,6 +260,7 @@
         $atrasados   = $emprestimos->filter(fn($e) => $e->isAtrasado())->count();
         $concluidos  = $emprestimos->whereIn('status', [\App\Models\Emprestimos::STATUS_DEVOLVIDO, \App\Models\Emprestimos::STATUS_ENCERRADO])->count();
         $rejeitados  = $emprestimos->where('status', \App\Models\Emprestimos::STATUS_REJEITADO)->count();
+        $cancelados  = $emprestimos->where('status', \App\Models\Emprestimos::STATUS_CANCELADO)->count();
         $multas      = $emprestimos->filter(fn($e) => $e->multaPendente())->sum('valor_multa');
         $totalReservas = ($reservasAtivas ?? collect())->count();
     @endphp
@@ -289,7 +290,7 @@
         </div>
 
         {{-- ── Cards compactos clicáveis ── --}}
-        <div class="grid grid-cols-2 lg:grid-cols-6 gap-3">
+        <div class="grid grid-cols-2 lg:grid-cols-7 gap-3">
 
             <button onclick="filtrarCard(this, 'todos', 'Todos os registros')"
                     class="card-filtro c-all ativo bg-white/95 dark:bg-[#111827] border border-slate-200 dark:border-[#1e293b] rounded-xl px-4 py-3
@@ -372,6 +373,18 @@
                 <div>
                     <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Rejeitados</p>
                     <p class="text-xl font-black text-slate-900 dark:text-white leading-tight font-serif">{{ $rejeitados }}</p>
+                </div>
+            </button>
+
+            <button onclick="filtrarCard(this, 'cancelado', 'Solicitações canceladas')"
+                    class="card-filtro c-late bg-white/95 dark:bg-[#111827] border border-slate-200 dark:border-[#1e293b] rounded-xl px-4 py-3
+                           flex items-center gap-3 hover:border-slate-500/60 transition-all text-left w-full shadow-sm">
+                <span class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">
+                    <i class="ph ph-prohibit text-slate-600 dark:text-slate-400 text-base"></i>
+                </span>
+                <div>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Cancelados</p>
+                    <p class="text-xl font-black text-slate-900 dark:text-white leading-tight font-serif">{{ $cancelados }}</p>
                 </div>
             </button>
 
@@ -536,6 +549,7 @@
                                     \App\Models\Emprestimos::STATUS_DEVOLVIDO => 'Concluído',
                                     \App\Models\Emprestimos::STATUS_ENCERRADO => 'Encerrado',
                                     \App\Models\Emprestimos::STATUS_REJEITADO => 'Rejeitado',
+                                    \App\Models\Emprestimos::STATUS_CANCELADO => 'Cancelado',
                                     default => '—',
                                 };
                             @endphp
@@ -628,6 +642,10 @@
                                     @elseif($status === \App\Models\Emprestimos::STATUS_REJEITADO)
                                         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 dark:bg-rose-900/40 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/50">
                                             <i class="ph ph-x-circle"></i> Rejeitado
+                                        </span>
+                                    @elseif($status === \App\Models\Emprestimos::STATUS_CANCELADO)
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800/50">
+                                            <i class="ph ph-prohibit"></i> Cancelado
                                         </span>
                                     @else
                                         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800/50">

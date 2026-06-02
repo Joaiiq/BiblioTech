@@ -198,6 +198,39 @@ class EmprestimoController extends Controller
         return redirect()->back()->with('sucesso', 'Reserva cancelada com sucesso.');
     }
 
+    public function cancelarSolicitacao($id)
+    {
+        if ($response = $this->bloquearAcessoAdministrativo()) {
+            return $response;
+        }
+
+        $membro = auth()->guard('membro')->user();
+
+        $emprestimo = Emprestimos::with('livro')
+            ->where('id', $id)
+            ->where('membro_id', $membro->id)
+            ->firstOrFail();
+
+        if ($emprestimo->status !== Emprestimos::STATUS_SOLICITADO) {
+            return redirect()->back()->with('erro', 'Só é possível cancelar solicitações que ainda aguardam aprovação.');
+        }
+
+        $emprestimo->update([
+            'status' => Emprestimos::STATUS_CANCELADO,
+            'rejected_reason' => 'Cancelado pelo membro antes da aprovação.',
+            'rejected_at' => now(),
+        ]);
+
+        $emprestimo->registrarEvento(
+            'emprestimo_cancelado',
+            'Solicitação cancelada',
+            'O membro cancelou o pedido antes da aprovação da biblioteca.',
+            ['cancelado_em' => now()->format('d/m/Y H:i')]
+        );
+
+        return redirect()->back()->with('sucesso', 'Solicitação cancelada com sucesso.');
+    }
+
     public function historico()
     {
         if ($response = $this->bloquearAcessoAdministrativo()) {
@@ -208,7 +241,7 @@ class EmprestimoController extends Controller
 
         $emprestimos = Emprestimos::with('livro.autor')
             ->where('membro_id', $membro->id)
-            ->orderByRaw("FIELD(status, 'solicitado','aprovado','retirado','em_uso','devolucao_solicitada','devolvido','encerrado','rejeitado')")
+            ->orderByRaw("FIELD(status, 'solicitado','aprovado','retirado','em_uso','devolucao_solicitada','devolvido','encerrado','rejeitado','cancelado')")
             ->orderBy('data_devolucao_prevista', 'asc')
             ->get();
 

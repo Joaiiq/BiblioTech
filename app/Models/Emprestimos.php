@@ -21,6 +21,7 @@ class Emprestimos extends Model
     public const STATUS_DEVOLVIDO = 'devolvido';
     public const STATUS_ENCERRADO = 'encerrado';
     public const STATUS_REJEITADO = 'rejeitado';
+    public const STATUS_CANCELADO = 'cancelado';
 
     public const PRAZO_LIVRO_COMUM_DIAS = 14;
     public const PRAZO_BESTSELLER_DIAS = 7;

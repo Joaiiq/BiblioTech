@@ -130,6 +130,9 @@ Route::get('/dashboard', [LivroController::class, 'dashboard'])
     Route::post('/meus-emprestimos/{id}/solicitar-devolucao', [EmprestimoController::class, 'solicitarDevolucao'])
         ->middleware('membro')
         ->name('emprestimos.solicitar-devolucao');
+    Route::post('/meus-emprestimos/{id}/cancelar-solicitacao', [EmprestimoController::class, 'cancelarSolicitacao'])
+        ->middleware('membro')
+        ->name('emprestimos.cancelar-solicitacao');
     Route::post('/meus-emprestimos/{id}/renovar', [EmprestimoController::class, 'renovar'])
         ->middleware('membro')
         ->name('emprestimos.renovar');

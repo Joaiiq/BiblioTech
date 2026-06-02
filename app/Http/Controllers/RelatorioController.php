@@ -311,6 +311,7 @@ class RelatorioController extends Controller
             'Em uso' => $emprestimosPeriodo->whereIn('status', Emprestimos::STATUS_EM_ANDAMENTO)->count(),
             'Concluídos' => $emprestimosPeriodo->whereIn('status', [Emprestimos::STATUS_DEVOLVIDO, Emprestimos::STATUS_ENCERRADO])->count(),
             'Rejeitados' => $emprestimosPeriodo->where('status', Emprestimos::STATUS_REJEITADO)->count(),
+            'Cancelados' => $emprestimosPeriodo->where('status', Emprestimos::STATUS_CANCELADO)->count(),
         ])->map(fn ($total, $status) => compact('status', 'total'))->values();
 
         $graficos = [

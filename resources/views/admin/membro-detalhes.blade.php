@@ -100,6 +100,7 @@
                             'retirado', 'em_uso', 'devolucao_solicitada' => 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500',
                             'encerrado', 'devolvido' => 'bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500',
                             'rejeitado' => 'bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500',
+                            'cancelado' => 'bg-slate-50 dark:bg-white/5 border-l-4 border-slate-400',
                             default => 'bg-slate-50 dark:bg-white/5 border-l-4 border-slate-300 dark:border-white/10',
                         };
                         $isAtrasado = $emp->isAtrasado();
@@ -113,9 +114,10 @@
                                         @if($emp->status === 'encerrado' || $emp->status === 'devolvido') bg-green-200 text-green-900 dark:bg-green-900/50 dark:text-green-200
                                         @elseif($emp->status === 'retirado' || $emp->status === 'em_uso' || $emp->status === 'devolucao_solicitada') bg-blue-200 text-blue-900 dark:bg-blue-900/50 dark:text-blue-200
                                         @elseif($emp->status === 'rejeitado') bg-red-200 text-red-900 dark:bg-red-900/50 dark:text-red-200
+                                        @elseif($emp->status === 'cancelado') bg-slate-200 text-slate-900 dark:bg-slate-700 dark:text-slate-100
                                         @else bg-slate-200 text-slate-900 dark:bg-slate-700 dark:text-slate-100
                                         @endif
-                                    ">{{ ucfirst(str_replace('_', ' ', $emp->status)) }}</span>
+                                    ">{{ $emp->status === 'cancelado' ? 'Cancelado' : ucfirst(str_replace('_', ' ', $emp->status)) }}</span>
                                     @if($isAtrasado)
                                         <span class="px-2 py-1 text-xs font-bold rounded bg-red-200 text-red-900 dark:bg-red-900/50 dark:text-red-200">🔴 ATRASADO</span>
                                     @endif

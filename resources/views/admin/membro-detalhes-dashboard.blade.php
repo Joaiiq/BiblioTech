@@ -240,6 +240,7 @@
                                                 \App\Models\Emprestimos::STATUS_DEVOLVIDO => 'Devolvido',
                                                 \App\Models\Emprestimos::STATUS_ENCERRADO => 'Encerrado',
                                                 \App\Models\Emprestimos::STATUS_REJEITADO => 'Rejeitado',
+                                                \App\Models\Emprestimos::STATUS_CANCELADO => 'Cancelado',
                                                 default => ucfirst(str_replace('_', ' ', $emp->status)),
                                             };
                                         @endphp

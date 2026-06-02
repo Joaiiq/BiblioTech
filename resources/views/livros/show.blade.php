@@ -6,6 +6,8 @@
         $statusClasse = $disponivel
             ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300'
             : 'border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300';
+        $podeGerenciarLivro = auth()->guard('web')->check()
+            && in_array(auth()->guard('web')->user()?->tipo_usuario, ['gerente', 'bibliotecario'], true);
     @endphp
 
     <div class="-mx-4 min-h-screen bg-gradient-to-b from-slate-100 via-blue-50 to-slate-100 px-4 py-8 dark:from-[#0f172a] dark:via-[#0f172a] dark:to-[#0b1120] sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
@@ -30,11 +32,21 @@
                     Voltar ao acervo
                 </a>
 
-                @if(auth()->check())
-                    <a href="{{ route('livros.edit', $livro->id) }}" class="inline-flex h-10 items-center gap-2 rounded-md bg-[#1E3A8A] px-4 text-[11px] font-black uppercase tracking-widest text-white transition hover:bg-blue-800">
-                        <i class="ph ph-pencil-simple"></i>
-                        Editar obra
-                    </a>
+                @if($podeGerenciarLivro)
+                    <div class="flex flex-wrap items-center gap-2">
+                        <a href="{{ route('livros.edit', $livro->id) }}" class="inline-flex h-10 items-center gap-2 rounded-md bg-[#1E3A8A] px-4 text-[11px] font-black uppercase tracking-widest text-white transition hover:bg-blue-800">
+                            <i class="ph ph-pencil-simple"></i>
+                            Editar obra
+                        </a>
+                        <form action="{{ route('livros.destroy', $livro->id) }}" method="POST" data-confirm="delete" data-title="Excluir livro?" data-text="O livro sairá do acervo, mas o histórico de empréstimos será preservado.">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="inline-flex h-10 items-center gap-2 rounded-md border border-red-200 bg-red-50 px-4 text-[11px] font-black uppercase tracking-widest text-red-700 transition hover:bg-red-100 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20">
+                                <i class="ph ph-trash"></i>
+                                Excluir livro
+                            </button>
+                        </form>
+                    </div>
                 @endif
             </div>
 

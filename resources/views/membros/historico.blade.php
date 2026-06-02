@@ -258,6 +258,7 @@
                             \App\Models\Emprestimos::STATUS_DEVOLVIDO => 'Concluído',
                             \App\Models\Emprestimos::STATUS_ENCERRADO => 'Encerrado',
                             \App\Models\Emprestimos::STATUS_REJEITADO => 'Rejeitado',
+                            \App\Models\Emprestimos::STATUS_CANCELADO => 'Cancelado',
                             default => 'Status indefinido',
                         };
                         $type = $atrasado ? 'atrasados' : ($concluido ? 'concluidos' : ($ativo ? 'ativos' : 'outros'));
@@ -265,7 +266,9 @@
                             ? 'border-red-200 bg-red-50 text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300'
                             : ($concluido
                                 ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300'
-                                : 'border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-300');
+                                : (in_array($status, [\App\Models\Emprestimos::STATUS_REJEITADO, \App\Models\Emprestimos::STATUS_CANCELADO], true)
+                                    ? 'border-slate-200 bg-slate-50 text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-slate-300'
+                                    : 'border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-300'));
                         $diasRestantes = $emp->data_devolucao_prevista ? today()->diffInDays($emp->data_devolucao_prevista, false) : null;
                         $pagamentoPendente = $emp->pagamentos?->firstWhere('status', \App\Models\Pagamento::STATUS_PENDENTE);
                     @endphp
@@ -335,6 +338,14 @@
                                         <i class="ph ph-file-pdf"></i>
                                         Comprovante
                                     </a>
+                                @elseif($status === \App\Models\Emprestimos::STATUS_SOLICITADO)
+                                    <form action="{{ route('emprestimos.cancelar-solicitacao', $emp->id) }}" method="POST" data-confirm="delete" data-title="Cancelar pedido?" data-text="A solicitação será cancelada antes da análise da biblioteca.">
+                                        @csrf
+                                        <button type="submit" class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-md border border-red-200 bg-red-50 px-3 text-[10px] font-black uppercase tracking-widest text-red-700 transition hover:bg-red-100 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20">
+                                            <i class="ph ph-x"></i>
+                                            Cancelar pedido
+                                        </button>
+                                    </form>
                                 @else
                                     <span class="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-slate-200 bg-slate-100 px-3 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:border-white/10 dark:bg-white/5 dark:text-slate-500">
                                         <i class="ph ph-clock"></i>

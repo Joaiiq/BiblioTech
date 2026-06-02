@@ -33,7 +33,7 @@ class EmprestimoAdminController extends Controller
             'eventos.user',
             'eventos.membro',
         ])
-            ->orderByRaw("FIELD(status, 'solicitado','aprovado','retirado','em_uso','devolucao_solicitada','devolvido','encerrado','rejeitado')")
+            ->orderByRaw("FIELD(status, 'solicitado','aprovado','retirado','em_uso','devolucao_solicitada','devolvido','encerrado','rejeitado','cancelado')")
             ->orderBy('data_devolucao_prevista', 'asc')
             ->get();
 

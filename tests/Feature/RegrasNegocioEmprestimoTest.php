@@ -180,6 +180,47 @@ it('registra evento quando aprova emprestimo', function () {
     expect($evento?->user_id)->toBe($gerente->id);
 });
 
+it('permite membro cancelar solicitacao antes da aprovacao', function () {
+    $membro = criarMembroParaRegra();
+    $emprestimo = Emprestimos::create([
+        'membro_id' => $membro->id,
+        'livro_id' => criarLivroParaRegra()->id,
+        'status' => Emprestimos::STATUS_SOLICITADO,
+        'data_emprestimo' => now()->toDateString(),
+        'data_devolucao_prevista' => now()->addDays(14)->toDateString(),
+        'valor_multa' => 0,
+    ]);
+
+    $this->actingAs($membro, 'membro')
+        ->post(route('emprestimos.cancelar-solicitacao', $emprestimo))
+        ->assertRedirect()
+        ->assertSessionHas('sucesso', 'Solicitação cancelada com sucesso.');
+
+    $emprestimo->refresh();
+
+    expect($emprestimo->status)->toBe(Emprestimos::STATUS_CANCELADO);
+    expect($emprestimo->rejected_reason)->toBe('Cancelado pelo membro antes da aprovação.');
+});
+
+it('bloqueia cancelamento de solicitacao ja aprovada', function () {
+    $membro = criarMembroParaRegra();
+    $emprestimo = Emprestimos::create([
+        'membro_id' => $membro->id,
+        'livro_id' => criarLivroParaRegra()->id,
+        'status' => Emprestimos::STATUS_APROVADO,
+        'data_emprestimo' => now()->toDateString(),
+        'data_devolucao_prevista' => now()->addDays(14)->toDateString(),
+        'valor_multa' => 0,
+    ]);
+
+    $this->actingAs($membro, 'membro')
+        ->post(route('emprestimos.cancelar-solicitacao', $emprestimo))
+        ->assertRedirect()
+        ->assertSessionHas('erro', 'Só é possível cancelar solicitações que ainda aguardam aprovação.');
+
+    expect($emprestimo->fresh()->status)->toBe(Emprestimos::STATUS_APROVADO);
+});
+
 it('registra devolucao real pela data solicitada pelo membro', function () {
     $gerente = User::factory()->create(['tipo_usuario' => 'gerente']);
     $membro = criarMembroParaRegra();
