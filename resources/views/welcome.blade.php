@@ -209,51 +209,54 @@
                             Algumas obras para dar vontade de entrar.
                         </h2>
                         <p class="mt-5 text-lg leading-8 text-slate-400">
-                            A pessoa pode conhecer o acervo por fora. Para pedir livro, reservar ou favoritar, precisa entrar com conta de membro.
+                            Uma amostra visual do acervo para apresentar o sistema sem liberar ações fora do login.
                         </p>
                     </div>
 
-                    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                        @foreach($landingBooks as $livro)
-                            <article data-aos="fade-up" data-aos-delay="{{ $loop->index * 80 }}" class="group overflow-hidden rounded-3xl border border-white/10 bg-white/[.04] shadow-xl shadow-black/20 transition hover:-translate-y-1 hover:border-amber-300/40 hover:bg-white/[.07]">
-                                <a href="{{ route('livros.show', $livro->id) }}" class="block">
-                                    <div class="relative aspect-[3/4] overflow-hidden bg-slate-900">
-                                        @if($livro->capa)
-                                            <img src="{{ asset('storage/' . $livro->capa) }}" alt="{{ $livro->titulo }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
-                                        @else
-                                            <div class="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-slate-800 to-slate-950 text-slate-500">
-                                                <i class="ph ph-book-open-text text-5xl"></i>
-                                                <span class="mt-3 text-xs font-black uppercase tracking-widest">Sem capa</span>
+                    <div data-aos="fade-up" class="overflow-hidden">
+                        <div class="swiper landing-books-swiper">
+                            <div class="swiper-wrapper">
+                                @foreach($landingBooks as $livro)
+                                    <article class="swiper-slide overflow-hidden rounded-3xl border border-white/10 bg-white/[.04] shadow-xl shadow-black/20">
+                                        <div class="relative aspect-[3/4] overflow-hidden bg-slate-900">
+                                            @if($livro->capa)
+                                                <img src="{{ asset('storage/' . $livro->capa) }}" alt="{{ $livro->titulo }}" class="h-full w-full object-cover">
+                                            @else
+                                                <div class="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-slate-800 to-slate-950 text-slate-500">
+                                                    <i class="ph ph-book-open-text text-5xl"></i>
+                                                    <span class="mt-3 text-xs font-black uppercase tracking-widest">Sem capa</span>
+                                                </div>
+                                            @endif
+
+                                            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent p-4">
+                                                <span class="inline-flex rounded-full bg-amber-400 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-slate-950">
+                                                    {{ $livro->categoriasTexto() }}
+                                                </span>
                                             </div>
-                                        @endif
-
-                                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent p-4">
-                                            <span class="inline-flex rounded-full bg-amber-400 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-slate-950">
-                                                {{ $livro->categoriasTexto() }}
-                                            </span>
                                         </div>
-                                    </div>
-                                </a>
 
-                                <div class="p-4">
-                                    <a href="{{ route('livros.show', $livro->id) }}" class="line-clamp-2 font-['Merriweather'] text-lg font-black leading-tight text-white transition hover:text-amber-300">
-                                        {{ $livro->titulo }}
-                                    </a>
-                                    <p class="mt-1 truncate text-sm font-semibold text-slate-400">{{ $livro->autor?->nome ?? 'Autor não informado' }}</p>
-                                    <p class="mt-3 line-clamp-3 text-sm leading-6 text-slate-500">
-                                        {{ $livro->sinopse ?: 'Prévia disponível na página da obra.' }}
-                                    </p>
-
-                                    <div class="mt-4 flex items-center justify-between gap-3">
-                                        <span class="text-xs font-black uppercase tracking-widest text-emerald-300">{{ (int) $livro->quantidade }} ex.</span>
-                                        <a href="{{ route('login') }}" class="inline-flex h-9 items-center gap-2 rounded-full bg-amber-400 px-4 text-[11px] font-black uppercase tracking-widest text-slate-950 transition hover:bg-amber-300">
-                                            Pedir livro
-                                            <i class="ph ph-sign-in"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </article>
-                        @endforeach
+                                        <div class="p-4">
+                                            <h3 class="line-clamp-2 font-['Merriweather'] text-lg font-black leading-tight text-white">
+                                                {{ $livro->titulo }}
+                                            </h3>
+                                            <p class="mt-1 truncate text-sm font-semibold text-slate-400">{{ $livro->autor?->nome ?? 'Autor não informado' }}</p>
+                                            <p class="mt-3 line-clamp-3 text-sm leading-6 text-slate-500">
+                                                {{ $livro->sinopse ?: 'Obra disponível no acervo da biblioteca.' }}
+                                            </p>
+                                            <p class="mt-4 text-xs font-black uppercase tracking-widest text-emerald-300">{{ (int) $livro->quantidade }} exemplar{{ (int) $livro->quantidade === 1 ? '' : 'es' }} no acervo</p>
+                                        </div>
+                                    </article>
+                                @endforeach
+                            </div>
+                            <div class="mt-5 flex items-center justify-end gap-2">
+                                <button type="button" class="landing-books-prev grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[.04] text-slate-300 transition hover:border-amber-300/40 hover:text-amber-300" aria-label="Livro anterior">
+                                    <i class="ph ph-caret-left"></i>
+                                </button>
+                                <button type="button" class="landing-books-next grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[.04] text-slate-300 transition hover:border-amber-300/40 hover:text-amber-300" aria-label="Próximo livro">
+                                    <i class="ph ph-caret-right"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -543,6 +546,26 @@
                 ease: 'sine.inOut',
                 stagger: 0.18
             });
+
+            if (document.querySelector('.landing-books-swiper')) {
+                new Swiper('.landing-books-swiper', {
+                    loop: {{ ($landingBooks ?? collect())->count() > 3 ? 'true' : 'false' }},
+                    spaceBetween: 16,
+                    autoplay: {
+                        delay: 2600,
+                        disableOnInteraction: false,
+                    },
+                    navigation: {
+                        nextEl: '.landing-books-next',
+                        prevEl: '.landing-books-prev',
+                    },
+                    breakpoints: {
+                        0: { slidesPerView: 1.15 },
+                        640: { slidesPerView: 2.1 },
+                        1024: { slidesPerView: 3 },
+                    },
+                });
+            }
         });
     </script>
 </body>
