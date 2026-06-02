@@ -152,6 +152,22 @@
                                         </p>
                                     </div>
                                 @endif
+
+                                @if($livro->preview_pdf)
+                                    <div class="overflow-hidden rounded-md border border-blue-200 bg-blue-50 dark:border-blue-500/20 dark:bg-blue-500/10">
+                                        <div class="flex flex-col gap-3 border-b border-blue-200 p-4 dark:border-blue-500/20 sm:flex-row sm:items-center sm:justify-between">
+                                            <div>
+                                                <h2 class="text-[11px] font-black uppercase tracking-[.16em] text-blue-800 dark:text-blue-300">Prévia em páginas</h2>
+                                                <p class="mt-1 text-sm text-blue-900/80 dark:text-blue-100/80">Leia algumas páginas antes de solicitar o empréstimo.</p>
+                                            </div>
+                                            <a href="{{ asset('storage/' . $livro->preview_pdf) }}" target="_blank" class="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-[#1E3A8A] px-4 text-[11px] font-black uppercase tracking-widest text-white transition hover:bg-blue-800">
+                                                <i class="ph ph-file-pdf"></i>
+                                                Abrir PDF
+                                            </a>
+                                        </div>
+                                        <iframe src="{{ asset('storage/' . $livro->preview_pdf) }}#toolbar=0&navpanes=0" title="Prévia de {{ $livro->titulo }}" class="h-[520px] w-full bg-white dark:bg-[#0d1420]"></iframe>
+                                    </div>
+                                @endif
                             </div>
 
                             <aside class="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/[.03]">

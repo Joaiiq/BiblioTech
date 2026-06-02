@@ -22,6 +22,7 @@ class LivrosFactory extends Factory
             'data_publicacao' => $this->faker->date(),
             'capa' => null,
             'preview' => null,
+            'preview_pdf' => null,
         ];
     }
 }

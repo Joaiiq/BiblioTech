@@ -41,7 +41,8 @@ class Livros extends Model
         'sinopse',
         'editora',
         'paginas',
-        'preview'
+        'preview',
+        'preview_pdf',
     ];
 
     // Converte os dados automaticamente para facilitar a nossa vida

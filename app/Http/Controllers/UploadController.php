@@ -13,6 +13,7 @@ class UploadController extends Controller
         abort_unless(
             str_starts_with($path, 'capas/')
                 || str_starts_with($path, 'autores/')
+                || str_starts_with($path, 'previews/')
                 || str_starts_with($path, 'perfis/'),
             404
         );

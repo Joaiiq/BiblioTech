@@ -148,6 +148,21 @@
                 <label for="preview" class="{{ $labelClass }}">Prévia das páginas</label>
                 <textarea id="preview" name="preview" rows="5" placeholder="Trecho do livro para prévia..." class="block w-full rounded-md border border-slate-200 bg-white px-3 py-3 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/20 dark:border-white/10 dark:bg-[#080d14] dark:text-white">{{ old('preview', $isEdit ? $livro->preview : '') }}</textarea>
             </div>
+
+            <div class="mt-4 rounded-md border border-dashed border-slate-300 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#080d14]">
+                <label for="preview_pdf" class="{{ $labelClass }}">Prévia em PDF opcional</label>
+                <input id="preview_pdf" type="file" name="preview_pdf" accept="application/pdf,.pdf" class="block w-full rounded-md border border-slate-200 bg-white p-3 text-sm text-slate-600 file:mr-4 file:rounded-md file:border-0 file:bg-[#1E3A8A] file:px-4 file:py-2 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:text-white hover:border-amber-300 dark:border-white/10 dark:bg-[#0d1420] dark:text-slate-300">
+                <div class="mt-2 flex flex-col gap-2 text-xs text-slate-500 dark:text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+                    <span>PDF até 10MB. Use poucas páginas para demonstrar a obra.</span>
+                    @if($isEdit && $livro->preview_pdf)
+                        <a href="{{ asset('storage/' . $livro->preview_pdf) }}" target="_blank" class="inline-flex items-center gap-1 font-black uppercase tracking-widest text-amber-700 hover:text-amber-900 dark:text-amber-300">
+                            <i class="ph ph-file-pdf"></i>
+                            Ver PDF atual
+                        </a>
+                    @endif
+                </div>
+                <x-input-error :messages="$errors->get('preview_pdf')" class="mt-2" />
+            </div>
         </section>
 
         <section class="rounded-md border border-slate-200 bg-white/95 p-5 shadow-sm dark:border-white/10 dark:bg-[#0d1420]/95 sm:p-6">

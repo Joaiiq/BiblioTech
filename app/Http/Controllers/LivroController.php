@@ -333,9 +333,12 @@ class LivroController extends Controller{
             'editora'         => 'nullable|string|max:255', // NOVO
             'paginas'         => 'nullable|integer|min:1', // NOVO
             'preview'         => 'nullable|string', // NOVO
+            'preview_pdf'     => 'nullable|file|mimes:pdf|max:10240',
         ], [
             'isbn.regex'  => 'O ISBN deve ter exatamente 13 números no formato 000-00-000-0000-0.',
-            'isbn.unique' => 'Este ISBN já está cadastrado no sistema.'
+            'isbn.unique' => 'Este ISBN já está cadastrado no sistema.',
+            'preview_pdf.mimes' => 'A prévia das páginas precisa ser um arquivo PDF.',
+            'preview_pdf.max' => 'A prévia em PDF deve ter no máximo 10MB.',
         ]);
 
         // 2. Prepara TODOS os dados para salvar
@@ -360,6 +363,10 @@ class LivroController extends Controller{
             $dadosLivro['capa'] = $request->file('capa')->store('capas', 'public');
         }
 
+        if ($request->hasFile('preview_pdf') && $request->file('preview_pdf')->isValid()) {
+            $dadosLivro['preview_pdf'] = $request->file('preview_pdf')->store('previews', 'public');
+        }
+
        
         $livro = Livros::create($dadosLivro);
         $livro->categorias()->sync($request->categorias);
@@ -380,7 +387,14 @@ class LivroController extends Controller{
             'livro_id' => $id,
             'titulo' => $titulo,
         ]);
-        return redirect()->back()->with('sucesso', 'Livro removido com sucesso!');
+        $fallback = route('livros.index', ['acervo' => 1]);
+        $previous = url()->previous();
+
+        if ($previous && $previous !== route('livros.show', $id)) {
+            return redirect()->to($previous)->with('sucesso', 'Livro removido com sucesso!');
+        }
+
+        return redirect($fallback)->with('sucesso', 'Livro removido com sucesso!');
     }
 
     public function edit($id)
@@ -416,9 +430,12 @@ class LivroController extends Controller{
             'editora'         => 'nullable|string|max:255', // NOVO
             'paginas'         => 'nullable|integer|min:1',  // NOVO
             'preview'         => 'nullable|string',         // NOVO
+            'preview_pdf'     => 'nullable|file|mimes:pdf|max:10240',
         ], [
             'isbn.regex'  => 'O ISBN deve ter exatamente 13 números no formato 000-00-000-0000-0.',
-            'isbn.unique' => 'Este ISBN já pertence a outro livro.'
+            'isbn.unique' => 'Este ISBN já pertence a outro livro.',
+            'preview_pdf.mimes' => 'A prévia das páginas precisa ser um arquivo PDF.',
+            'preview_pdf.max' => 'A prévia em PDF deve ter no máximo 10MB.',
         ]);
 
         // 2. Prepara os dados atualizados
@@ -444,6 +461,13 @@ class LivroController extends Controller{
                 Storage::disk('public')->delete($livro->capa);
             }
             $dadosLivro['capa'] = $request->file('capa')->store('capas', 'public');
+        }
+
+        if ($request->hasFile('preview_pdf') && $request->file('preview_pdf')->isValid()) {
+            if ($livro->preview_pdf) {
+                Storage::disk('public')->delete($livro->preview_pdf);
+            }
+            $dadosLivro['preview_pdf'] = $request->file('preview_pdf')->store('previews', 'public');
         }
 
         // 4. Salva as alterações
