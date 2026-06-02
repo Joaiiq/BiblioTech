@@ -24,12 +24,18 @@ class EmprestimoSolicitado extends Notification
     public function toArray($notifiable): array
     {
         $titulo = $this->emprestimo->livro?->titulo ?? 'livro';
+        $membro = $this->emprestimo->membro;
+        $nomeMembro = $membro?->nome ?? 'Membro não identificado';
+        $identificacao = $membro?->numero_carteirinha ?: $membro?->email;
 
         return [
             'type' => 'emprestimo_solicitado',
             'emprestimo_id' => $this->emprestimo->id ?? null,
+            'membro_id' => $membro?->id,
+            'membro_nome' => $nomeMembro,
+            'membro_identificacao' => $identificacao,
             'title' => 'Novo pedido de aluguel',
-            'message' => "Um membro solicitou o aluguel do livro '{$titulo}'.",
+            'message' => "O membro {$nomeMembro} solicitou o aluguel do livro '{$titulo}'.",
         ];
     }
 }

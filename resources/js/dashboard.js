@@ -477,7 +477,19 @@ document.addEventListener('DOMContentLoaded', () => {
             globalSearchResults.appendChild(link);
         });
 
+        positionGlobalSearchPanel();
         globalSearchPanel.classList.remove('hidden');
+    }
+
+    function positionGlobalSearchPanel() {
+        if (!globalSearchPanel || !topFilterEl) return;
+
+        const rect = topFilterEl.getBoundingClientRect();
+        globalSearchPanel.style.position = 'fixed';
+        globalSearchPanel.style.left = `${rect.left}px`;
+        globalSearchPanel.style.top = `${rect.bottom + 8}px`;
+        globalSearchPanel.style.width = `${rect.width}px`;
+        globalSearchPanel.style.zIndex = '2147483647';
     }
 
     if (topFilterEl) {
@@ -493,6 +505,8 @@ document.addEventListener('DOMContentLoaded', () => {
         topFilterEl.addEventListener('keydown', e => {
             if (e.key === 'Escape') globalSearchPanel?.classList.add('hidden');
         });
+        window.addEventListener('resize', positionGlobalSearchPanel, { passive: true });
+        window.addEventListener('scroll', positionGlobalSearchPanel, { passive: true });
     }
 
     document.addEventListener('click', e => {

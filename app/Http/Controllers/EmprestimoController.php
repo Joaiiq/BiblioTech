@@ -98,7 +98,7 @@ class EmprestimoController extends Controller
             'valor_multa' => 0, // Começa sem multa
         ]);
 
-        $emprestimo->load('livro');
+        $emprestimo->load(['livro', 'membro']);
         $emprestimo->registrarEvento(
             'emprestimo_solicitado',
             'Solicitação criada',
