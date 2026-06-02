@@ -60,15 +60,17 @@ class EmprestimoAdminController extends Controller
             return redirect()->back()->with('erro', 'A devolução precisa ser solicitada pelo membro.');
         }
 
-        $hoje = Carbon::today();
-        $valorMulta = Emprestimos::calcularMulta($emprestimo->data_devolucao_prevista, $hoje);
+        $dataDevolucaoReal = $emprestimo->return_requested_at
+            ? $emprestimo->return_requested_at->copy()->startOfDay()
+            : Carbon::today();
+        $valorMulta = Emprestimos::calcularMulta($emprestimo->data_devolucao_prevista, $dataDevolucaoReal);
         $diasAtraso = $valorMulta > 0
-            ? (int) $emprestimo->data_devolucao_prevista->copy()->startOfDay()->diffInDays($hoje)
+            ? (int) $emprestimo->data_devolucao_prevista->copy()->startOfDay()->diffInDays($dataDevolucaoReal)
             : 0;
 
         // 3. Atualiza o registro preenchendo a data real e a multa
         $emprestimo->update([
-            'data_devolucao_real' => $hoje,
+            'data_devolucao_real' => $dataDevolucaoReal,
             'valor_multa'         => $valorMulta,
             'status'              => Emprestimos::STATUS_DEVOLVIDO,
         ]);
@@ -77,7 +79,7 @@ class EmprestimoAdminController extends Controller
             'Devolução recebida',
             $valorMulta > 0 ? 'A devolução foi registrada com multa por atraso.' : 'A devolução foi registrada sem multa.',
             [
-                'data_devolucao_real' => $hoje->format('d/m/Y'),
+                'data_devolucao_real' => $dataDevolucaoReal->format('d/m/Y'),
                 'dias_atraso' => $diasAtraso,
                 'multa' => $valorMulta,
             ]

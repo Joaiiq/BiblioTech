@@ -179,3 +179,31 @@ it('registra evento quando aprova emprestimo', function () {
     expect($evento?->evento)->toBe('emprestimo_aprovado');
     expect($evento?->user_id)->toBe($gerente->id);
 });
+
+it('registra devolucao real pela data solicitada pelo membro', function () {
+    $gerente = User::factory()->create(['tipo_usuario' => 'gerente']);
+    $membro = criarMembroParaRegra();
+    $livro = criarLivroParaRegra(['quantidade' => 0]);
+    $dataSolicitada = now()->subDays(2)->startOfDay();
+
+    $emprestimo = Emprestimos::create([
+        'membro_id' => $membro->id,
+        'livro_id' => $livro->id,
+        'status' => Emprestimos::STATUS_DEVOLUCAO_SOLICITADA,
+        'data_emprestimo' => now()->subDays(15)->toDateString(),
+        'data_devolucao_prevista' => now()->subDays(4)->toDateString(),
+        'return_requested_at' => $dataSolicitada,
+        'valor_multa' => 0,
+    ]);
+
+    $this->actingAs($gerente)
+        ->post(route('admin.emprestimos.devolver', $emprestimo))
+        ->assertRedirect()
+        ->assertSessionHas('sucesso');
+
+    $emprestimo->refresh();
+
+    expect($emprestimo->status)->toBe(Emprestimos::STATUS_DEVOLVIDO);
+    expect($emprestimo->data_devolucao_real?->toDateString())->toBe($dataSolicitada->toDateString());
+    expect((float) $emprestimo->valor_multa)->toBe(2.0);
+});
