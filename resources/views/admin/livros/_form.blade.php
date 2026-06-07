@@ -20,6 +20,7 @@
         ->pluck('nome')
         ->join(' / ');
     $isBestseller = (bool) old('e_bestseller', $isEdit ? $livro->e_bestseller : false);
+    $isNacional = (bool) old('e_nacional', $isEdit ? $livro->e_nacional : false);
     $inputClass = 'block h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/20 dark:border-white/10 dark:bg-[#080d14] dark:text-white';
     $labelClass = 'mb-1.5 block text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400';
     $requiredMark = '<span class="ml-1 text-red-500">*</span>';
@@ -181,13 +182,22 @@
                     <x-input-error :messages="$errors->get('capa')" class="mt-2" />
                 </div>
 
-                <label for="e_bestseller" class="flex h-16 cursor-pointer items-center justify-between gap-4 rounded-md border border-amber-200 bg-amber-50 px-4 text-amber-900 transition hover:bg-amber-100 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200 dark:hover:bg-amber-500/20">
-                    <span>
-                        <span class="block text-[10px] font-black uppercase tracking-widest">Destaque</span>
-                        <span class="text-sm font-black">Destaque do acervo</span>
-                    </span>
-                    <input id="e_bestseller" type="checkbox" name="e_bestseller" value="1" @checked($isBestseller) class="h-5 w-5 rounded border-amber-300 text-amber-600 focus:ring-amber-500">
-                </label>
+                <div class="grid gap-4 md:grid-cols-2">
+                    <label for="e_bestseller" class="flex h-16 cursor-pointer items-center justify-between gap-4 rounded-md border border-amber-200 bg-amber-50 px-4 text-amber-900 transition hover:bg-amber-100 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200 dark:hover:bg-amber-500/20">
+                        <span>
+                            <span class="block text-[10px] font-black uppercase tracking-widest">Destaque</span>
+                            <span class="text-sm font-black">Destaque do acervo</span>
+                        </span>
+                        <input id="e_bestseller" type="checkbox" name="e_bestseller" value="1" @checked($isBestseller) class="h-5 w-5 rounded border-amber-300 text-amber-600 focus:ring-amber-500">
+                    </label>
+                    <label for="e_nacional" class="flex h-16 cursor-pointer items-center justify-between gap-4 rounded-md border border-emerald-200 bg-emerald-50 px-4 text-emerald-900 transition hover:bg-emerald-100 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200 dark:hover:bg-emerald-500/20">
+                        <span>
+                            <span class="block text-[10px] font-black uppercase tracking-widest">Livro nacional</span>
+                            <span class="text-sm font-black">Destaque para obras nacionais</span>
+                        </span>
+                        <input id="e_nacional" type="checkbox" name="e_nacional" value="1" @checked($isNacional) class="h-5 w-5 rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500">
+                    </label>
+                </div>
             </div>
         </section>
 
@@ -212,7 +222,10 @@
                         Sem capa
                     </span>
                     <img id="prev-img" src="{{ $coverUrl }}" alt="Capa" class="{{ $coverUrl ? '' : 'hidden' }} h-full w-full object-cover">
-                    <span id="prev-badge" class="{{ $isBestseller ? '' : 'hidden' }} absolute right-3 top-3 rounded-md bg-[#F59E0B] px-2 py-1 text-[10px] font-black uppercase tracking-widest text-slate-950">Destaque</span>
+                    <div class="absolute right-3 top-3 flex flex-col items-end gap-2">
+                        <span id="prev-badge" class="{{ $isBestseller ? '' : 'hidden' }} rounded-md bg-[#F59E0B] px-2 py-1 text-[10px] font-black uppercase tracking-widest text-slate-950">Destaque</span>
+                        <span id="prev-national-badge" class="{{ $isNacional ? '' : 'hidden' }} rounded-md bg-emerald-500 px-2 py-1 text-[10px] font-black uppercase tracking-widest text-white">Nacional</span>
+                    </div>
                     <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2">
                         <span id="prev-cat" class="truncate rounded-md bg-white/90 px-2 py-1 text-[10px] font-black uppercase tracking-widest text-slate-800">{{ $selectedCategoriaLabel ?: 'Categoria' }}</span>
                         <span class="rounded-md bg-emerald-600 px-2 py-1 text-[10px] font-black uppercase tracking-widest text-white"><span id="prev-stock">{{ old('quantidade', $isEdit ? $livro->quantidade : 0) ?: 0 }}</span> ex.</span>
@@ -346,6 +359,9 @@
         const bestsellerInput = document.getElementById('e_bestseller');
         const badge = document.getElementById('prev-badge');
         bestsellerInput?.addEventListener('change', event => badge?.classList.toggle('hidden', !event.target.checked));
+        const nacionalInput = document.getElementById('e_nacional');
+        const nacionalBadge = document.getElementById('prev-national-badge');
+        nacionalInput?.addEventListener('change', event => nacionalBadge?.classList.toggle('hidden', !event.target.checked));
 
         const capaInput = document.getElementById('capa');
         capaInput?.addEventListener('change', event => {

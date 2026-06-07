@@ -37,6 +37,7 @@
         $solicitacoesPendentes = \App\Models\Emprestimos::where('status', \App\Models\Emprestimos::STATUS_SOLICITADO)->count();
         $categoriaMaisViva = $categoriasMaisAcessadas->first()->categoria ?? $categorias->first() ?? 'Acervo';
         $livroDestaque = ($bestsellers->first() ?? $livrosRecentes->first() ?? $livros->first());
+        $totalNacionais = isset($livrosNacionais) ? $livrosNacionais->count() : 0;
     @endphp
 
     {{-- ══════════════════════════════════════════════════════
@@ -286,9 +287,14 @@
                                                 <i class="ph ph-book-open-text text-5xl text-blue-700/50 dark:text-blue-300/40"></i>
                                             </div>
                                         @endif
-                                        @if($vitrinePrincipal->e_bestseller)
+                                @if($vitrinePrincipal->e_bestseller)
                                             <span class="absolute left-3 top-3 rounded-md bg-[#F59E0B] px-2 py-1 text-[10px] font-black uppercase tracking-widest text-slate-950">
                                                 Destaque
+                                            </span>
+                                        @endif
+                                        @if($vitrinePrincipal->e_nacional)
+                                            <span class="absolute right-3 top-3 rounded-md bg-emerald-500 px-2 py-1 text-[10px] font-black uppercase tracking-widest text-white">
+                                                Nacional
                                             </span>
                                         @endif
                                     </div>
@@ -394,6 +400,43 @@
                                 </div>
                             </div>
                         </section>
+
+                        @if(isset($livrosNacionais) && $livrosNacionais->isNotEmpty())
+                        <section class="rounded-md border border-emerald-200 bg-white p-4 dark:border-emerald-500/20 dark:bg-[#0d1420]">
+                            <div class="mb-3 flex items-center justify-between gap-3">
+                                <div>
+                                    <p class="text-[10px] font-black uppercase tracking-[.18em] text-emerald-700 dark:text-emerald-300">Curadoria</p>
+                                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Livros nacionais</h3>
+                                </div>
+                                <span class="inline-flex items-center gap-1 rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">
+                                    <i class="ph ph-flag"></i>
+                                    {{ $totalNacionais }} títulos
+                                </span>
+                            </div>
+                            <div class="space-y-2">
+                                @foreach($livrosNacionais->take(4) as $livro)
+                                    <a href="{{ route('livros.show', $livro->id) }}" class="group flex items-center gap-3 rounded-md border border-slate-200 bg-slate-50 p-2 transition hover:border-emerald-300 hover:bg-emerald-50 dark:border-white/10 dark:bg-white/[.03] dark:hover:border-emerald-500/40 dark:hover:bg-emerald-500/10">
+                                        <div class="h-14 w-10 shrink-0 overflow-hidden rounded bg-slate-200 dark:bg-white/10">
+                                            @if($livro->capa)
+                                                <img src="{{ asset('storage/' . $livro->capa) }}" alt="{{ $livro->titulo }}" class="h-full w-full object-cover">
+                                            @else
+                                                <div class="flex h-full w-full items-center justify-center">
+                                                    <i class="ph ph-book text-slate-400"></i>
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <div class="flex items-center gap-2">
+                                                <p class="truncate text-sm font-black text-slate-900 dark:text-white">{{ $livro->titulo }}</p>
+                                                <span class="rounded-md bg-emerald-500 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-white">Nacional</span>
+                                            </div>
+                                            <p class="truncate text-[11px] text-slate-500 dark:text-slate-400">{{ $livro->autor?->nome ?? 'Autor não informado' }}</p>
+                                        </div>
+                                    </a>
+                                @endforeach
+                            </div>
+                        </section>
+                        @endif
                     </div>
                 @endif
 
@@ -881,6 +924,10 @@
                                 <i class="ph ph-star"></i>
                                 Destaques
                             </button>
+                            <button type="button" data-quick-filter="nacional" class="inline-flex h-9 items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 text-[10px] font-black uppercase tracking-widest text-emerald-700 transition hover:bg-emerald-100 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300 dark:hover:bg-emerald-500/20">
+                                <i class="ph ph-flag"></i>
+                                Nacionais
+                            </button>
                             <button type="button" data-quick-filter="fila" class="inline-flex h-9 items-center gap-2 rounded-md border border-blue-200 bg-blue-50 px-3 text-[10px] font-black uppercase tracking-widest text-blue-700 transition hover:bg-blue-100 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-300 dark:hover:bg-blue-500/20">
                                 <i class="ph ph-bookmark-simple"></i>
                                 Com fila
@@ -929,6 +976,7 @@
                         <select id="filter-destaque">
                             <option value="">Todos</option>
                             <option value="bestseller">Destaques</option>
+                            <option value="nacional">Nacionais</option>
                             <option value="fila">Com fila</option>
                         </select>
                     </div>
@@ -966,6 +1014,7 @@
                          data-autor-id="{{ $livro->autor_id }}"
                          data-categoria="{{ $livro->categoriasFiltro() ?: 'Geral' }}"
                          data-bestseller="{{ $livro->e_bestseller ? '1' : '0' }}"
+                         data-nacional="{{ $livro->e_nacional ? '1' : '0' }}"
                          data-disponivel="{{ (int) $livro->quantidade > 0 ? '1' : '0' }}"
                          data-quantidade="{{ (int) $livro->quantidade }}"
                          data-reservas="{{ (int) ($reservasPorLivro[$livro->id] ?? 0) }}"
@@ -981,6 +1030,9 @@
                                 <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-slate-950/70 to-transparent"></div>
                                 @if($livro->e_bestseller)
                                 <div class="absolute top-3 left-3 px-2 py-1 rounded-md bg-amber-500 text-slate-900 text-[9px] font-black uppercase tracking-[.08em]">Destaque</div>
+                                @endif
+                                @if($livro->e_nacional)
+                                <div class="absolute top-3 {{ $livro->e_bestseller ? 'left-[92px]' : 'left-3' }} px-2 py-1 rounded-md bg-emerald-500 text-white text-[9px] font-black uppercase tracking-[.08em]">Nacional</div>
                                 @endif
                                 @if(($reservasPorLivro[$livro->id] ?? 0) > 0)
                                     <div class="absolute top-3 right-3 px-2 py-1 rounded-md bg-white/90 text-amber-800 text-[9px] font-black uppercase tracking-[.08em]">

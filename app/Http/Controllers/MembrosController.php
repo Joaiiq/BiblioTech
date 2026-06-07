@@ -58,7 +58,9 @@ class MembrosController extends Controller
             'email' => $membro->email,
         ]);
 
-        return redirect()->back()->with('sucesso', 'Membro cadastrado com sucesso! Carteirinha gerada: ' . $numeroCarteirinha);
+        return redirect()
+            ->route('admin.operacao.index', ['membro_id' => $membro->id])
+            ->with('sucesso', 'Membro cadastrado com sucesso! Carteirinha gerada: ' . $numeroCarteirinha);
     }
 
     public function update(Request $request, Membros $membro)

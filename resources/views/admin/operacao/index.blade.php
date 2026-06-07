@@ -68,7 +68,7 @@
                         <select id="balcao_membro_id" name="membro_id" required class="block h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/20 dark:border-white/10 dark:bg-[#080d14] dark:text-white">
                             <option value="">Selecione o membro</option>
                             @foreach($membrosBalcao as $membro)
-                                <option value="{{ $membro->id }}">{{ $membro->nome }}{{ $membro->numero_carteirinha ? ' · ' . $membro->numero_carteirinha : '' }}{{ $membro->cpf ? ' · CPF ' . $membro->cpf : '' }}</option>
+                                <option value="{{ $membro->id }}" @selected((string) request('membro_id') === (string) $membro->id)>{{ $membro->nome }}{{ $membro->numero_carteirinha ? ' · ' . $membro->numero_carteirinha : '' }}{{ $membro->cpf ? ' · CPF ' . $membro->cpf : '' }}</option>
                             @endforeach
                         </select>
                     </div>

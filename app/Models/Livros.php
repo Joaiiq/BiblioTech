@@ -32,6 +32,7 @@ class Livros extends Model
         'autor_id',
         'isbn',
         'e_bestseller',
+        'e_nacional',
         'capa',
         'categoria',       
         'quantidade',      
@@ -48,6 +49,7 @@ class Livros extends Model
     // Converte os dados automaticamente para facilitar a nossa vida
     protected $casts = [
         'e_bestseller'    => 'boolean',
+        'e_nacional'      => 'boolean',
         'quantidade'      => 'integer',
         'data_publicacao' => 'date',
         'paginas'         => 'integer',

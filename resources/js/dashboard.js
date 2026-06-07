@@ -265,7 +265,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 && (!categoria || (c.dataset.categoria || '').split('|').includes(categoria))
                 && (!autorId || String(c.dataset.autorId) === String(autorId))
                 && (!disponibilidade || (disponibilidade === 'disponivel' ? c.dataset.disponivel === '1' : c.dataset.disponivel === '0'))
-                && (!destaque || (destaque === 'bestseller' ? c.dataset.bestseller === '1' : Number(c.dataset.reservas || 0) > 0));
+                && (!destaque || (
+                    destaque === 'bestseller'
+                        ? c.dataset.bestseller === '1'
+                        : destaque === 'nacional'
+                            ? c.dataset.nacional === '1'
+                            : Number(c.dataset.reservas || 0) > 0
+                ));
             c.style.display = ok ? '' : 'none';
             if (ok) visibleGrid++;
         });
@@ -275,7 +281,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 && (!categoria || (c.dataset.categoria || '').split('|').includes(categoria))
                 && (!autorId || String(c.dataset.autorId) === String(autorId))
                 && (!disponibilidade || (disponibilidade === 'disponivel' ? c.dataset.disponivel === '1' : c.dataset.disponivel === '0'))
-                && (!destaque || (destaque === 'bestseller' ? c.dataset.bestseller === '1' : Number(c.dataset.reservas || 0) > 0));
+                && (!destaque || (
+                    destaque === 'bestseller'
+                        ? c.dataset.bestseller === '1'
+                        : destaque === 'nacional'
+                            ? c.dataset.nacional === '1'
+                            : Number(c.dataset.reservas || 0) > 0
+                ));
             c.style.display = ok ? '' : 'none';
             if (ok) visibleSwiper++;
         });
@@ -306,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (categoria) chips.push({ label: categoria, clear: () => tsCategoria.setValue('') });
         if (autorId) chips.push({ label: tsAutor.getOption(autorId)?.textContent?.trim() || 'Autor', clear: () => tsAutor.setValue('') });
         if (disponibilidade) chips.push({ label: disponibilidade === 'disponivel' ? 'Disponíveis' : 'Indisponíveis', clear: () => tsDisponibilidade.setValue('') });
-        if (destaque) chips.push({ label: destaque === 'bestseller' ? 'Destaques' : 'Com fila', clear: () => tsDestaque.setValue('') });
+        if (destaque) chips.push({ label: destaque === 'bestseller' ? 'Destaques' : destaque === 'nacional' ? 'Nacionais' : 'Com fila', clear: () => tsDestaque.setValue('') });
         if (chips.length && chipsEl) {
             chips.forEach(({ label, clear }) => {
                 const b = document.createElement('button');
@@ -335,6 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const type = btn.getAttribute('data-quick-filter');
             const active = (type === 'disponivel' && disponibilidade === 'disponivel')
                 || (type === 'bestseller' && destaque === 'bestseller')
+                || (type === 'nacional' && destaque === 'nacional')
                 || (type === 'fila' && destaque === 'fila');
             btn.classList.toggle('ring-2', active);
             btn.classList.toggle('ring-[#1E3A8A]', active);
@@ -363,6 +376,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (type === 'bestseller') {
                 tsDestaque.setValue(tsDestaque.getValue() === 'bestseller' ? '' : 'bestseller');
+            }
+            if (type === 'nacional') {
+                tsDestaque.setValue(tsDestaque.getValue() === 'nacional' ? '' : 'nacional');
             }
             if (type === 'fila') {
                 tsDestaque.setValue(tsDestaque.getValue() === 'fila' ? '' : 'fila');

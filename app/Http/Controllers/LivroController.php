@@ -23,6 +23,7 @@ class LivroController extends Controller{
 
         $livros = Livros::with(['autor', 'categorias'])->latest()->get();
         $bestsellers = Livros::where('e_bestseller', true)->with(['autor', 'categorias'])->limit(12)->get();
+        $livrosNacionais = Livros::where('e_nacional', true)->with(['autor', 'categorias'])->latest()->limit(10)->get();
         $livrosRecentes = Livros::latest()->with(['autor', 'categorias'])->limit(12)->get();
         $categorias = Categoria::nomesDisponiveis();
         $autores = Autor::withCount('livros')->latest()->get();
@@ -216,6 +217,7 @@ class LivroController extends Controller{
         return view('dashboard', compact(
             'livros',
             'bestsellers',
+            'livrosNacionais',
             'livrosRecentes',
             'categorias',
             'autores',
@@ -344,6 +346,7 @@ class LivroController extends Controller{
             'paginas'         => 'nullable|integer|min:1', // NOVO
             'preview'         => 'nullable|string', // NOVO
             'preview_pdf'     => 'nullable|file|mimes:pdf|max:10240',
+            'e_nacional'      => 'nullable|boolean',
         ], [
             'isbn.regex'  => 'O ISBN deve ter exatamente 13 números no formato 000-00-000-0000-0.',
             'isbn.unique' => 'Este ISBN já está cadastrado no sistema.',
@@ -357,6 +360,7 @@ class LivroController extends Controller{
             'autor_id'        => $request->autor_id,
             'isbn'            => $request->isbn,
             'e_bestseller'    => $request->has('e_bestseller'),
+            'e_nacional'      => $request->has('e_nacional'),
             'categoria'       => Categoria::whereKey($request->categorias[0])->value('nome'),
             'quantidade'      => $request->quantidade,      // NOVO
             'estante'         => $request->estante,
@@ -441,6 +445,7 @@ class LivroController extends Controller{
             'paginas'         => 'nullable|integer|min:1',  // NOVO
             'preview'         => 'nullable|string',         // NOVO
             'preview_pdf'     => 'nullable|file|mimes:pdf|max:10240',
+            'e_nacional'      => 'nullable|boolean',
         ], [
             'isbn.regex'  => 'O ISBN deve ter exatamente 13 números no formato 000-00-000-0000-0.',
             'isbn.unique' => 'Este ISBN já pertence a outro livro.',
@@ -454,6 +459,7 @@ class LivroController extends Controller{
             'autor_id'        => $request->autor_id,
             'isbn'            => $request->isbn,
             'e_bestseller'    => $request->has('e_bestseller'),
+            'e_nacional'      => $request->has('e_nacional'),
             'categoria'       => Categoria::whereKey($request->categorias[0])->value('nome'),
             'quantidade'      => $request->quantidade,      // NOVO
             'estante'         => $request->estante,
