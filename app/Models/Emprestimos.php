@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Notifications\ReservaDisponivel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Livros;
 use App\Models\Membros;
 use Carbon\CarbonInterface;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class Emprestimos extends Model
@@ -207,27 +209,84 @@ class Emprestimos extends Model
         }
 
         $pendentes->each(function (self $emprestimo): void {
-            $emprestimo->update([
-                'status' => self::STATUS_CANCELADO,
-                'rejected_reason' => 'Retirada não realizada dentro do prazo.',
-                'rejected_at' => now(),
-            ]);
+            DB::transaction(function () use ($emprestimo): void {
+                $emprestimo->update([
+                    'status' => self::STATUS_CANCELADO,
+                    'rejected_reason' => 'Retirada não realizada dentro do prazo.',
+                    'rejected_at' => now(),
+                ]);
 
-            if ($emprestimo->livro) {
-                $emprestimo->livro->increment('quantidade');
-            }
+                if ($emprestimo->livro) {
+                    $emprestimo->livro->increment('quantidade');
+                    self::atenderProximaReservaDaFila($emprestimo->livro->fresh());
+                }
 
-            $emprestimo->registrarEvento(
-                'retirada_expirada',
-                'Prazo de retirada expirado',
-                'O sistema cancelou a retirada porque o membro não buscou o exemplar no prazo.',
-                [
-                    'limite_retirada' => $emprestimo->data_limite_retirada?->format('d/m/Y'),
-                ]
-            );
+                $emprestimo->registrarEvento(
+                    'retirada_expirada',
+                    'Prazo de retirada expirado',
+                    'O sistema cancelou a retirada porque o membro não buscou o exemplar no prazo.',
+                    [
+                        'limite_retirada' => $emprestimo->data_limite_retirada?->format('d/m/Y'),
+                    ]
+                );
+            });
         });
 
         return $pendentes->count();
+    }
+
+    private static function atenderProximaReservaDaFila(?Livros $livro): void
+    {
+        if (!$livro || !Schema::hasTable('reservas') || (int) $livro->quantidade <= 0) {
+            return;
+        }
+
+        $reserva = Reserva::with(['membro', 'livro'])
+            ->ativas()
+            ->where('livro_id', $livro->id)
+            ->orderBy('created_at')
+            ->first();
+
+        if (!$reserva || !$reserva->membro) {
+            return;
+        }
+
+        if (self::impedimentoParaNovoEmprestimo($reserva->membro_id, $reserva->livro_id)) {
+            return;
+        }
+
+        $limiteRetirada = self::prazoLimiteRetirada();
+
+        $emprestimo = self::create([
+            'membro_id' => $reserva->membro_id,
+            'livro_id' => $reserva->livro_id,
+            'status' => self::STATUS_APROVADO,
+            'data_emprestimo' => now()->startOfDay(),
+            'data_devolucao_prevista' => $limiteRetirada,
+            'data_limite_retirada' => $limiteRetirada,
+            'data_devolucao_real' => null,
+            'valor_multa' => 0,
+            'approved_by' => null,
+            'approved_at' => now(),
+        ]);
+
+        $livro->decrement('quantidade');
+        $reserva->update(['status' => Reserva::STATUS_ATENDIDA]);
+
+        $emprestimo->load('livro');
+        $reserva->load('livro');
+
+        $emprestimo->registrarEvento(
+            'reserva_atendida',
+            'Reserva atendida',
+            'O sistema liberou a próxima reserva da fila após uma retirada expirar.',
+            [
+                'reserva_id' => $reserva->id,
+                'origem' => 'fila_automatica',
+            ]
+        );
+
+        $reserva->membro->notify(new ReservaDisponivel($reserva, $emprestimo));
     }
 
     // Relação 1: O Empréstimo tem um Livro

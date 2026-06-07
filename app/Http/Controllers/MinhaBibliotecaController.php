@@ -13,6 +13,8 @@ class MinhaBibliotecaController extends Controller
 {
     public function index()
     {
+        Emprestimos::expirarRetiradasPendentes();
+
         $membro = auth()->guard('membro')->user();
 
         $emprestimos = Emprestimos::with(['livro.autor', 'pagamentos'])
@@ -196,6 +198,8 @@ class MinhaBibliotecaController extends Controller
 
     public function situacao()
     {
+        Emprestimos::expirarRetiradasPendentes();
+
         $membro = auth()->guard('membro')->user();
 
         $emprestimos = Emprestimos::with(['livro.autor', 'pagamentos'])

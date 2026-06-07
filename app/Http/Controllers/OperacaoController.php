@@ -45,7 +45,7 @@ class OperacaoController extends Controller
             ->take(8)
             ->get();
 
-        $multasPendentes = Emprestimos::with(['livro.autor', 'membro'])
+        $multasPendentes = Emprestimos::with(['livro.autor', 'membro', 'pagamentoAprovado', 'pagamentos'])
             ->where('valor_multa', '>', 0)
             ->whereNull('multa_paga_em')
             ->orderByDesc('valor_multa')

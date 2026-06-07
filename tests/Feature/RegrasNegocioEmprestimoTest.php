@@ -4,6 +4,7 @@ use App\Models\Emprestimos;
 use App\Models\Livros;
 use App\Models\Membros;
 use App\Models\Pagamento;
+use App\Models\Reserva;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -442,6 +443,51 @@ it('cancela retirada aprovada quando o membro nao busca no prazo', function () {
     expect($emprestimo->status)->toBe(Emprestimos::STATUS_CANCELADO);
     expect($emprestimo->rejected_reason)->toBe('Retirada não realizada dentro do prazo.');
     expect($livro->fresh()->quantidade)->toBe(1);
+
+    \Carbon\Carbon::setTestNow();
+});
+
+it('atende a proxima reserva quando uma retirada expira', function () {
+    \Carbon\Carbon::setTestNow(\Carbon\Carbon::create(2026, 6, 7));
+
+    $membroOriginal = criarMembroParaRegra();
+    $membroFila = criarMembroParaRegra();
+    $livro = criarLivroParaRegra(['quantidade' => 0]);
+
+    $emprestimoExpirado = Emprestimos::create([
+        'membro_id' => $membroOriginal->id,
+        'livro_id' => $livro->id,
+        'status' => Emprestimos::STATUS_APROVADO,
+        'data_emprestimo' => '2026-06-03',
+        'data_devolucao_prevista' => '2026-06-17',
+        'data_limite_retirada' => '2026-06-06',
+        'approved_at' => now()->subDays(4),
+        'valor_multa' => 0,
+    ]);
+
+    $reserva = Reserva::create([
+        'membro_id' => $membroFila->id,
+        'livro_id' => $livro->id,
+        'status' => Reserva::STATUS_ATIVA,
+    ]);
+
+    $cancelados = Emprestimos::expirarRetiradasPendentes();
+
+    $emprestimoExpirado->refresh();
+    $reserva->refresh();
+
+    $novoEmprestimo = Emprestimos::query()
+        ->where('membro_id', $membroFila->id)
+        ->where('livro_id', $livro->id)
+        ->where('status', Emprestimos::STATUS_APROVADO)
+        ->first();
+
+    expect($cancelados)->toBe(1);
+    expect($emprestimoExpirado->status)->toBe(Emprestimos::STATUS_CANCELADO);
+    expect($reserva->status)->toBe(Reserva::STATUS_ATENDIDA);
+    expect($novoEmprestimo)->not->toBeNull();
+    expect($novoEmprestimo?->data_limite_retirada?->toDateString())->toBe('2026-06-10');
+    expect($livro->fresh()->quantidade)->toBe(0);
 
     \Carbon\Carbon::setTestNow();
 });

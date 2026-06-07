@@ -369,13 +369,30 @@
                                             Perfil
                                         </a>
                                     @endif
-                                    <form action="{{ route('admin.emprestimos.regularizar-multa', $multa->id) }}" method="POST" data-confirm="loan" data-title="Regularizar multa?" data-text="A multa será marcada como paga.">
-                                        @csrf
-                                        <button class="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-emerald-600 px-3 text-[10px] font-black uppercase tracking-widest text-white transition hover:bg-emerald-700">
-                                            <i class="ph ph-check-circle"></i>
-                                            Regularizar
-                                        </button>
-                                    </form>
+                                    @php
+                                        $pagamentoPendente = $multa->pagamentos->firstWhere('status', \App\Models\Pagamento::STATUS_PENDENTE);
+                                        $pagamentoAprovado = $multa->pagamentoAprovado;
+                                    @endphp
+
+                                    @if($pagamentoPendente)
+                                        <span class="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 text-[10px] font-black uppercase tracking-widest text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300">
+                                            <i class="ph ph-hourglass-medium"></i>
+                                            Em análise
+                                        </span>
+                                    @elseif($pagamentoAprovado)
+                                        <form action="{{ route('admin.emprestimos.regularizar-multa', $multa->id) }}" method="POST" data-confirm="loan" data-title="Sincronizar multa?" data-text="Use isto apenas para multas antigas aprovadas antes da regra atual.">
+                                            @csrf
+                                            <button class="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-emerald-600 px-3 text-[10px] font-black uppercase tracking-widest text-white transition hover:bg-emerald-700">
+                                                <i class="ph ph-arrows-clockwise"></i>
+                                                Sincronizar
+                                            </button>
+                                        </form>
+                                    @else
+                                        <span class="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
+                                            <i class="ph ph-clock"></i>
+                                            Aguardando pagamento
+                                        </span>
+                                    @endif
                                 </div>
                             </article>
                         @empty

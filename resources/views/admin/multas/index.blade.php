@@ -224,13 +224,10 @@
                                                             </button>
                                                         </form>
                                                     @else
-                                                        <form action="{{ route('admin.emprestimos.regularizar-multa', $multa->id) }}" method="POST" data-confirm="loan" data-title="Regularizar multa?" data-text="A multa será marcada como paga manualmente.">
-                                                            @csrf
-                                                            <button type="submit" class="inline-flex h-9 items-center gap-2 rounded-md bg-slate-700 px-3 text-[10px] font-black uppercase tracking-widest text-white transition hover:bg-slate-800">
-                                                                <i class="ph ph-check-circle"></i>
-                                                                Baixa manual
-                                                            </button>
-                                                        </form>
+                                                        <span class="inline-flex h-9 items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
+                                                            <i class="ph ph-clock"></i>
+                                                            Aguardando pagamento
+                                                        </span>
                                                     @endif
                                                 @endif
                                             </div>

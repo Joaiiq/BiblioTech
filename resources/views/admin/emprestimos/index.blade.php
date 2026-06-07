@@ -666,7 +666,7 @@
                                                 </p>
                                             @elseif($pagamentoAprovado)
                                                 <p class="mt-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
-                                                    Pagamento aprovado. Falta sincronizar.
+                                                    Pagamento aprovado antes da regra atual.
                                                 </p>
                                             @else
                                                 <p class="mt-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400">

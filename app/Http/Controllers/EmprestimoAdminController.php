@@ -341,13 +341,15 @@ class EmprestimoAdminController extends Controller
             return redirect()->back()->with('erro', $motivo);
         }
 
+        $limiteRetirada = Emprestimos::prazoLimiteRetirada();
+
         $emprestimo = Emprestimos::create([
             'membro_id' => $reserva->membro_id,
             'livro_id' => $reserva->livro_id,
             'status' => Emprestimos::STATUS_APROVADO,
-            'data_emprestimo' => null,
-            'data_devolucao_prevista' => null,
-            'data_limite_retirada' => Emprestimos::prazoLimiteRetirada(),
+            'data_emprestimo' => now()->startOfDay(),
+            'data_devolucao_prevista' => $limiteRetirada,
+            'data_limite_retirada' => $limiteRetirada,
             'data_devolucao_real' => null,
             'valor_multa' => 0,
             'approved_by' => auth()->guard('web')->id(),
