@@ -204,7 +204,11 @@
                                             Perfil
                                         </a>
                                     @endif
-                                    @if($emprestimo->status === \App\Models\Emprestimos::STATUS_DEVOLUCAO_SOLICITADA)
+                                    @if(in_array($emprestimo->status, [
+                                        \App\Models\Emprestimos::STATUS_RETIRADO,
+                                        \App\Models\Emprestimos::STATUS_EM_USO,
+                                        \App\Models\Emprestimos::STATUS_DEVOLUCAO_SOLICITADA,
+                                    ], true))
                                         <form action="{{ route('admin.emprestimos.devolver', $emprestimo->id) }}" method="POST" data-confirm="loan" data-title="Receber livro atrasado?" data-text="O sistema vai registrar a devolução e calcular a multa.">
                                             @csrf
                                             <button class="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-[#1E3A8A] px-3 text-[10px] font-black uppercase tracking-widest text-white transition hover:bg-blue-800">
@@ -213,7 +217,7 @@
                                             </button>
                                         </form>
                                     @else
-                                        <span class="inline-flex h-9 items-center rounded-md border border-slate-200 bg-slate-50 px-3 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">Aguardando membro</span>
+                                        <span class="inline-flex h-9 items-center rounded-md border border-slate-200 bg-slate-50 px-3 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">Sem ação</span>
                                     @endif
                                 </div>
                             </article>

@@ -23,6 +23,8 @@ class EmprestimoAdminController extends Controller
      */
     public function index()
     {
+        Emprestimos::expirarRetiradasPendentes();
+
         // Traz os empréstimos e já carrega os relacionamentos (livro, e o user dentro de membro)
         // Ordena para que os livros NÃO devolvidos apareçam no topo da lista
         $emprestimos = Emprestimos::with([
@@ -59,8 +61,12 @@ class EmprestimoAdminController extends Controller
             return redirect()->back()->with('erro', 'Este livro já consta como devolvido no sistema!');
         }
 
-        if ($emprestimo->status !== Emprestimos::STATUS_DEVOLUCAO_SOLICITADA) {
-            return redirect()->back()->with('erro', 'A devolução precisa ser solicitada pelo membro.');
+        if (!in_array($emprestimo->status, [
+            Emprestimos::STATUS_RETIRADO,
+            Emprestimos::STATUS_EM_USO,
+            Emprestimos::STATUS_DEVOLUCAO_SOLICITADA,
+        ], true)) {
+            return redirect()->back()->with('erro', 'Este empréstimo não está em uma etapa válida para devolução no balcão.');
         }
 
         $dataDevolucaoReal = $emprestimo->return_requested_at
@@ -80,7 +86,9 @@ class EmprestimoAdminController extends Controller
         $emprestimo->registrarEvento(
             'emprestimo_devolvido',
             'Devolução recebida',
-            $valorMulta > 0 ? 'A devolução foi registrada com multa por atraso.' : 'A devolução foi registrada sem multa.',
+            $valorMulta > 0
+                ? 'A devolução foi registrada com multa por atraso.'
+                : ($emprestimo->return_requested_at ? 'A devolução foi registrada após solicitação do membro.' : 'A devolução foi registrada diretamente no balcão.'),
             [
                 'data_devolucao_real' => $dataDevolucaoReal->format('d/m/Y'),
                 'dias_atraso' => $diasAtraso,

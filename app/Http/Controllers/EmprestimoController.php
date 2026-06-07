@@ -237,6 +237,8 @@ class EmprestimoController extends Controller
             return $response;
         }
 
+        Emprestimos::expirarRetiradasPendentes();
+
         $membro = auth()->guard('membro')->user();
 
         $emprestimos = Emprestimos::with('livro.autor')

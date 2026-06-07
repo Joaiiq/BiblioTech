@@ -11,6 +11,8 @@ class OperacaoController extends Controller
 {
     public function index()
     {
+        Emprestimos::expirarRetiradasPendentes();
+
         $solicitacoes = Emprestimos::with(['livro.autor', 'membro'])
             ->where('status', Emprestimos::STATUS_SOLICITADO)
             ->latest()

@@ -388,3 +388,60 @@ it('registra devolucao real pela data solicitada pelo membro', function () {
     expect($emprestimo->data_devolucao_real?->toDateString())->toBe($dataSolicitada->toDateString());
     expect((float) $emprestimo->valor_multa)->toBe(2.0);
 });
+
+it('permite devolucao direta no balcao sem solicitacao previa', function () {
+    \Carbon\Carbon::setTestNow(\Carbon\Carbon::create(2026, 6, 7));
+
+    $bibliotecario = User::factory()->create(['tipo_usuario' => 'bibliotecario']);
+    $membro = criarMembroParaRegra();
+    $livro = criarLivroParaRegra(['quantidade' => 0]);
+    $emprestimo = Emprestimos::create([
+        'membro_id' => $membro->id,
+        'livro_id' => $livro->id,
+        'status' => Emprestimos::STATUS_EM_USO,
+        'data_emprestimo' => '2026-05-25',
+        'data_devolucao_prevista' => '2026-06-08',
+        'valor_multa' => 0,
+    ]);
+
+    $this->actingAs($bibliotecario)
+        ->post(route('admin.emprestimos.devolver', $emprestimo))
+        ->assertRedirect()
+        ->assertSessionHas('sucesso', 'Livro devolvido com sucesso!');
+
+    $emprestimo->refresh();
+
+    expect($emprestimo->status)->toBe(Emprestimos::STATUS_DEVOLVIDO);
+    expect($emprestimo->data_devolucao_real?->toDateString())->toBe('2026-06-07');
+    expect($livro->fresh()->quantidade)->toBe(1);
+
+    \Carbon\Carbon::setTestNow();
+});
+
+it('cancela retirada aprovada quando o membro nao busca no prazo', function () {
+    \Carbon\Carbon::setTestNow(\Carbon\Carbon::create(2026, 6, 7));
+
+    $membro = criarMembroParaRegra();
+    $livro = criarLivroParaRegra(['quantidade' => 0]);
+    $emprestimo = Emprestimos::create([
+        'membro_id' => $membro->id,
+        'livro_id' => $livro->id,
+        'status' => Emprestimos::STATUS_APROVADO,
+        'data_emprestimo' => '2026-06-03',
+        'data_devolucao_prevista' => '2026-06-17',
+        'data_limite_retirada' => '2026-06-06',
+        'approved_at' => now()->subDays(4),
+        'valor_multa' => 0,
+    ]);
+
+    $cancelados = Emprestimos::expirarRetiradasPendentes();
+
+    $emprestimo->refresh();
+
+    expect($cancelados)->toBe(1);
+    expect($emprestimo->status)->toBe(Emprestimos::STATUS_CANCELADO);
+    expect($emprestimo->rejected_reason)->toBe('Retirada não realizada dentro do prazo.');
+    expect($livro->fresh()->quantidade)->toBe(1);
+
+    \Carbon\Carbon::setTestNow();
+});

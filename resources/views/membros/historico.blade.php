@@ -308,6 +308,12 @@
                                         <p><span class="font-black uppercase tracking-wider text-slate-500">Devolução:</span> <strong class="text-slate-900 dark:text-white">{{ $emp->data_devolucao_real ? $emp->data_devolucao_real->format('d/m/Y') : 'Pendente' }}</strong></p>
                                     </div>
 
+                                    @if($status === \App\Models\Emprestimos::STATUS_APROVADO && $emp->data_limite_retirada)
+                                        <p class="mt-3 text-xs font-semibold text-amber-700 dark:text-amber-300">
+                                            Retire presencialmente até {{ $emp->data_limite_retirada->format('d/m/Y') }}.
+                                        </p>
+                                    @endif
+
                                     @if($diasRestantes !== null && ! $concluido)
                                         <p class="mt-3 text-xs font-semibold {{ $atrasado ? 'text-red-700 dark:text-red-300' : 'text-slate-500 dark:text-slate-400' }}">
                                             @if($atrasado)
@@ -346,10 +352,20 @@
                                             Cancelar pedido
                                         </button>
                                     </form>
+                                @elseif($status === \App\Models\Emprestimos::STATUS_APROVADO)
+                                    <span class="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 text-[10px] font-black uppercase tracking-widest text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300">
+                                        <i class="ph ph-bag"></i>
+                                        Retirada no balcão
+                                    </span>
+                                @elseif(in_array($status, [\App\Models\Emprestimos::STATUS_REJEITADO, \App\Models\Emprestimos::STATUS_CANCELADO], true))
+                                    <span class="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-slate-200 bg-slate-100 px-3 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
+                                        <i class="ph ph-minus-circle"></i>
+                                        Solicitação encerrada
+                                    </span>
                                 @else
                                     <span class="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-slate-200 bg-slate-100 px-3 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:border-white/10 dark:bg-white/5 dark:text-slate-500">
                                         <i class="ph ph-clock"></i>
-                                        Aguardando retirada
+                                        Sem ação disponível
                                     </span>
                                 @endif
 

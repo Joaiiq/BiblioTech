@@ -19,6 +19,8 @@ use App\Models\AuditLog;
 class LivroController extends Controller{
     public function dashboard()
     {
+        Emprestimos::expirarRetiradasPendentes();
+
         $livros = Livros::with(['autor', 'categorias'])->latest()->get();
         $bestsellers = Livros::where('e_bestseller', true)->with(['autor', 'categorias'])->limit(12)->get();
         $livrosRecentes = Livros::latest()->with(['autor', 'categorias'])->limit(12)->get();
@@ -167,11 +169,19 @@ class LivroController extends Controller{
             }
 
             if ($aprovadosRetirada > 0) {
+                $proximaRetirada = Emprestimos::where('membro_id', $membroId)
+                    ->where('status', Emprestimos::STATUS_APROVADO)
+                    ->whereNotNull('data_limite_retirada')
+                    ->orderBy('data_limite_retirada')
+                    ->first();
+
                 $alertasMembro->push([
                     'tipo' => 'info',
                     'icone' => 'ph-bag',
                     'titulo' => 'Livro aguardando retirada',
-                    'texto' => 'Seu pedido foi aprovado. Passe na biblioteca para retirar o exemplar.',
+                    'texto' => $proximaRetirada?->data_limite_retirada
+                        ? 'Seu pedido foi aprovado. Retire o exemplar presencialmente até ' . $proximaRetirada->data_limite_retirada->format('d/m/Y') . '.'
+                        : 'Seu pedido foi aprovado. Passe na biblioteca para retirar o exemplar.',
                     'acao' => 'Ver pedidos',
                     'url' => route('emprestimos.historico'),
                 ]);

@@ -704,7 +704,7 @@
                                         <form action="{{ route('admin.emprestimos.retirar', $emprestimo->id) }}" method="POST" class="inline-flex items-center gap-2">
                                             @csrf
                                             <span class="hidden text-[11px] font-semibold text-slate-500 dark:text-slate-400 xl:inline">
-                                                {{ $prazoAutomatico }}d automático
+                                                retirar até {{ $emprestimo->data_limite_retirada?->format('d/m') ?? '--/--' }}
                                             </span>
                                             <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-lg bg-amber-700 text-white border border-amber-600 hover:bg-amber-600 transition-all">
                                                 <i class="ph ph-bag"></i> Retirada
@@ -724,9 +724,12 @@
                                                 </button>
                                             </form>
                                     @elseif($status === \App\Models\Emprestimos::STATUS_EM_USO)
-                                        <span class="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[11px] font-bold text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
-                                            <i class="ph ph-clock"></i> Aguardando devolução
-                                        </span>
+                                        <form action="{{ route('admin.emprestimos.devolver', $emprestimo->id) }}" method="POST">
+                                            @csrf
+                                            <button type="button" onclick="confirmarDevolucao(event, this.closest('form'))" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-lg bg-[#1E3A8A] text-white border border-blue-800/80 hover:bg-blue-700 hover:border-blue-500 transition-all">
+                                                <i class="ph ph-arrow-u-up-left"></i> Receber
+                                            </button>
+                                        </form>
                                     @elseif($status === \App\Models\Emprestimos::STATUS_DEVOLUCAO_SOLICITADA)
                                         <form action="{{ route('admin.emprestimos.devolver', $emprestimo->id) }}" method="POST">
                                             @csrf

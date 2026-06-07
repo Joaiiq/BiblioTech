@@ -194,6 +194,42 @@ class Emprestimos extends Model
         return now()->addDays(self::PRAZO_RETIRADA_DIAS)->startOfDay();
     }
 
+    public static function expirarRetiradasPendentes(): int
+    {
+        $pendentes = self::with(['livro', 'membro'])
+            ->where('status', self::STATUS_APROVADO)
+            ->whereNotNull('data_limite_retirada')
+            ->whereDate('data_limite_retirada', '<', today())
+            ->get();
+
+        if ($pendentes->isEmpty()) {
+            return 0;
+        }
+
+        $pendentes->each(function (self $emprestimo): void {
+            $emprestimo->update([
+                'status' => self::STATUS_CANCELADO,
+                'rejected_reason' => 'Retirada não realizada dentro do prazo.',
+                'rejected_at' => now(),
+            ]);
+
+            if ($emprestimo->livro) {
+                $emprestimo->livro->increment('quantidade');
+            }
+
+            $emprestimo->registrarEvento(
+                'retirada_expirada',
+                'Prazo de retirada expirado',
+                'O sistema cancelou a retirada porque o membro não buscou o exemplar no prazo.',
+                [
+                    'limite_retirada' => $emprestimo->data_limite_retirada?->format('d/m/Y'),
+                ]
+            );
+        });
+
+        return $pendentes->count();
+    }
+
     // Relação 1: O Empréstimo tem um Livro
     public function livro()
     {
