@@ -172,12 +172,44 @@ it('registra evento quando aprova emprestimo', function () {
     $this->actingAs($gerente)
         ->post(route('admin.emprestimos.aprovar', $solicitacao))
         ->assertRedirect()
-        ->assertSessionHas('sucesso', 'Solicitação aprovada com sucesso.');
+        ->assertSessionHas('sucesso', 'Solicitação aprovada. O exemplar ficou separado para retirada presencial.');
 
-    $evento = $solicitacao->fresh()->eventos()->first();
+    $solicitacao->refresh();
+    $evento = $solicitacao->eventos()->first();
 
     expect($evento?->evento)->toBe('emprestimo_aprovado');
     expect($evento?->user_id)->toBe($gerente->id);
+    expect($solicitacao->data_limite_retirada)->not->toBeNull();
+});
+
+it('registra emprestimo presencial no balcao', function () {
+    \Carbon\Carbon::setTestNow(\Carbon\Carbon::create(2026, 6, 7));
+
+    $bibliotecario = User::factory()->create(['tipo_usuario' => 'bibliotecario']);
+    $membro = criarMembroParaRegra();
+    $livro = criarLivroParaRegra([
+        'titulo' => 'Livro de Balcão',
+        'quantidade' => 2,
+        'e_bestseller' => false,
+    ]);
+
+    $this->actingAs($bibliotecario)
+        ->post(route('admin.emprestimos.balcao'), [
+            'membro_id' => $membro->id,
+            'livro_id' => $livro->id,
+        ])
+        ->assertRedirect()
+        ->assertSessionHas('sucesso', 'Empréstimo registrado no balcão. Prazo de devolução: 21/06/2026.');
+
+    $emprestimo = Emprestimos::query()->latest('id')->first();
+
+    expect($emprestimo?->status)->toBe(Emprestimos::STATUS_RETIRADO);
+    expect($emprestimo?->data_emprestimo?->toDateString())->toBe('2026-06-07');
+    expect($emprestimo?->data_devolucao_prevista?->toDateString())->toBe('2026-06-21');
+    expect($emprestimo?->data_limite_retirada)->toBeNull();
+    expect($livro->fresh()->quantidade)->toBe(1);
+
+    \Carbon\Carbon::setTestNow();
 });
 
 it('aplica prazo de 14 dias na retirada de livro comum', function () {

@@ -128,6 +128,7 @@ class EmprestimoAdminController extends Controller
             'status' => Emprestimos::STATUS_APROVADO,
             'approved_by' => auth()->guard('web')->id(),
             'approved_at' => Carbon::now(),
+            'data_limite_retirada' => Emprestimos::prazoLimiteRetirada(),
         ]);
         $emprestimo->registrarEvento(
             'emprestimo_aprovado',
@@ -148,7 +149,7 @@ class EmprestimoAdminController extends Controller
             $emprestimo->membro->notify(new EmprestimoAprovado($emprestimo));
         }
 
-        return redirect()->back()->with('sucesso', 'Solicitação aprovada com sucesso.');
+        return redirect()->back()->with('sucesso', 'Solicitação aprovada. O exemplar ficou separado para retirada presencial.');
     }
 
     public function retirar(Request $request, $id)
@@ -166,6 +167,7 @@ class EmprestimoAdminController extends Controller
             'status' => Emprestimos::STATUS_RETIRADO,
             'data_emprestimo' => $hoje,
             'data_devolucao_prevista' => $hoje->copy()->addDays($prazoDias),
+            'data_limite_retirada' => null,
         ]);
         $emprestimo->registrarEvento(
             'emprestimo_retirado',
@@ -337,6 +339,7 @@ class EmprestimoAdminController extends Controller
             'status' => Emprestimos::STATUS_APROVADO,
             'data_emprestimo' => null,
             'data_devolucao_prevista' => null,
+            'data_limite_retirada' => Emprestimos::prazoLimiteRetirada(),
             'data_devolucao_real' => null,
             'valor_multa' => 0,
             'approved_by' => auth()->guard('web')->id(),
@@ -360,7 +363,67 @@ class EmprestimoAdminController extends Controller
             'emprestimo_id' => $emprestimo->id,
         ]);
 
-        return redirect()->back()->with('sucesso', 'Reserva atendida. O empréstimo foi aprovado e aguarda retirada.');
+        return redirect()->back()->with('sucesso', 'Reserva atendida. O exemplar ficou aguardando retirada presencial.');
+    }
+
+    public function registrarBalcao(Request $request)
+    {
+        $dados = $request->validate([
+            'membro_id' => ['required', 'exists:membros,id'],
+            'livro_id' => ['required', 'exists:livros,id'],
+        ]);
+
+        $membroId = (int) $dados['membro_id'];
+        $livroId = (int) $dados['livro_id'];
+
+        if ($motivo = Emprestimos::impedimentoParaNovoEmprestimo($membroId, $livroId)) {
+            return redirect()->back()->with('erro', $motivo);
+        }
+
+        $livro = \App\Models\Livros::with('autor')->findOrFail($livroId);
+        $membro = \App\Models\Membros::findOrFail($membroId);
+
+        if ((int) $livro->quantidade <= 0) {
+            return redirect()->back()->with('erro', 'Não há exemplares disponíveis para empréstimo imediato.');
+        }
+
+        $hoje = Carbon::today();
+        $prazoDias = Emprestimos::prazoDiasParaLivro($livro);
+
+        $emprestimo = Emprestimos::create([
+            'membro_id' => $membro->id,
+            'livro_id' => $livro->id,
+            'status' => Emprestimos::STATUS_RETIRADO,
+            'data_emprestimo' => $hoje,
+            'data_devolucao_prevista' => $hoje->copy()->addDays($prazoDias),
+            'data_limite_retirada' => null,
+            'data_devolucao_real' => null,
+            'valor_multa' => 0,
+            'approved_by' => auth()->guard('web')->id(),
+            'approved_at' => now(),
+        ]);
+
+        $livro->decrement('quantidade');
+
+        $emprestimo->registrarEvento(
+            'emprestimo_balcao',
+            'Empréstimo no balcão',
+            'A equipe registrou um empréstimo presencial diretamente no atendimento.',
+            [
+                'retirada' => $hoje->format('d/m/Y'),
+                'prazo' => $emprestimo->data_devolucao_prevista?->format('d/m/Y'),
+                'prazo_dias' => $prazoDias,
+            ]
+        );
+
+        AuditLog::record('emprestimo_balcao', "Registrou empréstimo presencial do livro {$livro->titulo}.", $emprestimo, [
+            'membro' => $membro->nome,
+            'prazo' => $emprestimo->data_devolucao_prevista?->format('d/m/Y'),
+        ]);
+
+        $membro->notify(new EmprestimoRetirado($emprestimo->load('livro')));
+
+        return redirect()->back()->with('sucesso', "Empréstimo registrado no balcão. Prazo de devolução: {$emprestimo->data_devolucao_prevista?->format('d/m/Y')}.");
     }
 
     public function rejeitar(Request $request, $id)

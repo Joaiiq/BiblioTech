@@ -55,6 +55,7 @@
                 background: rgba(8, 13, 20, 0.92);
                 border-bottom-color: rgba(255,255,255,.04);
             }
+            .swal2-container { z-index: 11050 !important; }
         </style>
     </head>
     <body class="antialiased bg-slate-50 text-slate-900 dark:bg-[#0f172a] dark:text-gray-200 overflow-x-hidden">
@@ -64,7 +65,7 @@
             {{-- ── Drawer flutuante ── --}}
             <div x-data="{ open: false }">
                 <button @click="open = true"
-                        class="fixed bottom-6 right-6 z-50 w-14 h-14 shrink-0 rounded-full
+                        class="fixed bottom-6 right-6 z-[10040] w-14 h-14 shrink-0 rounded-full
                                bg-[#1E3A8A] text-white shadow-2xl shadow-blue-900/40
                                hover:bg-[#162a63] hover:scale-110 active:scale-95
                                transition-all flex items-center justify-center focus:outline-none">
@@ -302,8 +303,8 @@
         @endphp
 
         @if($globalNotifiable && !request()->routeIs('dashboard'))
-            <div id="global-notifications-backdrop" class="fixed inset-0 bg-slate-950/40 opacity-0 pointer-events-none transition-opacity duration-200 z-50 dark:bg-slate-950/60" aria-hidden="true"></div>
-            <aside id="global-notifications-sidebar" class="fixed top-0 right-[-420px] w-[380px] max-w-[90vw] h-screen bg-white border-l border-slate-200 shadow-2xl transition-[right] duration-200 z-[60] flex flex-col dark:bg-[#0d1420] dark:border-white/10" role="dialog" aria-modal="true" aria-label="Notificações">
+            <div id="global-notifications-backdrop" class="fixed inset-0 z-[11020] bg-slate-950/40 opacity-0 pointer-events-none transition-opacity duration-200 dark:bg-slate-950/60" aria-hidden="true"></div>
+            <aside id="global-notifications-sidebar" class="fixed top-0 right-[-420px] z-[11030] flex h-screen w-[380px] max-w-[90vw] flex-col border-l border-slate-200 bg-white shadow-2xl transition-[right] duration-200 dark:border-white/10 dark:bg-[#0d1420]" role="dialog" aria-modal="true" aria-label="Notificações">
                 <div class="p-5 border-b border-slate-200 flex items-center justify-between dark:border-white/10">
                     <div>
                         <h3 class="text-sm font-black text-slate-950 uppercase tracking-widest dark:text-white">Notificações</h3>

@@ -22,6 +22,7 @@
     $isBestseller = (bool) old('e_bestseller', $isEdit ? $livro->e_bestseller : false);
     $inputClass = 'block h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/20 dark:border-white/10 dark:bg-[#080d14] dark:text-white';
     $labelClass = 'mb-1.5 block text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400';
+    $requiredMark = '<span class="ml-1 text-red-500">*</span>';
 @endphp
 
 <div class="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
@@ -46,13 +47,19 @@
 
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                    <label for="titulo" class="{{ $labelClass }}">Título</label>
+                    <label for="titulo" class="{{ $labelClass }}">{!! 'Título' . $requiredMark !!}</label>
                     <input id="titulo" type="text" name="titulo" value="{{ old('titulo', $isEdit ? $livro->titulo : '') }}" required autofocus class="{{ $inputClass }}">
                     <x-input-error :messages="$errors->get('titulo')" class="mt-2" />
                 </div>
 
                 <div>
-                    <label for="autor_id" class="{{ $labelClass }}">Autor</label>
+                    <div class="mb-1.5 flex items-center justify-between gap-3">
+                        <label for="autor_id" class="{{ $labelClass }} mb-0">{!! 'Autor' . $requiredMark !!}</label>
+                        <button type="button" id="open-autor-modal" class="inline-flex h-8 items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 text-[10px] font-black uppercase tracking-widest text-emerald-700 transition hover:bg-emerald-100 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300 dark:hover:bg-emerald-500/20">
+                            <i class="ph ph-plus-circle"></i>
+                            Novo autor
+                        </button>
+                    </div>
                     <select id="autor_id" name="autor_id" required class="{{ $inputClass }}">
                         <option value="">Selecione um autor</option>
                         @foreach($autores as $autor)
@@ -63,7 +70,7 @@
                 </div>
 
                 <div>
-                    <label class="{{ $labelClass }}">Categorias</label>
+                    <label class="{{ $labelClass }}">{!! 'Categorias' . $requiredMark !!}</label>
                     <div id="categorias-wrapper" class="grid max-h-40 grid-cols-1 gap-2 overflow-y-auto rounded-md border border-slate-200 bg-white p-2 dark:border-white/10 dark:bg-[#080d14] sm:grid-cols-2">
                         @foreach($categorias as $cat)
                             <label class="flex cursor-pointer items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 transition hover:bg-slate-100 dark:border-white/10 dark:bg-white/[.03] dark:text-slate-200 dark:hover:bg-white/10">
@@ -83,7 +90,7 @@
                 </div>
 
                 <div>
-                    <label for="data_publicacao" class="{{ $labelClass }}">Publicação</label>
+                    <label for="data_publicacao" class="{{ $labelClass }}">{!! 'Publicação' . $requiredMark !!}</label>
                     <input id="data_publicacao" type="date" name="data_publicacao" value="{{ old('data_publicacao', $isEdit && $livro->data_publicacao ? (is_string($livro->data_publicacao) ? $livro->data_publicacao : $livro->data_publicacao->format('Y-m-d')) : '') }}" min="1450-01-01" max="{{ today()->toDateString() }}" required class="{{ $inputClass }}">
                     <x-input-error :messages="$errors->get('data_publicacao')" class="mt-2" />
                 </div>
@@ -98,7 +105,7 @@
 
             <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
                 <div>
-                    <label for="quantidade" class="{{ $labelClass }}">Exemplares</label>
+                    <label for="quantidade" class="{{ $labelClass }}">{!! 'Exemplares' . $requiredMark !!}</label>
                     <input id="quantidade" type="number" name="quantidade" min="0" value="{{ old('quantidade', $isEdit ? $livro->quantidade : '') }}" required class="{{ $inputClass }}">
                     <x-input-error :messages="$errors->get('quantidade')" class="mt-2" />
                 </div>
@@ -121,7 +128,7 @@
 
             <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <div>
-                    <label for="isbn" class="{{ $labelClass }}">ISBN</label>
+                    <label for="isbn" class="{{ $labelClass }}">{!! 'ISBN' . $requiredMark !!}</label>
                     <input id="isbn" type="text" name="isbn" value="{{ old('isbn', $isEdit ? $livro->isbn : '') }}" required placeholder="000-00-000-0000-0" class="{{ $inputClass }}">
                     <x-input-error :messages="$errors->get('isbn')" class="mt-2" />
                 </div>
@@ -228,6 +235,52 @@
     </aside>
 </div>
 
+<div id="autor-modal" class="fixed inset-0 z-[11040] hidden">
+    <div id="autor-modal-backdrop" class="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"></div>
+    <div class="relative mx-auto mt-10 w-full max-w-2xl px-4 sm:mt-16">
+        <div class="rounded-md border border-slate-200 bg-white p-5 shadow-2xl dark:border-white/10 dark:bg-[#0d1420] sm:p-6">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-[10px] font-black uppercase tracking-[.18em] text-emerald-700 dark:text-emerald-300">Cadastro rápido</p>
+                    <h3 class="font-serif text-2xl font-black text-slate-950 dark:text-white">Novo autor</h3>
+                </div>
+                <button type="button" id="close-autor-modal" class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 bg-slate-50 text-slate-600 transition hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+
+            <form id="autor-inline-form" class="mt-6 space-y-4">
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                        <label for="autor-inline-nome" class="{{ $labelClass }}">{!! 'Nome do autor' . $requiredMark !!}</label>
+                        <input id="autor-inline-nome" name="nome" type="text" required class="{{ $inputClass }}">
+                    </div>
+                    <div>
+                        <label for="autor-inline-nacionalidade" class="{{ $labelClass }}">Nacionalidade</label>
+                        <input id="autor-inline-nacionalidade" name="nacionalidade" type="text" class="{{ $inputClass }}">
+                    </div>
+                    <div>
+                        <label for="autor-inline-data" class="{{ $labelClass }}">Data de nascimento</label>
+                        <input id="autor-inline-data" name="data_nascimento" type="date" max="{{ today()->toDateString() }}" class="{{ $inputClass }}">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="autor-inline-biografia" class="{{ $labelClass }}">Biografia</label>
+                        <textarea id="autor-inline-biografia" name="biografia" rows="4" class="block w-full rounded-md border border-slate-200 bg-white px-3 py-3 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/20 dark:border-white/10 dark:bg-[#080d14] dark:text-white"></textarea>
+                    </div>
+                </div>
+                <div id="autor-inline-errors" class="hidden rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300"></div>
+                <div class="flex justify-end gap-3">
+                    <button type="button" id="cancel-autor-modal" class="inline-flex h-11 items-center justify-center rounded-md border border-slate-200 bg-slate-50 px-5 text-[11px] font-black uppercase tracking-widest text-slate-700 transition hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10">Cancelar</button>
+                    <button type="submit" class="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-emerald-600 px-6 text-[11px] font-black uppercase tracking-widest text-white transition hover:bg-emerald-700">
+                        <i class="ph ph-floppy-disk"></i>
+                        Salvar autor
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script src="https://unpkg.com/imask"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -309,6 +362,77 @@
                 placeholder.classList.remove('flex');
             };
             reader.readAsDataURL(file);
+        });
+
+        const autorModal = document.getElementById('autor-modal');
+        const openAutorModal = document.getElementById('open-autor-modal');
+        const closeAutorModal = document.getElementById('close-autor-modal');
+        const cancelAutorModal = document.getElementById('cancel-autor-modal');
+        const autorModalBackdrop = document.getElementById('autor-modal-backdrop');
+        const autorInlineForm = document.getElementById('autor-inline-form');
+        const autorInlineErrors = document.getElementById('autor-inline-errors');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+        const toggleAutorModal = (open) => {
+            if (!autorModal) return;
+            autorModal.classList.toggle('hidden', !open);
+            document.body.classList.toggle('overflow-hidden', open);
+        };
+
+        [openAutorModal, closeAutorModal, cancelAutorModal, autorModalBackdrop].forEach(element => {
+            element?.addEventListener('click', () => toggleAutorModal(element === openAutorModal));
+        });
+
+        autorInlineForm?.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            autorInlineErrors?.classList.add('hidden');
+            autorInlineErrors.textContent = '';
+
+            const formData = new FormData(autorInlineForm);
+
+            try {
+                const response = await fetch(@json(route('autores.store')), {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
+                    },
+                    body: formData,
+                });
+
+                const payload = await response.json();
+
+                if (!response.ok) {
+                    const messages = Object.values(payload.errors || {}).flat();
+                    autorInlineErrors.textContent = messages[0] || payload.message || 'Não foi possível cadastrar o autor.';
+                    autorInlineErrors.classList.remove('hidden');
+                    return;
+                }
+
+                const option = new Option(payload.autor.nome, payload.autor.id, true, true);
+                authorSelect?.appendChild(option);
+                syncAuthor();
+                autorInlineForm.reset();
+                toggleAutorModal(false);
+
+                if (window.Swal) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 2600,
+                        timerProgressBar: true,
+                        background: '#0d1420',
+                        color: '#fff',
+                        icon: 'success',
+                        title: payload.message || 'Autor cadastrado com sucesso.',
+                    });
+                }
+            } catch (error) {
+                autorInlineErrors.textContent = 'Falha ao cadastrar autor.';
+                autorInlineErrors.classList.remove('hidden');
+            }
         });
     });
 </script>

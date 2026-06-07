@@ -28,6 +28,7 @@ class Emprestimos extends Model
     public const VALOR_MULTA_DIARIA = 1.00;
     public const DIAS_ANTECEDENCIA_LEMBRETE = 2;
     public const DIAS_ANTECEDENCIA_RENOVACAO = 2;
+    public const PRAZO_RETIRADA_DIAS = 3;
     public const MAX_RENOVACOES = 1;
     public const MAX_EMPRESTIMOS_ATIVOS = 3;
 
@@ -51,6 +52,7 @@ class Emprestimos extends Model
         'data_emprestimo',
         'status',
         'data_devolucao_prevista',
+        'data_limite_retirada',
         'data_devolucao_real',
         'valor_multa',
         'multa_paga_em',
@@ -68,6 +70,7 @@ class Emprestimos extends Model
     protected $casts = [
         'data_emprestimo'         => 'date',
         'data_devolucao_prevista' => 'date',
+        'data_limite_retirada'    => 'date',
         'data_devolucao_real'     => 'date',
         'status'                  => 'string',
         'approved_at'             => 'datetime',
@@ -184,6 +187,11 @@ class Emprestimos extends Model
             && (int) $this->renovacoes_count < self::MAX_RENOVACOES
             && $this->data_devolucao_prevista !== null
             && now()->startOfDay()->diffInDays($this->data_devolucao_prevista, false) <= self::DIAS_ANTECEDENCIA_RENOVACAO;
+    }
+
+    public static function prazoLimiteRetirada(): \Carbon\Carbon
+    {
+        return now()->addDays(self::PRAZO_RETIRADA_DIAS)->startOfDay();
     }
 
     // Relação 1: O Empréstimo tem um Livro

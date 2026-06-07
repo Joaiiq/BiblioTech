@@ -7,6 +7,7 @@
         <title>Administração - Biblioteca</title>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&family=Merriweather:wght@400;700;900&display=swap" rel="stylesheet">
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <style>.swal2-container { z-index: 11050 !important; }</style>
     </head>
     <body class="bg-gray-100 dark:bg-gray-900" style="font-family: 'Inter', sans-serif;">
         <div class="flex">
@@ -44,8 +45,8 @@
         </div>
 
         @if($adminNotifiable)
-            <div id="admin-notifications-backdrop" class="fixed inset-0 bg-slate-950/60 opacity-0 pointer-events-none transition-opacity duration-200 z-50" aria-hidden="true"></div>
-            <aside id="admin-notifications-sidebar" class="fixed top-0 right-[-420px] w-[380px] max-w-[90vw] h-screen bg-[#0d1420] border-l border-white/10 shadow-2xl transition-[right] duration-200 z-[60] flex flex-col" role="dialog" aria-modal="true" aria-label="Notificações">
+            <div id="admin-notifications-backdrop" class="fixed inset-0 z-[11020] bg-slate-950/60 opacity-0 pointer-events-none transition-opacity duration-200" aria-hidden="true"></div>
+            <aside id="admin-notifications-sidebar" class="fixed top-0 right-[-420px] z-[11030] flex h-screen w-[380px] max-w-[90vw] flex-col border-l border-white/10 bg-[#0d1420] shadow-2xl transition-[right] duration-200" role="dialog" aria-modal="true" aria-label="Notificações">
                 <div class="p-5 border-b border-white/10 flex items-center justify-between">
                     <div>
                         <h3 class="text-sm font-black text-white uppercase tracking-widest">Notificações</h3>

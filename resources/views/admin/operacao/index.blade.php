@@ -44,6 +44,52 @@
         </div>
 
         <main class="relative z-10 mx-auto max-w-7xl space-y-6">
+            <section class="rounded-md border border-slate-200 bg-white/95 p-5 shadow-sm dark:border-white/10 dark:bg-[#0d1420]/95 sm:p-6">
+                <div class="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-[.18em] text-blue-700 dark:text-blue-300">Atendimento presencial</p>
+                        <h2 class="mt-1 font-serif text-2xl font-black text-slate-950 dark:text-white">Empréstimo de balcão</h2>
+                        <p class="mt-2 max-w-2xl text-sm text-slate-500 dark:text-slate-400">Use este fluxo quando o bibliotecário estiver entregando o exemplar diretamente ao membro na biblioteca. O sistema já registra retirada imediata e prazo correto.</p>
+                    </div>
+                    <div class="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100">
+                        <p class="text-[10px] font-black uppercase tracking-[.18em] text-amber-700 dark:text-amber-300">Regra operacional</p>
+                        <ul class="mt-3 space-y-2 text-sm">
+                            <li>Livro comum: 14 dias.</li>
+                            <li>Bestseller: 7 dias.</li>
+                            <li>Pedido aprovado ou reserva atendida: retirada em até {{ \App\Models\Emprestimos::PRAZO_RETIRADA_DIAS }} dias.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <form action="{{ route('admin.emprestimos.balcao') }}" method="POST" class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]" data-confirm="loan" data-title="Registrar empréstimo presencial?" data-text="O exemplar será baixado do estoque e o prazo será aplicado imediatamente.">
+                    @csrf
+                    <div>
+                        <label for="balcao_membro_id" class="mb-1.5 block text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Membro <span class="text-red-500">*</span></label>
+                        <select id="balcao_membro_id" name="membro_id" required class="block h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/20 dark:border-white/10 dark:bg-[#080d14] dark:text-white">
+                            <option value="">Selecione o membro</option>
+                            @foreach($membrosBalcao as $membro)
+                                <option value="{{ $membro->id }}">{{ $membro->nome }}{{ $membro->numero_carteirinha ? ' · ' . $membro->numero_carteirinha : '' }}{{ $membro->cpf ? ' · CPF ' . $membro->cpf : '' }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label for="balcao_livro_id" class="mb-1.5 block text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Livro <span class="text-red-500">*</span></label>
+                        <select id="balcao_livro_id" name="livro_id" required class="block h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/20 dark:border-white/10 dark:bg-[#080d14] dark:text-white">
+                            <option value="">Selecione o exemplar</option>
+                            @foreach($livrosBalcao as $livro)
+                                <option value="{{ $livro->id }}">{{ $livro->titulo }} · {{ $livro->autor?->nome ?? 'Autor não informado' }} · {{ $livro->quantidade }} disp.</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button class="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[#1E3A8A] px-5 text-[11px] font-black uppercase tracking-widest text-white transition hover:bg-blue-800">
+                            <i class="ph ph-handshake"></i>
+                            Registrar no balcão
+                        </button>
+                    </div>
+                </form>
+            </section>
+
             <section class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-6">
                 <div class="rounded-md border border-blue-200 bg-white/95 p-4 shadow-sm dark:border-blue-500/30 dark:bg-blue-500/10">
                     <div class="flex items-center justify-between gap-3">
@@ -247,6 +293,9 @@
                                                 <span class="inline-flex rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-300">Solicitado</span>
                                             @else
                                                 <span class="inline-flex rounded-md border border-indigo-200 bg-indigo-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-indigo-700 dark:border-indigo-500/30 dark:bg-indigo-500/10 dark:text-indigo-300">Aprovado</span>
+                                            @endif
+                                            @if($emprestimo->status === \App\Models\Emprestimos::STATUS_APROVADO && $emprestimo->data_limite_retirada)
+                                                <p class="mt-2 text-xs font-bold text-amber-700 dark:text-amber-300">Retirar até {{ $emprestimo->data_limite_retirada->format('d/m/Y') }}</p>
                                             @endif
                                         </td>
                                         <td class="px-5 py-4">

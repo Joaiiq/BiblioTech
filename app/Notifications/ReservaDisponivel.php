@@ -21,6 +21,7 @@ class ReservaDisponivel extends Notification
     public function toArray($notifiable): array
     {
         $titulo = $this->reserva->livro?->titulo ?? $this->emprestimo?->livro?->titulo ?? 'livro';
+        $limiteRetirada = $this->emprestimo?->data_limite_retirada?->format('d/m/Y');
 
         return [
             'type' => 'reserva_disponivel',
@@ -28,7 +29,9 @@ class ReservaDisponivel extends Notification
             'emprestimo_id' => $this->emprestimo->id ?? null,
             'livro_id' => $this->reserva->livro_id ?? $this->emprestimo?->livro_id,
             'title' => 'Reserva atendida',
-            'message' => "Sua reserva do livro '{$titulo}' foi atendida. O empréstimo está aprovado e aguarda retirada.",
+            'message' => $limiteRetirada
+                ? "Sua reserva do livro '{$titulo}' foi atendida. Retire presencialmente até {$limiteRetirada}."
+                : "Sua reserva do livro '{$titulo}' foi atendida. O empréstimo está aprovado e aguarda retirada.",
         ];
     }
 }

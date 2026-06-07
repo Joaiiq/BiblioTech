@@ -63,6 +63,7 @@ Schedule::command('emprestimos:lembrar')->dailyAt('08:00');
     Route::post('/admin/emprestimos/{id}/devolver', [EmprestimoAdminController::class, 'devolver'])->name('admin.emprestimos.devolver')->middleware('tipo:gerente,bibliotecario');
     Route::post('/admin/emprestimos/{id}/aprovar', [EmprestimoAdminController::class, 'aprovar'])->name('admin.emprestimos.aprovar')->middleware('tipo:gerente,bibliotecario');
     Route::post('/admin/emprestimos/{id}/retirar', [EmprestimoAdminController::class, 'retirar'])->name('admin.emprestimos.retirar')->middleware('tipo:gerente,bibliotecario');
+    Route::post('/admin/emprestimos/balcao', [EmprestimoAdminController::class, 'registrarBalcao'])->name('admin.emprestimos.balcao')->middleware('tipo:gerente,bibliotecario');
     Route::post('/admin/emprestimos/{id}/iniciar-uso', [EmprestimoAdminController::class, 'iniciarUso'])->name('admin.emprestimos.iniciar-uso')->middleware('tipo:gerente,bibliotecario');
     Route::post('/admin/emprestimos/{id}/encerrar', [EmprestimoAdminController::class, 'encerrar'])->name('admin.emprestimos.encerrar')->middleware('tipo:gerente,bibliotecario');
     Route::post('/admin/emprestimos/{id}/regularizar-multa', [EmprestimoAdminController::class, 'regularizarMulta'])->name('admin.emprestimos.regularizar-multa')->middleware('tipo:gerente,bibliotecario');

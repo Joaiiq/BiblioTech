@@ -78,7 +78,17 @@ class AutorController extends Controller
             $dados['foto'] = $request->file('foto')->store('autores', 'public');
         }
 
-        Autor::create($dados);
+        $autor = Autor::create($dados);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Autor cadastrado com sucesso.',
+                'autor' => [
+                    'id' => $autor->id,
+                    'nome' => $autor->nome,
+                ],
+            ], 201);
+        }
 
         return redirect()->route('autores.index')->with('sucesso', 'Autor cadastrado com sucesso!');
     }

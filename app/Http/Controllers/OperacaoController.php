@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Emprestimos;
+use App\Models\Livros;
+use App\Models\Membros;
 use App\Models\Reserva;
 
 class OperacaoController extends Controller
@@ -78,6 +80,15 @@ class OperacaoController extends Controller
             'reservas_atendiveis' => $reservasAtendiveis->count(),
         ];
 
+        $membrosBalcao = Membros::query()
+            ->orderBy('nome')
+            ->get(['id', 'nome', 'cpf', 'numero_carteirinha']);
+
+        $livrosBalcao = Livros::with('autor')
+            ->where('quantidade', '>', 0)
+            ->orderBy('titulo')
+            ->get(['id', 'titulo', 'autor_id', 'quantidade', 'e_bestseller']);
+
         return view('admin.operacao.index', compact(
             'solicitacoes',
             'aprovados',
@@ -87,6 +98,8 @@ class OperacaoController extends Controller
             'multasPendentes',
             'reservasAtendiveis',
             'metricas',
+            'membrosBalcao',
+            'livrosBalcao',
         ));
     }
 }
