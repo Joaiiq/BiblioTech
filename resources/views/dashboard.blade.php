@@ -1141,7 +1141,7 @@
                 </div>
             @else
                 <div class="text-center py-10 text-slate-500 text-sm dark:text-gray-400">
-                    Nenhum aluguel ativo.
+                    Nenhum empréstimo ativo.
                 </div>
             @endif
         </div>

@@ -61,7 +61,7 @@
                     </div>
                 </div>
 
-                <form action="{{ route('admin.emprestimos.balcao') }}" method="POST" class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]" data-confirm="loan" data-title="Registrar empréstimo presencial?" data-text="O exemplar será baixado do estoque e o prazo será aplicado imediatamente.">
+                <form action="{{ route('admin.emprestimos.balcao') }}" method="POST" class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
                     @csrf
                     <div>
                         <label for="balcao_membro_id" class="mb-1.5 block text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Membro <span class="text-red-500">*</span></label>
@@ -77,7 +77,7 @@
                         <select id="balcao_livro_id" name="livro_id" required class="block h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/20 dark:border-white/10 dark:bg-[#080d14] dark:text-white">
                             <option value="">Selecione o exemplar</option>
                             @foreach($livrosBalcao as $livro)
-                                <option value="{{ $livro->id }}">{{ $livro->titulo }} · {{ $livro->autor?->nome ?? 'Autor não informado' }} · {{ $livro->quantidade }} disp.</option>
+                                <option value="{{ $livro->id }}" @selected((string) old('livro_id', request('livro_id')) === (string) $livro->id)>{{ $livro->titulo }} · {{ $livro->autor?->nome ?? 'Autor não informado' }} · {{ $livro->quantidade }} disp.</option>
                             @endforeach
                         </select>
                     </div>
