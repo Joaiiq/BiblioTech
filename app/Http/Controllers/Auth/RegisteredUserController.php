@@ -46,7 +46,7 @@ class RegisteredUserController extends Controller
             'telefone' => 'Não informado',
             'endereco' => 'Atualização pendente',
             'data_nascimento' => now()->subYears(18)->toDateString(),
-            'tipo_membro' => 'Pendente',
+            'tipo_membro' => 'membro',
             'numero_carteirinha' => $this->gerarNumeroCarteirinha(),
             'password' => Hash::make($request->password),
         ]);

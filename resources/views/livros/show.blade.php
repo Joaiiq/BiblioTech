@@ -261,15 +261,36 @@
                                                 <button disabled class="h-11 w-full rounded-md border border-slate-200 bg-slate-100 text-[11px] font-black uppercase tracking-widest text-slate-400 dark:border-white/10 dark:bg-white/5">Obra indisponível</button>
                                             @endif
                                         @endif
-                                    @elseif(auth()->check())
-                                        <a href="{{ route('livros.edit', $livro->id) }}" class="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[#1E3A8A] px-4 text-[11px] font-black uppercase tracking-widest text-white transition hover:bg-blue-800">
-                                            <i class="ph ph-pencil-simple"></i>
-                                            Editar obra
-                                        </a>
+                                    @elseif(auth()->guard('web')->check())
+                                        <div class="space-y-3 rounded-md border border-slate-200 bg-slate-50 p-3 dark:border-white/10 dark:bg-white/[.03]">
+                                            <label for="membro_id_admin" class="block text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                                                Emprestar para membro
+                                            </label>
+                                            <form action="{{ route('admin.emprestimos.balcao') }}" method="POST" class="space-y-3">
+                                                @csrf
+                                                <input type="hidden" name="livro_id" value="{{ $livro->id }}">
+                                                <select id="membro_id_admin" name="membro_id" required class="block h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/20 dark:border-white/10 dark:bg-[#080d14] dark:text-white">
+                                                    <option value="">Selecione o membro</option>
+                                                    @foreach($membrosParaEmprestimo as $membroItem)
+                                                        <option value="{{ $membroItem->id }}">
+                                                            {{ $membroItem->nome }} · {{ $membroItem->numero_carteirinha ?? $membroItem->email }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                <button type="submit" class="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[#1E3A8A] px-4 text-[11px] font-black uppercase tracking-widest text-white transition hover:bg-blue-800">
+                                                    <i class="ph ph-handshake"></i>
+                                                    Registrar empréstimo
+                                                </button>
+                                            </form>
+                                            <a href="{{ route('livros.edit', $livro->id) }}" class="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border border-slate-200 bg-white px-4 text-[11px] font-black uppercase tracking-widest text-slate-700 transition hover:bg-slate-50 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10">
+                                                <i class="ph ph-pencil-simple"></i>
+                                                Editar obra
+                                            </a>
+                                        </div>
                                     @else
                                         <a href="{{ route('login') }}" class="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[#1E3A8A] px-4 text-[11px] font-black uppercase tracking-widest text-white transition hover:bg-blue-800">
                                             <i class="ph ph-sign-in"></i>
-                                            Fazer login para alugar
+                                            Fazer login para solicitar
                                         </a>
                                     @endif
                                 </div>

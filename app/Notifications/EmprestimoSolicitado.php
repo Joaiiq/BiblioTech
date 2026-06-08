@@ -34,8 +34,8 @@ class EmprestimoSolicitado extends Notification
             'membro_id' => $membro?->id,
             'membro_nome' => $nomeMembro,
             'membro_identificacao' => $identificacao,
-            'title' => 'Novo pedido de aluguel',
-            'message' => "O membro {$nomeMembro} solicitou o aluguel do livro '{$titulo}'.",
+            'title' => 'Nova solicitação de empréstimo',
+            'message' => "O membro {$nomeMembro} solicitou o empréstimo do livro '{$titulo}'.",
         ];
     }
 }

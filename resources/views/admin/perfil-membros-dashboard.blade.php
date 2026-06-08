@@ -281,11 +281,11 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td data-search="{{ $membro->numero_carteirinha }} {{ $membro->cpf }} {{ $membro->tipo_membro }}">
+                                    <td data-search="{{ $membro->numero_carteirinha }} {{ $membro->cpf }} membro">
                                         <div class="space-y-1 min-w-[170px]">
                                             <p class="text-xs text-blue-600 dark:text-blue-400 font-mono font-bold">{{ $membro->numero_carteirinha ?? 'Sem carteirinha' }}</p>
                                             <p class="text-[11px] text-slate-500 dark:text-gray-500">CPF: {{ $membro->cpf ?? 'Não informado' }}</p>
-                                            <p class="text-[11px] text-slate-500 dark:text-gray-500">Tipo: {{ $membro->tipo_membro ?? 'Não informado' }}</p>
+                                            <p class="text-[11px] text-slate-500 dark:text-gray-500">Perfil: Membro</p>
                                         </div>
                                     </td>
                                     <td data-search="{{ $membro->telefone }} {{ $membro->endereco }}">

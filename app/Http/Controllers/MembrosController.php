@@ -34,7 +34,6 @@ class MembrosController extends Controller
             'telefone' => ['required', 'string', 'max:20', new ValidPhonePrefix],
             'endereco' => 'required|string|max:255',
             'data_nascimento' => ['required', 'date_format:Y-m-d', new RealisticDate('member_birth')],
-            'tipo_membro' => 'required|string|max:50',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
@@ -49,7 +48,7 @@ class MembrosController extends Controller
             'telefone' => $request->telefone,
             'endereco' => $request->endereco,
             'data_nascimento' => $request->data_nascimento,
-            'tipo_membro' => $request->tipo_membro,
+            'tipo_membro' => 'membro',
             'numero_carteirinha' => $numeroCarteirinha,
             'password' => $request->password,
         ]);
@@ -81,9 +80,10 @@ class MembrosController extends Controller
             'telefone' => ['required', 'string', 'max:20', new ValidPhonePrefix],
             'endereco' => 'required|string|max:255',
             'data_nascimento' => ['required', 'date_format:Y-m-d', new RealisticDate('member_birth')],
-            'tipo_membro' => 'required|string|max:50',
             'password' => 'nullable|string|min:8|confirmed',
         ]);
+
+        $validated['tipo_membro'] = 'membro';
 
         if (blank($validated['password'] ?? null)) {
             unset($validated['password']);

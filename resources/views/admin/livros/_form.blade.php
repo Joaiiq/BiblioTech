@@ -56,9 +56,9 @@
                 <div>
                     <div class="mb-1.5 flex items-center justify-between gap-3">
                         <label for="autor_id" class="{{ $labelClass }} mb-0">{!! 'Autor' . $requiredMark !!}</label>
-                        <button type="button" id="open-autor-modal" class="inline-flex h-8 items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 text-[10px] font-black uppercase tracking-widest text-emerald-700 transition hover:bg-emerald-100 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300 dark:hover:bg-emerald-500/20">
-                            <i class="ph ph-plus-circle"></i>
-                            Novo autor
+                        <button type="button" id="open-autor-modal" class="inline-flex h-7 items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2.5 text-[10px] font-black uppercase tracking-widest text-slate-600 transition hover:border-emerald-300 hover:text-emerald-700 hover:bg-emerald-50 dark:border-white/10 dark:bg-white/[.03] dark:text-slate-300 dark:hover:border-emerald-500/30 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-300">
+                            <i class="ph ph-plus text-xs"></i>
+                            Autor
                         </button>
                     </div>
                     <select id="autor_id" name="autor_id" required class="{{ $inputClass }}">

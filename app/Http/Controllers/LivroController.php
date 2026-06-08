@@ -515,6 +515,7 @@ class LivroController extends Controller{
         $reservaDoMembro = null;
         $posicaoReserva = null;
         $isFavorito = false;
+        $membrosParaEmprestimo = collect();
 
         // Apenas permitir comentário se o membro já tiver devolvido este livro
         $podeComentar = false;
@@ -572,6 +573,12 @@ class LivroController extends Controller{
             }
         }
 
+        if (auth()->guard('web')->check()) {
+            $membrosParaEmprestimo = Membros::query()
+                ->orderBy('nome')
+                ->get(['id', 'nome', 'numero_carteirinha', 'email']);
+        }
+
         $podeSolicitarEmprestimo = $isMembroOperacional
             && $livro->quantidade > 0
             && empty($bloqueiosEmprestimo);
@@ -596,7 +603,8 @@ class LivroController extends Controller{
             'reservaDoMembro',
             'posicaoReserva',
             'isFavorito',
-            'isMembroOperacional'
+            'isMembroOperacional',
+            'membrosParaEmprestimo'
         ));
     }
 

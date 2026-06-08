@@ -69,7 +69,7 @@
         </div>
         <div class="row">
             <div class="cell"><span class="label">Carteirinha</span><br><span class="value">{{ $emprestimo->membro->numero_carteirinha ?? '—' }}</span></div>
-            <div class="cell"><span class="label">Tipo</span><br><span class="value">{{ ucfirst($emprestimo->membro->tipo_membro ?? '—') }}</span></div>
+            <div class="cell"><span class="label">Perfil</span><br><span class="value">Membro</span></div>
         </div>
     </div>
 </div>

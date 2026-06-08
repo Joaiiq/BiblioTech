@@ -16,7 +16,6 @@ it('redireciona cadastro de membro para o painel operacional com o membro seleci
         'telefone' => '85999999999',
         'endereco' => 'Rua das Flores, 123',
         'data_nascimento' => '2000-05-10',
-        'tipo_membro' => 'estudante',
         'password' => 'password123',
         'password_confirmation' => 'password123',
     ]);
@@ -26,6 +25,8 @@ it('redireciona cadastro de membro para o painel operacional com o membro seleci
     $response
         ->assertRedirect(route('admin.operacao.index', ['membro_id' => $membro->id]))
         ->assertSessionHas('sucesso');
+
+    expect($membro->tipo_membro)->toBe('membro');
 });
 
 it('salva livro nacional no cadastro administrativo', function () {

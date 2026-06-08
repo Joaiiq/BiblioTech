@@ -57,7 +57,7 @@ class EmprestimoController extends Controller
 
         // 2. Verifica se o membro está autenticado (usando o guard 'membro')
         if (!auth()->guard('membro')->check()) {
-            return redirect()->route('login')->with('erro', 'Você precisa estar logado como membro para alugar livros.');
+            return redirect()->route('login')->with('erro', 'Você precisa estar logado como membro para solicitar empréstimos.');
         }
 
         // 3. Pega o membro autenticado pelo guard de membros.
@@ -113,7 +113,7 @@ class EmprestimoController extends Controller
                 $admin->notify(new EmprestimoSolicitado($emprestimo));
             });
 
-        return redirect()->back()->with('sucesso', 'Solicitação enviada! Aguarde a aprovação do bibliotecário.');
+        return redirect()->back()->with('sucesso', 'Solicitação enviada. Aguarde a liberação da biblioteca.');
     }
 
     public function reservar($id)

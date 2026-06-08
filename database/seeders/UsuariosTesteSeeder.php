@@ -37,7 +37,7 @@ class UsuariosTesteSeeder extends Seeder
                     'telefone' => "(85) 98888-000{$i}",
                     'endereco' => "Rua dos Testes, {$i}00",
                     'data_nascimento' => Carbon::create(2000, $i, 10)->toDateString(),
-                    'tipo_membro' => $i % 2 === 0 ? 'Professor' : 'Estudante',
+                    'tipo_membro' => 'membro',
                     'numero_carteirinha' => 'TST-' . str_pad((string) $i, 4, '0', STR_PAD_LEFT),
                     'password' => $senha,
                 ]

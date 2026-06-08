@@ -12,7 +12,7 @@
                 <div>
                     <p class="text-[10px] font-black uppercase tracking-[.18em] text-blue-700 dark:text-blue-300">Atendimento</p>
                     <h1 class="font-serif text-2xl font-black text-slate-950 dark:text-white">Cadastrar membro</h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Dados, vínculo e credenciais em uma ficha única</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Dados e credenciais em uma ficha única</p>
                 </div>
             </div>
 
@@ -55,8 +55,8 @@
                         <p id="preview-phone" class="mt-1 truncate text-sm font-bold text-slate-900 dark:text-white">(00) 00000-0000</p>
                     </div>
                     <div class="rounded-md border border-slate-200 bg-slate-50 p-3 dark:border-white/10 dark:bg-white/[.03]">
-                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-500">Vínculo</p>
-                        <p id="preview-type" class="mt-1 truncate text-sm font-bold text-slate-900 dark:text-white">Selecione um tipo</p>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-500">Perfil</p>
+                        <p class="mt-1 truncate text-sm font-bold text-slate-900 dark:text-white">Membro</p>
                     </div>
                 </div>
 
@@ -125,27 +125,16 @@
                             <i class="ph ph-map-pin"></i>
                         </span>
                         <div>
-                            <p class="text-[10px] font-black uppercase tracking-[.18em] text-amber-700 dark:text-amber-300">Vínculo</p>
-                            <h2 class="text-lg font-black text-slate-950 dark:text-white">Endereço e tipo de leitor</h2>
+                            <p class="text-[10px] font-black uppercase tracking-[.18em] text-amber-700 dark:text-amber-300">Contato</p>
+                            <h2 class="text-lg font-black text-slate-950 dark:text-white">Endereço do membro</h2>
                         </div>
                     </div>
 
-                    <div class="mt-5 grid gap-4 sm:grid-cols-2">
+                    <div class="mt-5 grid gap-4">
                         <div>
                             <x-input-label for="endereco" :value="'Endereço completo'" />
                             <x-text-input id="endereco" name="endereco" type="text" value="{{ old('endereco') }}" required data-member-field class="mt-2 block w-full bg-white text-slate-900 dark:bg-[#080d14] dark:text-white" />
                             <x-input-error class="mt-2" :messages="$errors->get('endereco')" />
-                        </div>
-
-                        <div>
-                            <x-input-label for="tipo_membro" :value="'Tipo de membro'" />
-                            <select id="tipo_membro" name="tipo_membro" required data-member-field class="mt-2 block h-10 w-full rounded-md border-slate-300 bg-white text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-slate-700 dark:bg-[#080d14] dark:text-white">
-                                <option value="">Selecione</option>
-                                <option value="estudante" @selected(old('tipo_membro') === 'estudante')>Estudante</option>
-                                <option value="professor" @selected(old('tipo_membro') === 'professor')>Professor</option>
-                                <option value="comum" @selected(old('tipo_membro') === 'comum')>Comum</option>
-                            </select>
-                            <x-input-error class="mt-2" :messages="$errors->get('tipo_membro')" />
                         </div>
                     </div>
                 </section>
@@ -198,7 +187,6 @@
             const emailInput = document.getElementById('email');
             const cpfInput = document.getElementById('cpf');
             const phoneInput = document.getElementById('telefone');
-            const typeInput = document.getElementById('tipo_membro');
             const passwordInput = document.getElementById('password');
             const confirmationInput = document.getElementById('password_confirmation');
 
@@ -207,7 +195,6 @@
             const previewEmail = document.getElementById('preview-email');
             const previewCpf = document.getElementById('preview-cpf');
             const previewPhone = document.getElementById('preview-phone');
-            const previewType = document.getElementById('preview-type');
             const previewPassword = document.getElementById('preview-password');
             const progressLabel = document.getElementById('preview-progress-label');
             const progressBar = document.getElementById('preview-progress-bar');
@@ -228,18 +215,11 @@
                 return '';
             };
 
-            const typeLabel = (value) => ({
-                estudante: 'Estudante',
-                professor: 'Professor',
-                comum: 'Comum',
-            }[value] || 'Selecione um tipo');
-
             const updatePreview = () => {
                 const name = nameInput?.value.trim() || 'Novo membro';
                 const email = emailInput?.value.trim() || 'email ainda não informado';
                 const cpf = cpfInput?.value.trim() || '000.000.000-00';
                 const phone = phoneInput?.value.trim() || '(00) 00000-0000';
-                const type = typeLabel(typeInput?.value);
                 const password = passwordInput?.value || '';
                 const confirmation = confirmationInput?.value || '';
                 const filled = fields.filter((field) => field.value.trim() !== '').length;
@@ -250,7 +230,6 @@
                 previewEmail.textContent = email;
                 previewCpf.textContent = cpf;
                 previewPhone.textContent = phone;
-                previewType.textContent = type;
                 progressLabel.textContent = `${progress}%`;
                 progressBar.style.width = `${progress}%`;
 

@@ -38,7 +38,7 @@
 
     <div class="-mx-4 min-h-screen bg-gradient-to-b from-slate-100 via-blue-50 to-slate-100 px-4 py-8 dark:from-[#0f172a] dark:via-[#0f172a] dark:to-[#0b1120] sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         <main class="mx-auto max-w-6xl space-y-6">
-            <section class="grid grid-cols-2 gap-3 lg:grid-cols-7">
+            <section class="grid grid-cols-2 gap-3 xl:grid-cols-7">
                 <button data-notification-filter="todas" class="notification-filter rounded-md border border-blue-200 bg-blue-50 p-4 text-left text-blue-800 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-300">
                     <p class="text-[10px] font-black uppercase tracking-widest">Todas</p>
                     <p class="mt-1 text-2xl font-black">{{ $notifications->count() }}</p>
@@ -63,6 +63,10 @@
                     <p class="text-[10px] font-black uppercase tracking-widest">Alertas</p>
                     <p class="mt-1 text-2xl font-black">{{ $typeCounts['alertas'] ?? 0 }}</p>
                 </button>
+                <button data-notification-filter="financeiro" class="notification-filter rounded-md border border-slate-200 bg-white p-4 text-left text-slate-700 dark:border-white/10 dark:bg-[#0d1420] dark:text-slate-300">
+                    <p class="text-[10px] font-black uppercase tracking-widest">Financeiro</p>
+                    <p class="mt-1 text-2xl font-black">{{ $typeCounts['financeiro'] ?? 0 }}</p>
+                </button>
                 <button data-notification-filter="mensagens" class="notification-filter rounded-md border border-slate-200 bg-white p-4 text-left text-slate-700 dark:border-white/10 dark:bg-[#0d1420] dark:text-slate-300">
                     <p class="text-[10px] font-black uppercase tracking-widest">Mensagens</p>
                     <p class="mt-1 text-2xl font-black">{{ $typeCounts['mensagens'] ?? 0 }}</p>
@@ -86,12 +90,12 @@
                         @php
                             $data = $notification->data;
                             $meta = $notification->meta;
-                            $title = $data['title'] ?? 'Notificação';
-                            $message = $data['message'] ?? 'Aviso do sistema.';
+                            $title = str_replace(['pedido de aluguel', 'aluguel'], ['solicitação de empréstimo', 'empréstimo'], $data['title'] ?? 'Notificação');
+                            $message = str_replace(['pedido de aluguel', 'solicitou o aluguel', ' alugar '], ['solicitação de empréstimo', 'solicitou o empréstimo', ' solicitar '], $data['message'] ?? 'Aviso do sistema.');
                             $isUnread = is_null($notification->read_at);
                         @endphp
                         <article class="notification-row p-5 {{ $isUnread ? 'bg-blue-50/60 dark:bg-blue-500/5' : '' }}" data-filter-group="{{ $meta['grupo'] }}" data-unread="{{ $isUnread ? '1' : '0' }}" data-search="{{ \Illuminate\Support\Str::lower($title . ' ' . $message) }}">
-                            <div class="grid gap-4 sm:grid-cols-[48px_minmax(0,1fr)_auto] sm:items-start">
+                            <div class="grid gap-4 lg:grid-cols-[48px_minmax(0,1fr)_auto] lg:items-start">
                                 <span class="flex h-12 w-12 items-center justify-center rounded-md border text-xl {{ $meta['classes'] }}">
                                     <i class="ph {{ $meta['icon'] }}"></i>
                                 </span>
@@ -122,12 +126,12 @@
                                         @endif
                                     </div>
                                 </div>
-                                <div class="text-right">
+                                <div class="flex items-center gap-3 lg:block lg:text-right">
                                     <time class="text-xs font-semibold text-slate-500 dark:text-slate-400">
                                         {{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}
                                     </time>
                                     @if($notification->read_at)
-                                        <p class="mt-1 text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Lida</p>
+                                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 lg:mt-1">Lida</p>
                                     @endif
                                 </div>
                             </div>

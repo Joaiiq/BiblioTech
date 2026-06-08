@@ -142,8 +142,8 @@
                                     <p class="text-slate-900 dark:text-white">{{ $membro->telefone ?? '—' }}</p>
                                 </div>
                                 <div>
-                                    <p class="text-[10px] uppercase tracking-widest text-slate-500">Tipo</p>
-                                    <p class="text-slate-900 dark:text-white">{{ $membro->tipo_membro ?? '—' }}</p>
+                                    <p class="text-[10px] uppercase tracking-widest text-slate-500">Perfil</p>
+                                    <p class="text-slate-900 dark:text-white">Membro</p>
                                 </div>
                             </div>
                         </div>

@@ -210,10 +210,10 @@ class RelatorioController extends Controller
             ->groupBy(function (Emprestimos $emprestimo) {
                 $membro = $emprestimo->membro;
 
-                return $this->faixaEtaria($membro->data_nascimento) . '|' . ($membro->tipo_membro ?: 'comum');
+                return $this->faixaEtaria($membro->data_nascimento) . '|membro';
             })
             ->map(function ($grupo, $chave) {
-                [$faixaEtaria, $tipoMembro] = explode('|', $chave);
+                [$faixaEtaria] = explode('|', $chave);
 
                 $categoriasPreferidas = $grupo
                     ->filter(fn (Emprestimos $emprestimo) => filled($emprestimo->livro?->categoria))
@@ -227,7 +227,7 @@ class RelatorioController extends Controller
 
                 return [
                     'faixa_etaria' => $faixaEtaria,
-                    'tipo_membro' => ucfirst($tipoMembro),
+                    'tipo_membro' => 'Membro',
                     'leitores' => $grupo->pluck('membro_id')->unique()->count(),
                     'emprestimos' => $grupo->count(),
                     'categoria_preferida' => $categoriasPreferidas->first()['categoria'] ?? 'Sem categoria',

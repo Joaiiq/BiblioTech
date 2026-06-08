@@ -89,8 +89,8 @@
                     <div class="value">{{ $nascimento }}</div>
                 </div>
                 <div class="cell">
-                    <div class="label">Tipo de membro</div>
-                    <div class="value">{{ ucfirst($membro->tipo_membro ?? 'Comum') }}</div>
+                    <div class="label">Perfil</div>
+                    <div class="value">Membro</div>
                 </div>
             </div>
             <div class="row">

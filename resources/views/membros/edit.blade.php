@@ -71,12 +71,10 @@
                     </div>
 
                     <div>
-                        <label for="tipo_membro" class="{{ $label }}">Tipo de vínculo</label>
-                        <select id="tipo_membro" name="tipo_membro" class="{{ $input }}" required>
-                            <option value="estudante" @selected(old('tipo_membro', $membro->tipo_membro) === 'estudante')>Estudante</option>
-                            <option value="professor" @selected(old('tipo_membro', $membro->tipo_membro) === 'professor')>Professor</option>
-                            <option value="comum" @selected(old('tipo_membro', $membro->tipo_membro) === 'comum')>Comum</option>
-                        </select>
+                        <label class="{{ $label }}">Perfil</label>
+                        <div class="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-black text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">
+                            Membro
+                        </div>
                     </div>
 
                     <div>

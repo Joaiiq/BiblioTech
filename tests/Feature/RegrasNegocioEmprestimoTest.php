@@ -17,7 +17,7 @@ function criarMembroParaRegra(array $attributes = []): Membros
         'telefone' => '85999999999',
         'endereco' => 'Rua Teste, 123',
         'data_nascimento' => now()->subYears(20)->toDateString(),
-        'tipo_membro' => 'estudante',
+        'tipo_membro' => 'membro',
         'numero_carteirinha' => fake()->unique()->numerify('########'),
         'password' => Hash::make('password'),
     ], $attributes));

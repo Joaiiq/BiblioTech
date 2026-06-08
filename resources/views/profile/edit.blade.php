@@ -108,8 +108,8 @@
                                     <dd class="mt-1 font-black text-blue-700 dark:text-blue-300">{{ $authUser->numero_carteirinha ?? 'Pendente' }}</dd>
                                 </div>
                                 <div>
-                                    <dt class="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-500">Tipo</dt>
-                                    <dd class="mt-1 font-bold text-slate-950 dark:text-white">{{ ucfirst($authUser->tipo_membro ?? 'Membro') }}</dd>
+                                    <dt class="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-500">Perfil</dt>
+                                    <dd class="mt-1 font-bold text-slate-950 dark:text-white">Membro</dd>
                                 </div>
                                 <div>
                                     <dt class="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-500">Telefone</dt>

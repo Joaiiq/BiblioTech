@@ -1159,46 +1159,59 @@
         $notifiable = auth()->guard('web')->user() ?: auth()->guard('membro')->user();
         $unreads = $notifiable ? $notifiable->unreadNotifications()->latest()->get() : collect();
         $reads = $notifiable ? $notifiable->readNotifications()->latest()->take(30)->get() : collect();
+        $normalizarMensagemNotif = fn ($texto) => str_replace(
+            ['pedido de aluguel', 'solicitou o aluguel', ' alugar '],
+            ['solicitação de empréstimo', 'solicitou o empréstimo', ' solicitar '],
+            $texto ?? 'Notificação'
+        );
     @endphp
-    <div id="notifications-backdrop" class="fixed inset-0 bg-slate-950/40 opacity-0 pointer-events-none transition-opacity duration-200 z-50 dark:bg-slate-950/60" aria-hidden="true"></div>
-    <aside id="notifications-sidebar" class="fixed top-0 right-[-420px] w-[380px] max-w-[90vw] h-screen bg-white border-l border-slate-200 shadow-2xl transition-[right] duration-200 z-[60] flex flex-col dark:bg-[#0d1420] dark:border-white/10" role="dialog" aria-modal="true" aria-label="Notificações">
-        <div class="p-5 border-b border-slate-200 flex items-center justify-between dark:border-white/10">
-            <div>
-                <h3 class="text-sm font-black text-slate-950 uppercase tracking-widest dark:text-white">Notificações</h3>
-                <p class="text-[11px] text-slate-500 dark:text-gray-400">Últimas atualizações do seu acervo</p>
+    <div id="notifications-backdrop" class="fixed inset-0 z-[11020] bg-slate-950/40 opacity-0 pointer-events-none transition-opacity duration-200 dark:bg-slate-950/60" aria-hidden="true"></div>
+    <aside id="notifications-sidebar" class="fixed top-0 right-[-420px] z-[11030] flex h-screen w-[380px] max-w-[90vw] flex-col border-l border-slate-200 bg-white shadow-2xl transition-[right] duration-200 dark:border-white/10 dark:bg-[#0d1420]" role="dialog" aria-modal="true" aria-label="Notificações">
+        <div class="border-b border-slate-200 p-5 dark:border-white/10">
+            <div class="flex items-start justify-between gap-4">
+                <div class="min-w-0">
+                    <p class="text-[10px] font-black uppercase tracking-[.18em] text-blue-700 dark:text-blue-300">Central</p>
+                    <h3 class="mt-1 text-sm font-black uppercase tracking-widest text-slate-950 dark:text-white">Notificações</h3>
+                    <p class="mt-1 text-[11px] leading-relaxed text-slate-500 dark:text-gray-400">Acompanhe pedidos, devoluções, reservas e avisos do acervo.</p>
+                </div>
+                @if($unreads->isNotEmpty())
+                    <span class="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-red-600 px-2 text-[10px] font-black text-white">
+                        {{ $unreads->count() > 9 ? '9+' : $unreads->count() }}
+                    </span>
+                @endif
             </div>
-            <button type="button" id="notifications-close" class="w-9 h-9 rounded-lg bg-slate-50 border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition dark:bg-white/5 dark:border-white/10 dark:text-gray-300 dark:hover:text-white dark:hover:bg-white/10" aria-label="Fechar">
+            <button type="button" id="notifications-close" class="absolute right-5 top-5 flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white" aria-label="Fechar">
                 <i class="ph ph-x text-sm"></i>
             </button>
         </div>
-        <div class="p-4 overflow-y-auto flex-1 space-y-3">
+        <div class="flex-1 space-y-3 overflow-y-auto p-4">
             @if($unreads->isEmpty() && $reads->isEmpty())
-                <div class="text-center py-6 text-slate-500 text-sm dark:text-gray-400">Sem notificações por enquanto.</div>
+                <div class="py-6 text-center text-sm text-slate-500 dark:text-gray-400">Sem notificações por enquanto.</div>
             @endif
 
             @foreach($unreads as $n)
-                <div class="notification-unread p-3 rounded-md bg-blue-50 border border-blue-100 dark:bg-white/5 dark:border-white/10">
-                    <div class="flex items-start justify-between">
-                        <div class="text-sm text-slate-900 dark:text-white">{!! $n->data['message'] ?? ($n->data['title'] ?? 'Notificação') !!}</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-400">{{ $n->created_at->diffForHumans() }}</div>
+                <article class="notification-unread rounded-md border border-blue-100 bg-blue-50 p-3 dark:border-white/10 dark:bg-white/5">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0 text-sm leading-relaxed text-slate-900 dark:text-white">{!! $normalizarMensagemNotif($n->data['message'] ?? ($n->data['title'] ?? 'Notificação')) !!}</div>
+                        <time class="shrink-0 text-[11px] font-semibold text-slate-500 dark:text-slate-400">{{ $n->created_at->diffForHumans() }}</time>
                     </div>
-                </div>
+                </article>
             @endforeach
 
             @foreach($reads as $n)
-                <div class="notification-read p-3 rounded-md bg-slate-50 border border-slate-200 text-slate-500 dark:bg-transparent dark:border-white/5 dark:text-slate-400">
-                    <div class="flex items-start justify-between">
-                        <div class="text-sm">{!! $n->data['message'] ?? ($n->data['title'] ?? 'Notificação') !!}</div>
-                        <div class="text-xs">{{ $n->created_at->diffForHumans() }}</div>
+                <article class="notification-read rounded-md border border-slate-200 bg-slate-50 p-3 text-slate-500 dark:border-white/5 dark:bg-transparent dark:text-slate-400">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0 text-sm leading-relaxed">{!! $normalizarMensagemNotif($n->data['message'] ?? ($n->data['title'] ?? 'Notificação')) !!}</div>
+                        <time class="shrink-0 text-[11px] font-semibold">{{ $n->created_at->diffForHumans() }}</time>
                     </div>
-                </div>
+                </article>
             @endforeach
         </div>
-        <div class="space-y-2 p-4 border-t border-slate-200 dark:border-white/10">
-            <a href="{{ route('notifications.index') }}" class="w-full inline-flex items-center justify-center gap-2 h-10 rounded-lg bg-blue-50 border border-blue-200 text-blue-800 hover:bg-blue-100 transition text-[11px] font-bold uppercase tracking-widest dark:bg-blue-500/10 dark:border-blue-500/30 dark:text-blue-300 dark:hover:bg-blue-500/20">
+        <div class="space-y-2 border-t border-slate-200 p-4 dark:border-white/10">
+            <a href="{{ route('notifications.index') }}" class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-blue-200 bg-blue-50 text-[11px] font-bold uppercase tracking-widest text-blue-800 transition hover:bg-blue-100 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-300 dark:hover:bg-blue-500/20">
                 Ver central
             </a>
-            <button id="mark-all-read" class="w-full inline-flex items-center justify-center gap-2 h-10 rounded-lg bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-950 hover:bg-slate-100 transition text-[11px] font-bold uppercase tracking-widest dark:bg-white/5 dark:border-white/10 dark:text-gray-200 dark:hover:text-white dark:hover:bg-white/10">
+            <button id="mark-all-read" class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-widest text-slate-700 transition hover:bg-slate-100 hover:text-slate-950 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10 dark:hover:text-white">
                 Marcar todas como lidas
             </button>
         </div>

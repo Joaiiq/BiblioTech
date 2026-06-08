@@ -1,7 +1,7 @@
 <x-app-layout>
     @php
         $nascimento = $membro->data_nascimento ? \Carbon\Carbon::parse($membro->data_nascimento)->format('d/m/Y') : 'Não informado';
-        $tipo = ucfirst($membro->tipo_membro ?? 'Comum');
+        $tipo = 'Membro';
         $statusOk = $atrasados === 0 && (float) $multasPendentes <= 0;
     @endphp
 
