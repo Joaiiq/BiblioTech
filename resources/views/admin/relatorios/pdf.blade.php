@@ -155,7 +155,7 @@
             <thead>
                 <tr>
                     <th>Faixa etária</th>
-                    <th>Tipo de membro</th>
+                    <th>Perfil</th>
                     <th>Leitores</th>
                     <th>Empréstimos</th>
                     <th>Categoria preferida</th>

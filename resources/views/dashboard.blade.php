@@ -86,9 +86,9 @@
                         @endif
                     </button>
                     @if($isMember)
-                        <button type="button" id="loans-toggle" class="h-9 w-9 rounded-lg bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/10 transition flex items-center justify-center" aria-controls="loans-sidebar" aria-expanded="false" aria-label="Meus alugueis">
+                        <button type="button" id="loans-toggle" class="h-9 w-9 rounded-lg bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/10 transition flex items-center justify-center" aria-controls="loans-sidebar" aria-expanded="false" aria-label="Meus empréstimos">
                             <i class="ph ph-ticket text-sm"></i>
-                            <span class="sr-only">Meus alugueis</span>
+                            <span class="sr-only">Meus empréstimos</span>
                         </button>
                     @endif
                 </div>
@@ -1079,12 +1079,12 @@
     </div>{{-- /content-area --}}
 
     @if($isMember)
-    {{-- ══ SIDEBAR: MEUS ALUGUEIS ══ --}}
+    {{-- ══ SIDEBAR: MEUS EMPRÉSTIMOS ══ --}}
     <div id="loans-backdrop" class="fixed inset-0 bg-slate-950/40 opacity-0 pointer-events-none transition-opacity duration-200 z-50 dark:bg-slate-950/60" aria-hidden="true"></div>
-    <aside id="loans-sidebar" class="fixed top-0 right-[-420px] w-[380px] max-w-[90vw] h-screen bg-white border-l border-slate-200 shadow-2xl transition-[right] duration-200 z-[60] flex flex-col dark:bg-[#0d1420] dark:border-white/10" role="dialog" aria-modal="true" aria-label="Meus alugueis">
+    <aside id="loans-sidebar" class="fixed top-0 right-[-420px] w-[380px] max-w-[90vw] h-screen bg-white border-l border-slate-200 shadow-2xl transition-[right] duration-200 z-[60] flex flex-col dark:bg-[#0d1420] dark:border-white/10" role="dialog" aria-modal="true" aria-label="Meus empréstimos">
         <div class="p-5 border-b border-slate-200 flex items-center justify-between dark:border-white/10">
             <div>
-                <h3 class="text-sm font-black text-slate-950 uppercase tracking-widest dark:text-white">Meus alugueis</h3>
+                <h3 class="text-sm font-black text-slate-950 uppercase tracking-widest dark:text-white">Meus empréstimos</h3>
                 <p class="text-[11px] text-slate-500 dark:text-gray-400">Acompanhe seus prazos</p>
             </div>
             <button type="button" id="loans-close" class="w-9 h-9 rounded-lg bg-slate-50 border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition dark:bg-white/5 dark:border-white/10 dark:text-gray-300 dark:hover:text-white dark:hover:bg-white/10" aria-label="Fechar">
@@ -1154,7 +1154,7 @@
     @endif
 
     @if($notifiableTop)
-    {{-- ══ SIDEBAR: NOTIFICAÇÕES (baseado em Meus alugueis) ══ --}}
+    {{-- ══ SIDEBAR: NOTIFICAÇÕES ══ --}}
     @php
         $notifiable = auth()->guard('web')->user() ?: auth()->guard('membro')->user();
         $unreads = $notifiable ? $notifiable->unreadNotifications()->latest()->get() : collect();

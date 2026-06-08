@@ -382,7 +382,7 @@
                         <thead class="reports-table-head text-[11px] uppercase tracking-wider">
                             <tr>
                                 <th class="text-left px-5 py-3">Faixa etária</th>
-                                <th class="text-left px-5 py-3">Tipo de membro</th>
+                                <th class="text-left px-5 py-3">Perfil</th>
                                 <th class="text-left px-5 py-3">Leitores</th>
                                 <th class="text-left px-5 py-3">Empréstimos</th>
                                 <th class="text-left px-5 py-3">Categoria preferida</th>

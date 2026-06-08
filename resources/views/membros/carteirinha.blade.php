@@ -88,7 +88,7 @@
                             <p class="mt-2 text-sm font-bold text-slate-950 dark:text-white">{{ $nascimento }}</p>
                         </div>
                         <div class="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/[.03]">
-                            <p class="text-[10px] font-black uppercase tracking-[.18em] text-slate-500 dark:text-slate-400">Tipo de membro</p>
+                            <p class="text-[10px] font-black uppercase tracking-[.18em] text-slate-500 dark:text-slate-400">Perfil</p>
                             <p class="mt-2 text-sm font-bold text-slate-950 dark:text-white">{{ $tipo }}</p>
                         </div>
                     </div>
