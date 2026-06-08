@@ -15,9 +15,15 @@
                     <p class="text-xs text-slate-500 dark:text-slate-400">Ficha completa do acervo</p>
                 </div>
             </div>
-            <button type="button" @click="dark = !dark" class="h-10 w-10 rounded-md border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-50 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10" aria-label="Alternar tema">
-                <i class="ph text-sm" :class="dark ? 'ph-sun' : 'ph-moon'"></i>
-            </button>
+            <div class="flex items-center gap-2">
+                <button type="button" id="open-autor-modal-header" class="inline-flex h-10 items-center gap-2 rounded-md border border-slate-200 bg-white px-3 text-[10px] font-black uppercase tracking-widest text-slate-700 transition hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:border-emerald-500/30 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-300">
+                    <i class="ph ph-plus text-sm"></i>
+                    Autor
+                </button>
+                <button type="button" @click="dark = !dark" class="h-10 w-10 rounded-md border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-50 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10" aria-label="Alternar tema">
+                    <i class="ph text-sm" :class="dark ? 'ph-sun' : 'ph-moon'"></i>
+                </button>
+            </div>
         </div>
     </x-slot>
 

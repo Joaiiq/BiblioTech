@@ -1174,11 +1174,6 @@
                     <h3 class="mt-1 text-sm font-black uppercase tracking-widest text-slate-950 dark:text-white">Notificações</h3>
                     <p class="mt-1 text-[11px] leading-relaxed text-slate-500 dark:text-gray-400">Acompanhe pedidos, devoluções, reservas e avisos do acervo.</p>
                 </div>
-                @if($unreads->isNotEmpty())
-                    <span class="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-red-600 px-2 text-[10px] font-black text-white">
-                        {{ $unreads->count() > 9 ? '9+' : $unreads->count() }}
-                    </span>
-                @endif
             </div>
             <button type="button" id="notifications-close" class="absolute right-5 top-5 flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white" aria-label="Fechar">
                 <i class="ph ph-x text-sm"></i>

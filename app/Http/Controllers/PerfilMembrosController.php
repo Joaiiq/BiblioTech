@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Membros;
 use App\Models\Emprestimos;
 use App\Models\AuditLog;
+use App\Models\Livros;
 use App\Notifications\MessageToMember;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -91,11 +92,18 @@ class PerfilMembrosController extends Controller
             ->filter(fn($emprestimo) => $emprestimo->multaPendente())
             ->sum('valor_multa');
 
+        $livrosDisponiveis = Livros::with('autor')
+            ->whereNull('deleted_at')
+            ->where('quantidade', '>', 0)
+            ->orderBy('titulo')
+            ->get(['id', 'titulo', 'autor_id', 'quantidade', 'e_bestseller']);
+
         return view('admin.membro-detalhes-dashboard', [
             'membro' => $membro,
             'emprestimos' => $emprestimos,
             'atrasados' => $atrasados,
             'multasTotal' => $multasTotal,
+            'livrosDisponiveis' => $livrosDisponiveis,
         ]);
     }
 

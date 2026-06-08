@@ -54,13 +54,7 @@
                 </div>
 
                 <div>
-                    <div class="mb-1.5 flex items-center justify-between gap-3">
-                        <label for="autor_id" class="{{ $labelClass }} mb-0">{!! 'Autor' . $requiredMark !!}</label>
-                        <button type="button" id="open-autor-modal" class="inline-flex h-7 items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2.5 text-[10px] font-black uppercase tracking-widest text-slate-600 transition hover:border-emerald-300 hover:text-emerald-700 hover:bg-emerald-50 dark:border-white/10 dark:bg-white/[.03] dark:text-slate-300 dark:hover:border-emerald-500/30 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-300">
-                            <i class="ph ph-plus text-xs"></i>
-                            Autor
-                        </button>
-                    </div>
+                    <label for="autor_id" class="{{ $labelClass }}">{!! 'Autor' . $requiredMark !!}</label>
                     <select id="autor_id" name="autor_id" required class="{{ $inputClass }}">
                         <option value="">Selecione um autor</option>
                         @foreach($autores as $autor)
@@ -183,19 +177,25 @@
                 </div>
 
                 <div class="grid gap-4 md:grid-cols-2">
-                    <label for="e_bestseller" class="flex h-16 cursor-pointer items-center justify-between gap-4 rounded-md border border-amber-200 bg-amber-50 px-4 text-amber-900 transition hover:bg-amber-100 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200 dark:hover:bg-amber-500/20">
+                    <label for="e_bestseller" class="flex min-h-16 cursor-pointer items-center justify-between gap-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-amber-900 transition hover:bg-amber-100 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200 dark:hover:bg-amber-500/20">
                         <span>
                             <span class="block text-[10px] font-black uppercase tracking-widest">Destaque</span>
                             <span class="text-sm font-black">Destaque do acervo</span>
                         </span>
-                        <input id="e_bestseller" type="checkbox" name="e_bestseller" value="1" @checked($isBestseller) class="h-5 w-5 rounded border-amber-300 text-amber-600 focus:ring-amber-500">
+                        <span class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition {{ $isBestseller ? 'bg-amber-500' : 'bg-amber-200 dark:bg-amber-900/40' }}">
+                            <input id="e_bestseller" type="checkbox" name="e_bestseller" value="1" @checked($isBestseller) class="peer sr-only">
+                            <span class="absolute left-0.5 h-5 w-5 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                        </span>
                     </label>
-                    <label for="e_nacional" class="flex h-16 cursor-pointer items-center justify-between gap-4 rounded-md border border-emerald-200 bg-emerald-50 px-4 text-emerald-900 transition hover:bg-emerald-100 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200 dark:hover:bg-emerald-500/20">
+                    <label for="e_nacional" class="flex min-h-16 cursor-pointer items-center justify-between gap-4 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-900 transition hover:bg-emerald-100 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200 dark:hover:bg-emerald-500/20">
                         <span>
                             <span class="block text-[10px] font-black uppercase tracking-widest">Livro nacional</span>
                             <span class="text-sm font-black">Destaque para obras nacionais</span>
                         </span>
-                        <input id="e_nacional" type="checkbox" name="e_nacional" value="1" @checked($isNacional) class="h-5 w-5 rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500">
+                        <span class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition {{ $isNacional ? 'bg-emerald-500' : 'bg-emerald-200 dark:bg-emerald-900/40' }}">
+                            <input id="e_nacional" type="checkbox" name="e_nacional" value="1" @checked($isNacional) class="peer sr-only">
+                            <span class="absolute left-0.5 h-5 w-5 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                        </span>
                     </label>
                 </div>
             </div>
@@ -381,7 +381,7 @@
         });
 
         const autorModal = document.getElementById('autor-modal');
-        const openAutorModal = document.getElementById('open-autor-modal');
+        const openAutorModal = document.getElementById('open-autor-modal-header');
         const closeAutorModal = document.getElementById('close-autor-modal');
         const cancelAutorModal = document.getElementById('cancel-autor-modal');
         const autorModalBackdrop = document.getElementById('autor-modal-backdrop');
@@ -395,8 +395,9 @@
             document.body.classList.toggle('overflow-hidden', open);
         };
 
-        [openAutorModal, closeAutorModal, cancelAutorModal, autorModalBackdrop].forEach(element => {
-            element?.addEventListener('click', () => toggleAutorModal(element === openAutorModal));
+        openAutorModal?.addEventListener('click', () => toggleAutorModal(true));
+        [closeAutorModal, cancelAutorModal, autorModalBackdrop].forEach(element => {
+            element?.addEventListener('click', () => toggleAutorModal(false));
         });
 
         autorInlineForm?.addEventListener('submit', async (event) => {

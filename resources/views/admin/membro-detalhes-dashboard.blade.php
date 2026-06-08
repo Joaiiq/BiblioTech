@@ -150,6 +150,25 @@
                     </div>
 
                     <div class="flex flex-col gap-2 sm:flex-row">
+                        <form action="{{ route('admin.emprestimos.balcao') }}" method="POST" class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                            @csrf
+                            <input type="hidden" name="membro_id" value="{{ $membro->id }}">
+                            <div class="min-w-[240px]">
+                                <label for="perfil_livro_id" class="sr-only">Livro para empréstimo</label>
+                                <select id="perfil_livro_id" name="livro_id" required class="h-[42px] w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/20 dark:border-white/10 dark:bg-white/5 dark:text-white">
+                                    <option value="">Emprestar livro agora</option>
+                                    @foreach($livrosDisponiveis as $livroDisponivel)
+                                        <option value="{{ $livroDisponivel->id }}">
+                                            {{ $livroDisponivel->titulo }}@if($livroDisponivel->autor) · {{ $livroDisponivel->autor->nome }}@endif
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <button type="submit" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md bg-emerald-600 border border-emerald-700 text-white text-[11px] font-black uppercase tracking-widest hover:bg-emerald-500 transition">
+                                <i class="ph ph-book-bookmark text-sm"></i>
+                                Registrar empréstimo
+                            </button>
+                        </form>
                         <button type="button" id="openPasswordModalBtn" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md bg-amber-500 border border-amber-600 text-slate-950 text-[11px] font-black uppercase tracking-widest hover:bg-amber-400 transition">
                             <i class="ph ph-key text-sm"></i>
                             Redefinir senha
@@ -366,13 +385,23 @@
 
                     <div>
                         <label for="member_password" class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-gray-500 mb-1 block">Nova senha</label>
-                        <input id="member_password" name="password" type="password" autocomplete="new-password" minlength="8" required class="w-full px-3 py-2 rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30 transition">
+                        <div class="relative">
+                            <input id="member_password" name="password" type="password" autocomplete="new-password" minlength="8" required class="w-full px-3 py-2 pr-11 rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30 transition">
+                            <button type="button" data-toggle-password="member_password" class="absolute inset-y-0 right-0 inline-flex w-11 items-center justify-center text-slate-500 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-white" aria-label="Mostrar senha">
+                                <i class="ph ph-eye text-sm"></i>
+                            </button>
+                        </div>
                         <x-input-error :messages="$errors->get('password')" class="mt-2" />
                     </div>
 
                     <div>
                         <label for="member_password_confirmation" class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-gray-500 mb-1 block">Confirmar nova senha</label>
-                        <input id="member_password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" minlength="8" required class="w-full px-3 py-2 rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30 transition">
+                        <div class="relative">
+                            <input id="member_password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" minlength="8" required class="w-full px-3 py-2 pr-11 rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30 transition">
+                            <button type="button" data-toggle-password="member_password_confirmation" class="absolute inset-y-0 right-0 inline-flex w-11 items-center justify-center text-slate-500 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-white" aria-label="Mostrar senha">
+                                <i class="ph ph-eye text-sm"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="flex items-center justify-end gap-2 pt-2">
@@ -421,6 +450,17 @@
         document.getElementById('closePasswordModal')?.addEventListener('click', closePasswordModal);
         document.getElementById('cancelPasswordBtn')?.addEventListener('click', closePasswordModal);
         passwordModal.addEventListener('click', event => { if (event.target === passwordModal) closePasswordModal(); });
+        document.querySelectorAll('[data-toggle-password]').forEach(button => {
+            button.addEventListener('click', () => {
+                const input = document.getElementById(button.dataset.togglePassword);
+                const icon = button.querySelector('i');
+                if (!input || !icon) return;
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                icon.className = `ph ${isPassword ? 'ph-eye-slash' : 'ph-eye'} text-sm`;
+                button.setAttribute('aria-label', isPassword ? 'Ocultar senha' : 'Mostrar senha');
+            });
+        });
 
         form?.addEventListener('submit', async event => {
             event.preventDefault();
