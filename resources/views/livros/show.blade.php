@@ -165,7 +165,7 @@
                                                 Abrir PDF
                                             </a>
                                         </div>
-                                        <iframe src="{{ asset('storage/' . $livro->preview_pdf) }}#toolbar=0&navpanes=0" title="Prévia de {{ $livro->titulo }}" class="h-[520px] w-full bg-white dark:bg-[#0d1420]"></iframe>
+                                        <iframe src="{{ asset('storage/' . $livro->preview_pdf) }}#toolbar=0&navpanes=0" title="Prévia de {{ $livro->titulo }}" class="h-80 sm:h-96 md:h-[520px] w-full bg-white dark:bg-[#0d1420]"></iframe>
                                     </div>
                                 @endif
                             </div>
