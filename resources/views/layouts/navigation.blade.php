@@ -40,7 +40,7 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-xs font-black uppercase tracking-widest rounded-md text-[#1F2937] dark:text-gray-300 bg-white dark:bg-[#111827] hover:text-[#1E3A8A] dark:hover:text-blue-400 transition">
-                            <x-user-avatar :user="$authUser" size="h-7 w-7" text="text-[9px]" class="mr-2" />
+                            <x-user-avatar :user="$authUser" size="h-8 w-8" text="text-[9px]" class="mr-2" />
                             <div>{{ $authUser ? ($authUser->name ?? $authUser->nome) : 'Usuário' }}</div>
                             <svg class="ms-1 fill-current h-4 w-4" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>

@@ -562,7 +562,7 @@
                                 <td class="px-4 py-4">
                                     @if($emprestimo->membro && $emprestimo->membro->name)
                                         <div class="flex items-center gap-2">
-                                            <x-user-avatar :user="$emprestimo->membro" size="h-7 w-7" text="text-[10px]" />
+                                            <x-user-avatar :user="$emprestimo->membro" size="h-8 w-8" text="text-[10px]" />
                                             <div class="min-w-0">
                                                 <span class="block truncate text-sm font-bold text-slate-800 dark:text-slate-200">{{ $emprestimo->membro->name }}</span>
                                                 <span class="block truncate text-[10px] font-semibold text-slate-500 dark:text-slate-500">{{ $emprestimo->membro->numero_carteirinha ?? $emprestimo->membro->email }}</span>
