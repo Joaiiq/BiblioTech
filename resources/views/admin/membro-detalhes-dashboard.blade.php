@@ -327,7 +327,7 @@
         </div>
     </div>
 
-    <div id="messageModal" class="fixed inset-0 z-40 hidden items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div id="messageModal" class="fixed inset-0 z-40 hidden items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
         <div class="w-full max-w-lg mx-4">
             <div class="bg-white dark:bg-[#0d1420] rounded-md p-6 border border-slate-200 dark:border-white/10 shadow-2xl">
                 <div class="flex items-center justify-between mb-5">
@@ -362,7 +362,7 @@
         </div>
     </div>
 
-    <div id="passwordModal" class="fixed inset-0 z-40 hidden items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div id="passwordModal" class="fixed inset-0 z-40 hidden items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
         <div class="w-full max-w-lg mx-4">
             <div class="bg-white dark:bg-[#0d1420] rounded-md p-6 border border-slate-200 dark:border-white/10 shadow-2xl">
                 <div class="flex items-center justify-between mb-5">

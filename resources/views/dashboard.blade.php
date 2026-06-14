@@ -189,7 +189,7 @@
                                         Novo membro
                                     </a>
                                 @else
-                                    <a href="#acervo-section" class="inline-flex items-center gap-2 rounded-md bg-[#1E3A8A] px-4 py-3 text-[11px] font-black uppercase tracking-widest text-white hover:bg-blue-800 transition">
+                                    <a href="#acervo-section" class="inline-flex items-center gap-2 rounded-md bg-[#1E3A8A] px-4 py-3 text-[11px] font-black uppercase tracking-widest text-white hover:bg-blue-800 transition hover:scale-105">
                                         <i class="ph ph-books"></i>
                                         Explorar acervo
                                     </a>
@@ -354,7 +354,7 @@
                                 </div>
                                 <div class="space-y-2">
                                     @forelse($vitrineNovidades as $livro)
-                                        <a href="{{ route('livros.show', $livro->id) }}" class="group flex items-center gap-3 rounded-md border border-slate-200 bg-slate-50 p-2 transition hover:border-blue-300 hover:bg-blue-50 dark:border-white/10 dark:bg-white/[.03] dark:hover:border-blue-500/40 dark:hover:bg-blue-500/10">
+                                        <a href="{{ route('livros.show', $livro->id) }}" class="group flex items-center gap-3 rounded-md border border-slate-200 bg-slate-50 p-2 transition hover:border-blue-300 hover:bg-blue-50 dark:border-white/10 dark:bg-white/[.03] dark:hover:border-blue-500/40 dark:hover:bg-blue-500/10 hover:scale-[1.02]">
                                             <div class="h-14 w-10 shrink-0 overflow-hidden rounded bg-slate-200 dark:bg-white/10">
                                                 @if($livro->capa)
                                                     <img src="{{ asset('storage/' . $livro->capa) }}" alt="{{ $livro->titulo }}" class="h-full w-full object-cover">
@@ -385,7 +385,7 @@
                                 </div>
                                 <div class="space-y-2">
                                     @forelse($livrosMaisReservados as $livro)
-                                        <a href="{{ route('livros.show', $livro->id) }}" class="flex items-center justify-between gap-3 rounded-md border border-amber-200 bg-amber-50 p-3 transition hover:bg-amber-100 dark:border-amber-500/20 dark:bg-amber-500/10 dark:hover:bg-amber-500/20">
+                                        <a href="{{ route('livros.show', $livro->id) }}" class="flex items-center justify-between gap-3 rounded-md border border-amber-200 bg-amber-50 p-3 transition hover:bg-amber-100 dark:border-amber-500/20 dark:bg-amber-500/10 dark:hover:bg-amber-500/20 hover:scale-[1.02]">
                                             <div class="min-w-0">
                                                 <p class="truncate text-sm font-bold text-slate-900 dark:text-white">{{ $livro->titulo }}</p>
                                                 <p class="truncate text-xs text-slate-500 dark:text-slate-400">{{ $livro->categoriasTexto() }}</p>
@@ -415,7 +415,7 @@
                             </div>
                             <div class="space-y-2">
                                 @foreach($livrosNacionais->take(4) as $livro)
-                                    <a href="{{ route('livros.show', $livro->id) }}" class="group flex items-center gap-3 rounded-md border border-slate-200 bg-slate-50 p-2 transition hover:border-emerald-300 hover:bg-emerald-50 dark:border-white/10 dark:bg-white/[.03] dark:hover:border-emerald-500/40 dark:hover:bg-emerald-500/10">
+                                    <a href="{{ route('livros.show', $livro->id) }}" class="group flex items-center gap-3 rounded-md border border-slate-200 bg-slate-50 p-2 transition hover:border-emerald-300 hover:bg-emerald-50 dark:border-white/10 dark:bg-white/[.03] dark:hover:border-emerald-500/40 dark:hover:bg-emerald-500/10 hover:scale-[1.02]">
                                         <div class="h-14 w-10 shrink-0 overflow-hidden rounded bg-slate-200 dark:bg-white/10">
                                             @if($livro->capa)
                                                 <img src="{{ asset('storage/' . $livro->capa) }}" alt="{{ $livro->titulo }}" class="h-full w-full object-cover">
@@ -472,7 +472,7 @@
                                             $atrasado = $emprestimo->isAtrasado();
                                             $venceHoje = $emprestimo->data_devolucao_prevista?->isToday();
                                         @endphp
-                                        <article class="rounded-md border {{ $atrasado ? 'border-red-200 bg-red-50 dark:border-red-500/30 dark:bg-red-500/10' : ($venceHoje ? 'border-amber-200 bg-amber-50 dark:border-amber-500/30 dark:bg-amber-500/10' : 'border-slate-200 bg-slate-50 dark:border-white/10 dark:bg-white/[.03]') }} p-3">
+                                        <article class="rounded-md border {{ $atrasado ? 'border-red-200 bg-red-50 dark:border-red-500/30 dark:bg-red-500/10' : ($venceHoje ? 'border-amber-200 bg-amber-50 dark:border-amber-500/30 dark:bg-amber-500/10' : 'border-slate-200 bg-slate-50 dark:border-white/10 dark:bg-white/[.03]') }} p-3 transition hover:scale-[1.02]">
                                             <div class="flex gap-3">
                                                 <div class="h-16 w-11 shrink-0 overflow-hidden rounded bg-slate-200 dark:bg-white/10">
                                                     @if($emprestimo->livro?->capa)
@@ -555,7 +555,7 @@
                                                     ? 'border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100'
                                                     : 'border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-200');
                                         @endphp
-                                        <a href="{{ $alerta['url'] }}" class="block rounded-md border p-3 transition hover:translate-x-0.5 {{ $alertClass }}">
+                                        <a href="{{ $alerta['url'] }}" class="block rounded-md border p-3 transition hover:translate-x-0.5 {{ $alertClass }} {{ $alerta['tipo'] === 'danger' ? 'animate-pulse-subtle' : '' }}">
                                             <div class="flex gap-3">
                                                 <i class="ph {{ $alerta['icone'] }} mt-0.5 text-lg"></i>
                                                 <div>
@@ -590,7 +590,7 @@
                         @else
                             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                                 @foreach($favoritosDoMembro as $livro)
-                                    <a href="{{ route('livros.show', $livro->id) }}" class="group flex items-center gap-3 rounded-md border border-slate-200 bg-slate-50 p-3 transition hover:border-amber-300 hover:bg-amber-50 dark:border-white/10 dark:bg-white/[.03] dark:hover:border-amber-500/40 dark:hover:bg-amber-500/10">
+                                    <a href="{{ route('livros.show', $livro->id) }}" class="group flex items-center gap-3 rounded-md border border-slate-200 bg-slate-50 p-3 transition hover:border-amber-300 hover:bg-amber-50 dark:border-white/10 dark:bg-white/[.03] dark:hover:border-amber-500/40 dark:hover:bg-amber-500/10 hover:scale-[1.02]">
                                         <div class="h-16 w-11 shrink-0 overflow-hidden rounded bg-slate-200 dark:bg-white/10">
                                             @if($livro->capa)
                                                 <img src="{{ asset('storage/' . $livro->capa) }}" alt="{{ $livro->titulo }}" class="h-full w-full object-cover">
@@ -1081,7 +1081,7 @@
     @if($isMember)
     {{-- ══ SIDEBAR: MEUS EMPRÉSTIMOS ══ --}}
     <div id="loans-backdrop" class="fixed inset-0 bg-slate-950/40 opacity-0 pointer-events-none transition-opacity duration-200 z-50 dark:bg-slate-950/60" aria-hidden="true"></div>
-    <aside id="loans-sidebar" class="fixed top-0 right-[-420px] w-[380px] max-w-[90vw] h-screen bg-white border-l border-slate-200 shadow-2xl transition-[right] duration-200 z-[20] flex flex-col dark:bg-[#0d1420] dark:border-white/10" role="dialog" aria-modal="true" aria-label="Meus empréstimos">
+    <aside id="loans-sidebar" class="fixed top-0 right-[-420px] w-[380px] max-w-[90vw] h-screen bg-white border-l border-slate-200 shadow-2xl transition-[right] duration-200 z-[20] flex flex-col dark:bg-[#0d1420] dark:border-white/10 animate-slide-in-right" role="dialog" aria-modal="true" aria-label="Meus empréstimos">
         <div class="p-5 border-b border-slate-200 flex items-center justify-between dark:border-white/10">
             <div>
                 <h3 class="text-sm font-black text-slate-950 uppercase tracking-widest dark:text-white">Meus empréstimos</h3>
@@ -1166,7 +1166,7 @@
         );
     @endphp
     <div id="notifications-backdrop" class="fixed inset-0 z-[30] bg-slate-950/40 opacity-0 pointer-events-none transition-opacity duration-200 dark:bg-slate-950/60" aria-hidden="true"></div>
-    <aside id="notifications-sidebar" class="fixed top-0 right-[-420px] z-[50] flex h-screen w-[380px] max-w-[90vw] flex-col border-l border-slate-200 bg-white shadow-2xl transition-[right] duration-200 dark:border-white/10 dark:bg-[#0d1420]" role="dialog" aria-modal="true" aria-label="Notificações">
+    <aside id="notifications-sidebar" class="fixed top-0 right-[-420px] z-[50] flex h-screen w-[380px] max-w-[90vw] flex-col border-l border-slate-200 bg-white shadow-2xl transition-[right] duration-200 dark:border-white/10 dark:bg-[#0d1420] animate-slide-in-right" role="dialog" aria-modal="true" aria-label="Notificações">
         <div class="border-b border-slate-200 p-5 dark:border-white/10">
             <div class="flex items-start justify-between gap-4">
                 <div class="min-w-0">
