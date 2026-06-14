@@ -55,7 +55,7 @@
                             Sua prateleira de interesse, sem perder livro bom no caminho.
                         </h2>
                         <p class="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-                            Favoritar ajuda você a separar leituras para depois. Quando quiser pegar emprestado, abra a obra e confira estoque, fila e bloqueios.
+                            Favoritar ajuda você a separar livros para depois. Quando quiser pegar emprestado, abra a obra e confira estoque, fila e bloqueios.
                         </p>
                     </div>
                     <div class="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/[.03]">

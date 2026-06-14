@@ -167,14 +167,14 @@
                                 @if($isAdmin)
                                     {{ $primeiroNome }}, hoje o acervo pede atenção em circulação, prazos e fila de atendimento.
                                 @else
-                                    {{ $primeiroNome }}, encontre sua próxima leitura sem perder de vista seus prazos.
+                                    {{ $primeiroNome }}, encontre seu próximo livro sem perder de vista seus prazos.
                                 @endif
                             </h2>
                             <p class="max-w-2xl text-sm md:text-base text-slate-600 dark:text-slate-400 mt-3 leading-relaxed">
                                 @if($isAdmin)
                                     {{ $totalLivros }} títulos catalogados, {{ $totalMembros }} membros ativos no sistema e {{ $emprestimosAtivos }} empréstimos em acompanhamento agora.
                                 @else
-                                    {{ $totalLivros }} títulos disponíveis para explorar, favoritos para salvar e recomendações baseadas no seu jeito de ler.
+                                    {{ $totalLivros }} títulos disponíveis para explorar, favoritos para salvar e recomendações baseadas no seu histórico de empréstimos.
                                 @endif
                             </p>
 
@@ -210,7 +210,7 @@
                         <div class="border-t border-slate-200 bg-slate-50/80 p-5 sm:p-6 dark:border-white/5 dark:bg-white/[.03] lg:border-l lg:border-t-0">
                             <div class="flex items-start justify-between gap-4">
                                 <div>
-                                    <p class="text-[10px] font-black uppercase tracking-[.18em] text-slate-500 dark:text-slate-400">{{ $isAdmin ? 'Movimento de hoje' : 'Sua leitura agora' }}</p>
+                                    <p class="text-[10px] font-black uppercase tracking-[.18em] text-slate-500 dark:text-slate-400">{{ $isAdmin ? 'Movimento de hoje' : 'Seus empréstimos agora' }}</p>
                                     <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">{{ $isAdmin ? 'Resumo para priorizar a operação.' : 'Resumo rápido do que merece sua atenção.' }}</p>
                                 </div>
                                 <i class="ph ph-chart-line-up text-2xl text-amber-600 dark:text-amber-400"></i>
@@ -574,7 +574,7 @@
                     <section class="lg:col-span-3 rounded-md border border-amber-200 bg-white p-5 dark:border-amber-500/20 dark:bg-[#0d1420]">
                         <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                             <div>
-                                <p class="text-[10px] font-black uppercase tracking-[.18em] text-amber-700 dark:text-amber-300">Quero ler</p>
+                                <p class="text-[10px] font-black uppercase tracking-[.18em] text-amber-700 dark:text-amber-300">Meus favoritos</p>
                                 <h3 class="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Favoritos salvos</h3>
                             </div>
                             <a href="{{ route('favoritos.index') }}" class="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-amber-300 bg-amber-50 px-3 text-[10px] font-black uppercase tracking-widest text-amber-800 transition hover:bg-amber-100 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300 dark:hover:bg-amber-500/20">
@@ -614,7 +614,7 @@
                         <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                             <div>
                                 <p class="text-[10px] font-black uppercase tracking-[.18em] text-blue-700 dark:text-blue-300">Sugestões para você</p>
-                                <h3 class="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Próxima leitura</h3>
+                                <h3 class="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Para você</h3>
                             </div>
                             <a href="#acervo-section" class="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-blue-300 bg-blue-50 px-3 text-[10px] font-black uppercase tracking-widest text-blue-800 transition hover:bg-blue-100 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-300 dark:hover:bg-blue-500/20">
                                 <i class="ph ph-compass"></i>

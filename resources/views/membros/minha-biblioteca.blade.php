@@ -20,7 +20,7 @@
                 <div>
                     <p class="text-[10px] font-black uppercase tracking-[.18em] text-blue-700 dark:text-blue-300">Área do leitor</p>
                     <h1 class="font-serif text-2xl font-black text-slate-950 dark:text-white">Minha biblioteca</h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Tudo que importa para sua leitura em um lugar</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Tudo sobre seus empréstimos, reservas e favoritos em um lugar</p>
                 </div>
             </div>
 
