@@ -45,8 +45,8 @@
         </div>
 
         @if($adminNotifiable)
-            <div id="admin-notifications-backdrop" class="fixed inset-0 z-[11020] bg-slate-950/60 opacity-0 pointer-events-none transition-opacity duration-200" aria-hidden="true"></div>
-            <aside id="admin-notifications-sidebar" class="fixed top-0 right-[-420px] z-[11030] flex h-screen w-[380px] max-w-[90vw] flex-col border-l border-white/10 bg-[#0d1420] shadow-2xl transition-[right] duration-200" role="dialog" aria-modal="true" aria-label="Notificações">
+            <div id="admin-notifications-backdrop" class="fixed inset-0 z-[30] bg-slate-950/60 opacity-0 pointer-events-none transition-opacity duration-200" aria-hidden="true"></div>
+            <aside id="admin-notifications-sidebar" class="fixed top-0 right-[-420px] z-[50] flex h-screen w-[380px] max-w-[90vw] flex-col border-l border-white/10 bg-[#0d1420] shadow-2xl transition-[right] duration-200" role="dialog" aria-modal="true" aria-label="Notificações">
                 <div class="p-5 border-b border-white/10 flex items-center justify-between">
                     <div>
                         <h3 class="text-sm font-black text-white uppercase tracking-widest">Notificações</h3>

@@ -1081,7 +1081,7 @@
     @if($isMember)
     {{-- ══ SIDEBAR: MEUS EMPRÉSTIMOS ══ --}}
     <div id="loans-backdrop" class="fixed inset-0 bg-slate-950/40 opacity-0 pointer-events-none transition-opacity duration-200 z-50 dark:bg-slate-950/60" aria-hidden="true"></div>
-    <aside id="loans-sidebar" class="fixed top-0 right-[-420px] w-[380px] max-w-[90vw] h-screen bg-white border-l border-slate-200 shadow-2xl transition-[right] duration-200 z-[60] flex flex-col dark:bg-[#0d1420] dark:border-white/10" role="dialog" aria-modal="true" aria-label="Meus empréstimos">
+    <aside id="loans-sidebar" class="fixed top-0 right-[-420px] w-[380px] max-w-[90vw] h-screen bg-white border-l border-slate-200 shadow-2xl transition-[right] duration-200 z-[20] flex flex-col dark:bg-[#0d1420] dark:border-white/10" role="dialog" aria-modal="true" aria-label="Meus empréstimos">
         <div class="p-5 border-b border-slate-200 flex items-center justify-between dark:border-white/10">
             <div>
                 <h3 class="text-sm font-black text-slate-950 uppercase tracking-widest dark:text-white">Meus empréstimos</h3>
@@ -1165,8 +1165,8 @@
             $texto ?? 'Notificação'
         );
     @endphp
-    <div id="notifications-backdrop" class="fixed inset-0 z-[11020] bg-slate-950/40 opacity-0 pointer-events-none transition-opacity duration-200 dark:bg-slate-950/60" aria-hidden="true"></div>
-    <aside id="notifications-sidebar" class="fixed top-0 right-[-420px] z-[11030] flex h-screen w-[380px] max-w-[90vw] flex-col border-l border-slate-200 bg-white shadow-2xl transition-[right] duration-200 dark:border-white/10 dark:bg-[#0d1420]" role="dialog" aria-modal="true" aria-label="Notificações">
+    <div id="notifications-backdrop" class="fixed inset-0 z-[30] bg-slate-950/40 opacity-0 pointer-events-none transition-opacity duration-200 dark:bg-slate-950/60" aria-hidden="true"></div>
+    <aside id="notifications-sidebar" class="fixed top-0 right-[-420px] z-[50] flex h-screen w-[380px] max-w-[90vw] flex-col border-l border-slate-200 bg-white shadow-2xl transition-[right] duration-200 dark:border-white/10 dark:bg-[#0d1420]" role="dialog" aria-modal="true" aria-label="Notificações">
         <div class="border-b border-slate-200 p-5 dark:border-white/10">
             <div class="flex items-start justify-between gap-4">
                 <div class="min-w-0">

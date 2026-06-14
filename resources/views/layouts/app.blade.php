@@ -303,8 +303,8 @@
         @endphp
 
         @if($globalNotifiable && !request()->routeIs('dashboard'))
-            <div id="global-notifications-backdrop" class="fixed inset-0 z-[11020] bg-slate-950/40 opacity-0 pointer-events-none transition-opacity duration-200 dark:bg-slate-950/60" aria-hidden="true"></div>
-            <aside id="global-notifications-sidebar" class="fixed top-0 right-[-420px] z-[11030] flex h-screen w-[380px] max-w-[90vw] flex-col border-l border-slate-200 bg-white shadow-2xl transition-[right] duration-200 dark:border-white/10 dark:bg-[#0d1420]" role="dialog" aria-modal="true" aria-label="Notificações">
+            <div id="global-notifications-backdrop" class="fixed inset-0 z-[30] bg-slate-950/40 opacity-0 pointer-events-none transition-opacity duration-200 dark:bg-slate-950/60" aria-hidden="true"></div>
+            <aside id="global-notifications-sidebar" class="fixed top-0 right-[-420px] z-[50] flex h-screen w-[380px] max-w-[90vw] flex-col border-l border-slate-200 bg-white shadow-2xl transition-[right] duration-200 dark:border-white/10 dark:bg-[#0d1420]" role="dialog" aria-modal="true" aria-label="Notificações">
                 <div class="p-5 border-b border-slate-200 flex items-center justify-between dark:border-white/10">
                     <div>
                         <h3 class="text-sm font-black text-slate-950 uppercase tracking-widest dark:text-white">Notificações</h3>
