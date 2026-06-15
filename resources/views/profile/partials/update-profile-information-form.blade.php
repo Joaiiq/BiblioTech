@@ -19,7 +19,7 @@
                 name="profile_photo"
                 type="file"
                 accept="image/*"
-                class="mt-2 block w-full rounded-md border border-dashed border-slate-300 bg-slate-50 p-3 text-sm text-slate-600 file:mr-4 file:rounded-md file:border-0 file:bg-[#1E3A8A] file:px-4 file:py-2 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:text-white hover:border-amber-300 dark:border-white/10 dark:bg-[#080d14] dark:text-slate-300"
+                class="mt-2 block w-full rounded-md border border-dashed border-slate-300 bg-slate-50 p-3 text-sm text-slate-600 file:mr-2 sm:file:mr-4 file:rounded-md file:border-0 file:bg-[#1E3A8A] file:px-3 sm:file:px-4 file:py-2 file:text-[9px] sm:file:text-[10px] file:font-black file:uppercase file:tracking-widest file:text-white hover:border-amber-300 dark:border-white/10 dark:bg-[#080d14] dark:text-slate-300"
             >
             <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">JPG, PNG, GIF ou WEBP até 2MB.</p>
             <x-input-error class="mt-2" :messages="$errors->get('profile_photo')" />

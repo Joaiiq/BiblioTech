@@ -92,7 +92,7 @@
                         name="foto"
                         accept="image/*"
                         x-on:change="updatePhoto($event)"
-                        class="block h-11 w-full cursor-pointer rounded-md border border-dashed border-slate-300 bg-slate-50 text-sm text-slate-600 file:mr-4 file:h-full file:border-0 file:bg-[#1E3A8A] file:px-4 file:text-[11px] file:font-black file:uppercase file:tracking-widest file:text-white hover:border-amber-400 dark:border-white/10 dark:bg-[#080d14] dark:text-slate-300"
+                        class="block h-11 w-full cursor-pointer rounded-md border border-dashed border-slate-300 bg-slate-50 text-sm text-slate-600 file:mr-2 sm:file:mr-4 file:h-full file:border-0 file:bg-[#1E3A8A] file:px-3 sm:file:px-4 file:text-[9px] sm:file:text-[11px] file:font-black file:uppercase file:tracking-widest file:text-white hover:border-amber-400 dark:border-white/10 dark:bg-[#080d14] dark:text-slate-300"
                     >
                     <x-input-error :messages="$errors->get('foto')" class="mt-2" />
                 </div>

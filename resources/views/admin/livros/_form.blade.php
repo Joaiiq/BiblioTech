@@ -153,7 +153,7 @@
 
             <div class="mt-4 rounded-md border border-dashed border-slate-300 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#080d14]">
                 <label for="preview_pdf" class="{{ $labelClass }}">Prévia em PDF opcional</label>
-                <input id="preview_pdf" type="file" name="preview_pdf" accept="application/pdf,.pdf" class="block w-full rounded-md border border-slate-200 bg-white p-3 text-sm text-slate-600 file:mr-4 file:rounded-md file:border-0 file:bg-[#1E3A8A] file:px-4 file:py-2 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:text-white hover:border-amber-300 dark:border-white/10 dark:bg-[#0d1420] dark:text-slate-300">
+                <input id="preview_pdf" type="file" name="preview_pdf" accept="application/pdf,.pdf" class="block w-full rounded-md border border-slate-200 bg-white p-3 text-sm text-slate-600 file:mr-2 sm:file:mr-4 file:rounded-md file:border-0 file:bg-[#1E3A8A] file:px-3 sm:file:px-4 file:py-2 file:text-[9px] sm:file:text-[10px] file:font-black file:uppercase file:tracking-widest file:text-white hover:border-amber-300 dark:border-white/10 dark:bg-[#0d1420] dark:text-slate-300">
                 <div class="mt-2 flex flex-col gap-2 text-xs text-slate-500 dark:text-slate-400 sm:flex-row sm:items-center sm:justify-between">
                     <span>PDF até 10MB. Use poucas páginas para demonstrar a obra.</span>
                     @if($isEdit && $livro->preview_pdf)
@@ -171,7 +171,7 @@
             <div class="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_220px] md:items-center">
                 <div>
                     <label for="capa" class="{{ $labelClass }}">{{ $isEdit ? 'Trocar capa' : 'Capa do livro' }}</label>
-                    <input id="capa" type="file" name="capa" accept="image/*" class="block w-full rounded-md border border-dashed border-slate-300 bg-slate-50 p-3 text-sm text-slate-600 file:mr-4 file:rounded-md file:border-0 file:bg-[#1E3A8A] file:px-4 file:py-2 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:text-white hover:border-amber-300 dark:border-white/10 dark:bg-[#080d14] dark:text-slate-300">
+                    <input id="capa" type="file" name="capa" accept="image/*" class="block w-full rounded-md border border-dashed border-slate-300 bg-slate-50 p-3 text-sm text-slate-600 file:mr-2 sm:file:mr-4 file:rounded-md file:border-0 file:bg-[#1E3A8A] file:px-3 sm:file:px-4 file:py-2 file:text-[9px] sm:file:text-[10px] file:font-black file:uppercase file:tracking-widest file:text-white hover:border-amber-300 dark:border-white/10 dark:bg-[#080d14] dark:text-slate-300">
                     <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">PNG ou JPG até 2MB. O preview atualiza antes de salvar.</p>
                     <x-input-error :messages="$errors->get('capa')" class="mt-2" />
                 </div>
