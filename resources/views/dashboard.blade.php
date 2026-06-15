@@ -1080,8 +1080,8 @@
 
     @if($isMember)
     {{-- ══ SIDEBAR: MEUS EMPRÉSTIMOS ══ --}}
-    <div id="loans-backdrop" class="fixed inset-0 bg-slate-950/40 opacity-0 pointer-events-none transition-opacity duration-200 z-50 dark:bg-slate-950/60" aria-hidden="true"></div>
-    <aside id="loans-sidebar" class="fixed top-0 right-[-420px] w-[380px] max-w-[90vw] h-screen bg-white border-l border-slate-200 shadow-2xl transition-[right] duration-200 z-[20] flex flex-col dark:bg-[#0d1420] dark:border-white/10 animate-slide-in-right" role="dialog" aria-modal="true" aria-label="Meus empréstimos">
+    <div id="loans-backdrop" class="fixed inset-0 bg-slate-950/40 opacity-0 pointer-events-none transition-opacity duration-200 z-30 dark:bg-slate-950/60" aria-hidden="true"></div>
+    <aside id="loans-sidebar" class="fixed top-0 right-[-420px] w-[380px] max-w-[90vw] h-screen bg-white border-l border-slate-200 shadow-2xl transition-[right] duration-200 z-40 flex flex-col dark:bg-[#0d1420] dark:border-white/10 animate-slide-in-right" role="dialog" aria-modal="true" aria-label="Meus empréstimos">
         <div class="p-5 border-b border-slate-200 flex items-center justify-between dark:border-white/10">
             <div>
                 <h3 class="text-sm font-black text-slate-950 uppercase tracking-widest dark:text-white">Meus empréstimos</h3>
