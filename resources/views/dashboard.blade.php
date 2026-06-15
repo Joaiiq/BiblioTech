@@ -62,7 +62,7 @@
                         class="w-full bg-white dark:bg-[#0d1420] border border-slate-200 dark:border-white/10 rounded-lg pl-9 pr-3 py-2 text-xs text-slate-700 dark:text-gray-200 placeholder:text-slate-400 dark:placeholder:text-gray-600 focus:outline-none focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/30"
                         autocomplete="off"
                     >
-                    <div id="global-search-panel" class="absolute left-0 right-0 top-[calc(100%+8px)] z-[9999] hidden overflow-hidden rounded-md border border-slate-200 bg-white shadow-2xl shadow-slate-950/10 dark:border-white/10 dark:bg-[#0d1420] dark:shadow-black/40">
+                    <div id="global-search-panel" class="absolute left-0 right-0 top-[calc(100%+8px)] z-[60] hidden overflow-hidden rounded-md border border-slate-200 bg-white shadow-2xl shadow-slate-950/10 dark:border-white/10 dark:bg-[#0d1420] dark:shadow-black/40">
                         <div class="border-b border-slate-200 px-3 py-2 dark:border-white/10">
                             <p class="text-[10px] font-black uppercase tracking-[.16em] text-slate-500 dark:text-slate-400">Resultados rápidos</p>
                         </div>
@@ -1080,8 +1080,8 @@
 
     @if($isMember)
     {{-- ══ SIDEBAR: MEUS EMPRÉSTIMOS ══ --}}
-    <div id="loans-backdrop" class="fixed inset-0 bg-slate-950/40 opacity-0 pointer-events-none transition-opacity duration-200 z-30 dark:bg-slate-950/60" aria-hidden="true"></div>
-    <aside id="loans-sidebar" class="fixed top-0 right-[-420px] w-[380px] max-w-[90vw] h-screen bg-white border-l border-slate-200 shadow-2xl transition-[right] duration-200 z-40 flex flex-col dark:bg-[#0d1420] dark:border-white/10 animate-slide-in-right" role="dialog" aria-modal="true" aria-label="Meus empréstimos">
+    <div id="loans-backdrop" class="fixed inset-0 bg-slate-950/40 opacity-0 pointer-events-none transition-opacity duration-200 z-[70] dark:bg-slate-950/60" aria-hidden="true"></div>
+    <aside id="loans-sidebar" class="fixed top-0 right-[-420px] w-[380px] max-w-[90vw] h-screen bg-white border-l border-slate-200 shadow-2xl transition-[right] duration-200 z-[80] flex flex-col dark:bg-[#0d1420] dark:border-white/10 animate-slide-in-right" role="dialog" aria-modal="true" aria-label="Meus empréstimos">
         <div class="p-5 border-b border-slate-200 flex items-center justify-between dark:border-white/10">
             <div>
                 <h3 class="text-sm font-black text-slate-950 uppercase tracking-widest dark:text-white">Meus empréstimos</h3>
@@ -1165,8 +1165,8 @@
             $texto ?? 'Notificação'
         );
     @endphp
-    <div id="notifications-backdrop" class="fixed inset-0 z-[30] bg-slate-950/40 opacity-0 pointer-events-none transition-opacity duration-200 dark:bg-slate-950/60" aria-hidden="true"></div>
-    <aside id="notifications-sidebar" class="fixed top-0 right-[-420px] z-[50] flex h-screen w-[380px] max-w-[90vw] flex-col border-l border-slate-200 bg-white shadow-2xl transition-[right] duration-200 dark:border-white/10 dark:bg-[#0d1420] animate-slide-in-right" role="dialog" aria-modal="true" aria-label="Notificações">
+    <div id="notifications-backdrop" class="fixed inset-0 z-[90] bg-slate-950/40 opacity-0 pointer-events-none transition-opacity duration-200 dark:bg-slate-950/60" aria-hidden="true"></div>
+    <aside id="notifications-sidebar" class="fixed top-0 right-[-420px] z-[100] flex h-screen w-[380px] max-w-[90vw] flex-col border-l border-slate-200 bg-white shadow-2xl transition-[right] duration-200 dark:border-white/10 dark:bg-[#0d1420] animate-slide-in-right" role="dialog" aria-modal="true" aria-label="Notificações">
         <div class="border-b border-slate-200 p-5 dark:border-white/10">
             <div class="flex items-start justify-between gap-4">
                 <div class="min-w-0">
