@@ -248,7 +248,7 @@
     </aside>
 </div>
 
-<div id="autor-modal" class="fixed inset-0 z-[11040] hidden">
+<div id="autor-modal" class="fixed inset-0 z-40 hidden">
     <div id="autor-modal-backdrop" class="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"></div>
     <div class="relative mx-auto mt-10 w-full max-w-2xl px-4 sm:mt-16">
         <div class="rounded-md border border-slate-200 bg-white p-5 shadow-2xl dark:border-white/10 dark:bg-[#0d1420] sm:p-6">

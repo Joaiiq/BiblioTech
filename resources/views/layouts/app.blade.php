@@ -65,7 +65,7 @@
             {{-- ── Drawer flutuante ── --}}
             <div x-data="{ open: false }">
                 <button @click="open = true"
-                        class="fixed bottom-6 right-6 z-[10040] w-14 h-14 shrink-0 rounded-full
+                        class="fixed bottom-6 right-6 z-40 w-14 h-14 shrink-0 rounded-full
                                bg-[#1E3A8A] text-white shadow-2xl shadow-blue-900/40
                                hover:bg-[#162a63] hover:scale-110 active:scale-95
                                transition-all flex items-center justify-center focus:outline-none">
@@ -79,7 +79,7 @@
                      x-transition:leave="transition ease-in duration-150"
                      x-transition:leave-start="opacity-100"
                      x-transition:leave-end="opacity-0"
-                     class="fixed inset-0 z-[10000] flex">
+                     class="fixed inset-0 z-30 flex">
 
                     <div @click="open = false" class="absolute inset-0 bg-slate-950/40 backdrop-blur-sm dark:bg-black/60"></div>
 
@@ -90,7 +90,7 @@
                            x-transition:leave="transition ease-in duration-150"
                            x-transition:leave-start="translate-x-0"
                            x-transition:leave-end="-translate-x-full"
-                           class="relative z-[10010] flex h-full w-64 flex-col border-r border-slate-200 bg-white shadow-2xl dark:border-white/5 dark:bg-[#080d14]">
+                           class="relative z-40 flex h-full w-64 flex-col border-r border-slate-200 bg-white shadow-2xl dark:border-white/5 dark:bg-[#080d14]">
 
                         <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-white/5">
                             <div class="flex flex-col items-center justify-center gap-1">
@@ -361,7 +361,7 @@
             /* Modal Configurado com as cores do projeto */
             const darkSwal = Swal.mixin({
                 customClass: {
-                    popup: 'bg-[#111827] text-white border border-gray-800 rounded-md shadow-xl',
+                    popup: 'bg-[#111827] text-white border border-gray-800 rounded-md shadow-xl z-40',
                     confirmButton: 'px-6 py-2 mx-2 bg-red-500 hover:bg-red-600 text-white rounded-md font-bold uppercase text-xs tracking-widest transition-colors',
                     cancelButton: 'px-6 py-2 mx-2 bg-[#1e293b] border border-gray-700 hover:bg-gray-800 text-white rounded-md font-bold uppercase text-xs tracking-widest transition-colors'
                 },
